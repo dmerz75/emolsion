@@ -11,8 +11,10 @@ extern "C" {
 // #include "readfile.h"
 // #include "chain.h"
 #include "md.h"
+#include "ReadPDBfile.hpp"
+#include "system.hpp"
 // #include "config.hpp"
-#include "ConfigFile.h"
+// #include "ConfigFile.h"
 // #include "Chameleon.h"
 
 // // #include "contacts.h"
@@ -64,6 +66,8 @@ int main(int argc, char *argv[]) {
 
 
     // Procedure:
+    // 0. Create System.
+    //    ()
     // 1. Read the config file. <conf.sop>
     //    () read_config_file
     //    1.1 Alter the default parameters. <def_param.h>
@@ -79,28 +83,71 @@ int main(int argc, char *argv[]) {
     // 5. Write final PDB.
     // 6. Close, Free up memory.
 
-
-    // read the config file!
-
-
-    ConfigFile cf("conf.sop");
-
-    std::string name,foo,bah;
-    double number,bar;
-
-    name   = cf.Value("section_1","name");
-    number   = cf.Value("section_1","number");
-
-    std::cout << name << std::endl;
-    std::cout << number << std::endl;
+    int num_atoms;
+    num_atoms = -1;
 
 
-    // water = cf.Value("section_2","water");
-    // four  = cf.Value("section_2","four");
+    // 0. Create the System.
+    // System sys;
+    // sys.print_prop();
 
-    // std::cout << foo   << std::endl;
-    // std::cout << water << std::endl;
-    // std::cout << four  << std::endl;
+
+    // 1. read the config file!
+
+
+    // 2. Read the pdb.
+    Atom a1[0];
+    std::cout << "Currently, there are " << num_atoms << " atoms." << endl;
+    num_atoms = ReadPDBfile(argv[1],num_atoms,a1);
+    // delete a1;
+
+    std::cout << "Currently, there are " << num_atoms << " atoms." << endl;
+    // try Allocation Failure catch here?
+    Atom allatoms[num_atoms];
+    num_atoms = ReadPDBfile(argv[1],num_atoms,allatoms);
+
+
+
+    // for(int i=0; i<num_atoms; i++)
+    // {
+    //     allatoms[i].print_coords();
+    //     printf("%s  ",allatoms[i].chain.c_str());
+    //     printf("%d\n",allatoms[i].resid);
+    // }
+
+
+
+    // Selection: H, precheck!
+    int total_H = 0;
+    for(int i=0; i<num_atoms; i++)
+    {
+        if(allatoms[i].chain.compare("H") == 0)
+        {
+            total_H += 1;
+        }
+    }
+    std::cout << "total_H: " << total_H << endl;
+
+    // Selection: H
+    // overloaded, with/without return selection
+    // select(fromthese,parameter-chain-resid,idn-H,num_select);
+    int num_select;
+    num_select = -1;
+    num_select = select(allatoms,"chain","H",num_select);
+
+    // // pointer.
+    // Atom *selectionH;
+    // // memory allocation.
+    // try {
+    //     selectionH = new Atom;
+    // } catch (std::bad_alloc xa) {
+    //     std::cout << "Allocation Failure\n";
+    //     return 1;
+    // }
+    // num_select = select(allatoms,selectionH,"chain","H",num_select);
+
+
+
 
 
     std::cout << "\nclosing stdin,stdout,stderr.\n";

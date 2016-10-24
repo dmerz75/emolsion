@@ -52,8 +52,8 @@ ODIR     := build
 TESTD    := test
 
 # Executable:
-EXEC     := run_segment
-EXEF     := $(wildcard /usr/local/bin/run_segment*)
+EXEC     := readpdb
+EXEF     := $(wildcard /usr/local/bin/$(EXEC)*)
 
 
 
@@ -93,6 +93,13 @@ main:
 # $(CXX) $(CPPFILES) $(CFLAGS_3) $(INC) $(LIB) -o test/$(EXEC)_def
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) -o test/$(EXEC)_def
 	cd test && ./$(EXEC)_def 2KHO.pdb 2KHO.dcd
+main0:
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) -o test/$(EXEC)_def
+	cd test && ./$(EXEC)_def 2KHO.pdb 2KHO.dcd
+main1:
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) -o test/$(EXEC)_def
+	cd test && ./$(EXEC)_def 4EZW.pdb nil.dcd
+
 
 
 # -----------------------------------------------------------------------------
