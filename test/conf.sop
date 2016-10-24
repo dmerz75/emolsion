@@ -1,0 +1,14 @@
+[section_1]
+name 2kho
+number 57
+
+[section_2]
+foo = foo2
+bar = 8722
+bah = hab
+
+
+[section_3]
+foo = foo3
+bar = 5274
+bah = bah3
