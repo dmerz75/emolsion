@@ -52,7 +52,7 @@ ODIR     := build
 TESTD    := test
 
 # Executable:
-EXEC     := readpdb
+EXEC     := run_readpdb
 EXEF     := $(wildcard /usr/local/bin/$(EXEC)*)
 
 
