@@ -42,7 +42,7 @@ INC_EIGEN:= -I/usr/include/eigen3
 
 
 # DIRS
-TOPDIR   :=	$(shell pwd)
+TOPDIR   := $(shell pwd)
 SRCDIR   := src
 BUILDDIR := build
 BIN_DIR  := bin

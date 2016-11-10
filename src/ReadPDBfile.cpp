@@ -48,6 +48,8 @@ int ReadPDBfile(char filename[40],int total_atoms,Atom *aa)
     string line;
     ifstream pdbfile(fn.c_str());
 
+
+    // While reading, count the atoms.
     int num_atoms;
     num_atoms = 0;
     // ,total_atoms;

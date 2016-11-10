@@ -106,15 +106,14 @@ int main(int argc, char *argv[]) {
     Atom allatoms[num_atoms];
     num_atoms = ReadPDBfile(argv[1],num_atoms,allatoms);
 
-
-
-    // for(int i=0; i<num_atoms; i++)
-    // {
-    //     allatoms[i].print_coords();
-    //     printf("%s  ",allatoms[i].chain.c_str());
-    //     printf("%d\n",allatoms[i].resid);
-    // }
-
+    for(int i=0; i<num_atoms; i++)
+    {
+        // allatoms[i].print_coords();
+        // printf("%s  ",allatoms[i].chain.c_str());
+        // printf("%d\n",allatoms[i].resid);
+        allatoms[i].num_atoms = num_atoms;
+    }
+    // allatoms[0].num_atoms = num_atoms;
 
 
     // Selection: H, precheck!
@@ -126,14 +125,60 @@ int main(int argc, char *argv[]) {
             total_H += 1;
         }
     }
-    std::cout << "total_H: " << total_H << endl;
+    std::cout << "total_atoms_on_chain_H(4EZW-55?): " << total_H << endl;
+
+
 
     // Selection: H
     // overloaded, with/without return selection
     // select(fromthese,parameter-chain-resid,idn-H,num_select);
     int num_select;
+
+    // CHAIN:
+    // num_select = select(allatoms,"chain","A",num_select);
+    // Example 1.
     num_select = -1;
-    num_select = select(allatoms,"chain","H",num_select);
+    num_select = system_select(allatoms,"chain H",num_select);
+    std::cout << "We found " << num_select << " atoms on chain H." << endl;
+
+    // Example 2.
+    num_select = -1;
+    num_select = system_select(allatoms,"chain D",num_select);
+    std::cout << "We found " << num_select << " atoms on chain D." << endl;
+
+    // Example 3.
+    num_select = -1;
+    num_select = system_select(allatoms,"chain A",num_select);
+    std::cout << "We found " << num_select << " atoms on chain A." << endl;
+
+
+    // RESIDUE:
+    // Example 4.
+    num_select = -1;
+    num_select = system_select(allatoms,"resid 539 to 541",num_select);
+    std::cout << "We found " << num_select << " atoms for residues 539 to 541" << endl;
+
+    // Example 5.
+    num_select = -1;
+    num_select = system_select(allatoms,"resid 397",num_select);
+    std::cout << "We found " << num_select << " atoms for residues 397" << endl;
+
+
+    // INDEX:
+    // Example 4.
+    num_select = -1;
+    num_select = system_select(allatoms,"index 150 to 350",num_select);
+    std::cout << "We found " << num_select << " atoms for indices 150 to 350" << endl;
+
+    // Example 5.
+    num_select = -1;
+    num_select = system_select(allatoms,"index 1051",num_select);
+    std::cout << "We found " << num_select << " atoms for index 1050" << endl;
+
+
+
+
+
 
     // // pointer.
     // Atom *selectionH;

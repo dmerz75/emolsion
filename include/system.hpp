@@ -35,13 +35,17 @@ public:
     ~System();
     void print_prop();
 
-private:
+
     int num_chains;
     int num_residues;
     int num_atoms;
 
+
     float minx, miny, minz;
     float maxx, maxy, maxz;
+
+private:
+
 
 };
 inline System::System()
@@ -127,7 +131,8 @@ public:
     int id_global;
     int id_local;
     int resid;
-    int num_atoms;
+    int num_atoms_res;
+    string restype;   // HIS, GLU, ILE, LEU ..
 
 private:
 
@@ -139,7 +144,7 @@ inline Residue::Residue()
     id_global = -1;
     id_local = -1;
     resid = -1;
-    num_atoms = -1;
+    num_atoms_res = -1;
 }
 inline Residue::~Residue()
 {
@@ -173,7 +178,7 @@ public:
     float radius;     // VDW, Richards, Gerstein.
 
     string atomtype;  // N, CA, C, O, CB, ..
-    string restype;   // HIS, GLU, ILE, LEU ..
+
     string general_atomtype; // 77,1
 
 private:
@@ -225,9 +230,11 @@ inline void Atom::print_coords()
    function declarations
    --------------------------------------------------------- */
 // void ReadPDBfile(PDBfile *pdbfile,char filename[40]);
-int select(Atom *aa,char param[],char criterion[],int num);
-// int select(Atom aa,Atom asel,string param,string criterion,int num);
+// int select(Atom *aa,char criterion[40],int num);
+int system_select(Atom *aa,char const *criterion,int total);
 
+
+// int select(Atom aa,Atom asel,string param,string criterion,int num);
 void get_minmax(System sys);
 
 
