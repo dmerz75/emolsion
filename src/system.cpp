@@ -194,59 +194,9 @@ int system_select(Atom *aa,char const *criterion,int total)
     }
 
 
-    // if (found2 != std::string::npos)
-    // {
-    //     std::string sel_resid = selection.replace(found2,str2.length(),"");
-
-
-    //     std::cout << sel_resid << endl;
-
-    //     for(int i=0; i < num_all; i++)
-    //     {
-
-    //         // if(aa[i].chain.compare(sel_chain) == 0)
-    //         // {
-    //         //     num += 1;
-    //         // }
-    //     }
-    //     total = num;
-    //     return total;
-    // }
-
-
-
-
-
-
-    // std::cout << "found: " << found << endl;
-    // std::size_t found1 = selection.find("not");
-    // std::cout << "found1: " << found1 << endl;
-    // return 0;
-
-    // printf("num_atoms: %d\n",aa[0].System.num_atoms);
-    // aa[0].print_prop();
-
-    // // Selection!
-    // int num = 0;
-    // for(int i=0; i < num_all; i++)
-    // {
-    //     std::cout << i << endl;
-
-    //     // if(aa[i].chain.compare("H") == 0)
-    //     // {
-    //     //     total_H += 1;
-    //     // }
-    // }
-    // // std::cout << "total_atoms_on_chain_H(4EZW-55?): " << total_H << endl;
-
     total = num;
     return total;
 }
-// int select(Atom aa,Atom asel,string param,string criterion,int num)
-// {
-
-
-// }
 
 
 void get_minmax(System sys)
