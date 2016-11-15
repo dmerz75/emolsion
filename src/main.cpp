@@ -75,6 +75,7 @@ int main(int argc, char *argv[]) {
     // 2. Read the PDB. <2KHO.pdb>
     //    () read_pdb
     // 3. Open the DCD.
+    //    3.0 allocate for aa_later.
     //    3.1 If DCD exists, read coordinates, velocities.
     //    3.2 If DCD does not exist, run minimization.
     // 4. Run MD.
@@ -97,30 +98,47 @@ int main(int argc, char *argv[]) {
 
     // 2. Read the pdb.
     Atom a1[0];
-    std::cout << "Currently, there are " << num_atoms << " atoms." << endl;
+    std::cout << "1. Currently, there are " << num_atoms << " atoms." << endl;
     num_atoms = ReadPDBfile(argv[1],num_atoms,a1);
     // delete a1;
 
-    std::cout << "Currently, there are " << num_atoms << " atoms." << endl;
+    std::cout << "2. Currently, there are " << num_atoms << " atoms." << endl;
     // try Allocation Failure catch here?
-    Atom allatoms[num_atoms];
-    num_atoms = ReadPDBfile(argv[1],num_atoms,allatoms);
 
+    // memory allocation.
+    // #include <iostream>
+    // Chain *chain_ref;
+    // try {
+        // chain_ref = new Chain [num_chains];
+    Atom *aa_ref;
+    try
+    {
+        aa_ref = new Atom[num_atoms];
+    }
+    catch (std::bad_alloc xa)
+    {
+        std::cout << "Allocation Failure\n";
+        exit(1);
+    }
+    num_atoms = ReadPDBfile(argv[1],num_atoms,aa_ref);
+
+
+    // Assign Total.
     for(int i=0; i<num_atoms; i++)
     {
-        // allatoms[i].print_coords();
-        // printf("%s  ",allatoms[i].chain.c_str());
-        // printf("%d\n",allatoms[i].resid);
-        allatoms[i].num_atoms = num_atoms;
+        // aa_ref[i].print_coords();
+        // printf("%s  ",aa_ref[i].chain.c_str());
+        // printf("%d\n",aa_ref[i].resid);
+        aa_ref[i].num_atoms = num_atoms;
     }
-    // allatoms[0].num_atoms = num_atoms;
+    // aa_ref[0].num_atoms = num_atoms;
 
 
     // Selection: H, precheck!
     int total_H = 0;
     for(int i=0; i<num_atoms; i++)
     {
-        if(allatoms[i].chain.compare("H") == 0)
+        if(aa_ref[i].chain.compare("H") == 0)
         {
             total_H += 1;
         }
@@ -129,67 +147,135 @@ int main(int argc, char *argv[]) {
 
 
 
-    // Selection: H
+
+    /* ---------------------------------------------------------
+       Begin Selection:
+       --------------------------------------------------------- */
     // overloaded, with/without return selection
     // select(fromthese,parameter-chain-resid,idn-H,num_select);
     int num_select;
 
     // CHAIN:
-    // num_select = select(allatoms,"chain","A",num_select);
+    // num_select = select(aa_ref,"chain","A",num_select);
     // Example 1.
     num_select = -1;
-    num_select = system_select(allatoms,"chain H",num_select);
+    num_select = system_select(aa_ref,"chain H",num_select);
     std::cout << "We found " << num_select << " atoms on chain H." << endl;
 
     // Example 2.
     num_select = -1;
-    num_select = system_select(allatoms,"chain D",num_select);
+    num_select = system_select(aa_ref,"chain D",num_select);
     std::cout << "We found " << num_select << " atoms on chain D." << endl;
 
     // Example 3.
     num_select = -1;
-    num_select = system_select(allatoms,"chain A",num_select);
+    num_select = system_select(aa_ref,"chain A",num_select);
     std::cout << "We found " << num_select << " atoms on chain A." << endl;
 
 
     // RESIDUE:
     // Example 4.
     num_select = -1;
-    num_select = system_select(allatoms,"resid 539 to 541",num_select);
+    num_select = system_select(aa_ref,"resid 539 to 541",num_select);
     std::cout << "We found " << num_select << " atoms for residues 539 to 541" << endl;
 
     // Example 5.
     num_select = -1;
-    num_select = system_select(allatoms,"resid 397",num_select);
+    num_select = system_select(aa_ref,"resid 397",num_select);
     std::cout << "We found " << num_select << " atoms for residues 397" << endl;
 
 
     // INDEX:
     // Example 4.
     num_select = -1;
-    num_select = system_select(allatoms,"index 150 to 350",num_select);
+    num_select = system_select(aa_ref,"index 150 to 350",num_select);
     std::cout << "We found " << num_select << " atoms for indices 150 to 350" << endl;
 
     // Example 5.
     num_select = -1;
-    num_select = system_select(allatoms,"index 1051",num_select);
+    num_select = system_select(aa_ref,"index 1051",num_select);
     std::cout << "We found " << num_select << " atoms for index 1050" << endl;
 
 
 
+    // Working Example.
+    num_select = -1;
+    const char *pickme = "resid 411 to 418";
+    num_select = system_select(aa_ref,pickme,num_select);
+    std::cout << "We found " << num_select << " atoms in this selection: " << pickme << endl;
+
+
+    // Allocate for selection.
+    Atom *aa_sel;
+    try
+    {
+        aa_sel = new Atom[num_select];
+    }
+    catch (std::bad_alloc xa)
+    {
+        std::cout << "Allocation Failure\n";
+        exit(1);
+    }
+
+
+    // Get selection.
+    system_select(aa_ref,pickme,num_select,aa_sel);
 
 
 
-    // // pointer.
-    // Atom *selectionH;
-    // // memory allocation.
-    // try {
-    //     selectionH = new Atom;
-    // } catch (std::bad_alloc xa) {
-    //     std::cout << "Allocation Failure\n";
-    //     return 1;
-    // }
-    // num_select = select(allatoms,selectionH,"chain","H",num_select);
+
+
+    // Verify Selection.
+    for(int i=0; i<num_select; i++)
+    {
+        aa_sel[i].num_atoms = num_select;
+        // aa_ref[i].print_coords();
+        // printf("%s  ",aa_ref[i].chain.c_str());
+        // printf("%d\n",aa_ref[i].resid);
+        std::cout << "select_i: " << ' '
+                  << aa_sel[i].num_atoms << ' '
+                  << aa_sel[i].index << ' '
+                  << aa_sel[i].resid << ' '
+                  << aa_sel[i].chain << ' '
+                  << aa_sel[i].restype << ' '
+                  << endl;
+    }
+    /* ---------------------------------------------------------
+       End Selection.
+       --------------------------------------------------------- */
+
+
+
+    /* ---------------------------------------------------------
+       For DCD. create frame0 and time-later reference states.
+       --------------------------------------------------------- */
+    Atom *aa_zero;
+    try
+    {
+        aa_zero = new Atom[num_atoms];
+    }
+    catch (std::bad_alloc xa)
+    {
+        std::cout << "Allocation Failure\n";
+        exit(1);
+    }
+
+
+    Atom *aa_lat;
+    try
+    {
+        aa_lat = new Atom[num_atoms];
+    }
+    catch (std::bad_alloc xa)
+    {
+        std::cout << "Allocation Failure\n";
+        exit(1);
+    }
+
+
+    // LOAD DCD.
+
+
 
 
 

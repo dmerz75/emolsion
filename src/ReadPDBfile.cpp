@@ -100,7 +100,17 @@ int ReadPDBfile(char filename[40],int total_atoms,Atom *aa)
                     aa[num_atoms].index = num_atoms;
                     aa[num_atoms].atomtype = line.substr(13,3);// CA,CG1,OD1
                     aa[num_atoms].restype = line.substr(17,3); // GLY,ILE
-                    aa[num_atoms].general_atomtype = line.substr(77,1); // C,N,O,F
+
+                    try
+                    {
+                        aa[num_atoms].general_atomtype = line.substr(77,1); // C,N,O,F
+                    }
+                    catch (const std::out_of_range & e)
+                    {
+                        // std::cout<< e.what(); // message to console: vector::_M_range_check
+                    }
+
+
 
                     // For Residue:
                     aa[num_atoms].resid = atoi(line.substr(23,3).c_str()); // 4,603 for 2KHO

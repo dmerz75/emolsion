@@ -232,6 +232,7 @@ inline void Atom::print_coords()
 // void ReadPDBfile(PDBfile *pdbfile,char filename[40]);
 // int select(Atom *aa,char criterion[40],int num);
 int system_select(Atom *aa,char const *criterion,int total);
+void system_select(Atom *aa,char const *criterion,int total,Atom *asel);
 
 
 // int select(Atom aa,Atom asel,string param,string criterion,int num);

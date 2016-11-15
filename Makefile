@@ -99,6 +99,9 @@ main0:
 main1:
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) -o test/$(EXEC)_def
 	cd test && ./$(EXEC)_def 4EZW.pdb nil.dcd
+main2:
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) -o test/$(EXEC)_def
+	cd test && ./$(EXEC)_def mt.ref.pdb mt_partial.dcd
 
 
 
