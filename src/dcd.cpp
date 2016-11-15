@@ -17,10 +17,10 @@ extern int endoffile;
    headers
    --------------------------------------------------------- */
 // #include "readfile.h"
-#include "chain.h"
+// #include "chain.h"
 #include "md.h"
-/* #include "dcdio.h" */
-
+#include "dcdio.h"
+#include "system.hpp"
 
 /* ---------------------------------------------------------
    functions
@@ -41,10 +41,12 @@ int advance_dcd(int numframes,int frame,dcdhandle *v,int natoms,molfile_timestep
     return frame + 1;
     // return frame;
 }
-void load_chain_to_timestep(Chain *chain,int num_chains,const molfile_timestep_t *ts){
-    debug("the number of chains to load: %d\n",num_chains);
-    debug("maximum_index: %d\n",chain[num_chains-1].findex);
-    debug("chain_count: %d\n",num_chains);
+void load_chain_to_timestep(System *chain,int num_chains,const molfile_timestep_t *ts)
+{
+
+    // debug("the number of chains to load: %d\n",num_chains);
+    // debug("maximum_index: %d\n",chain[num_chains-1].findex);
+    // debug("chain_count: %d\n",num_chains);
 
     // Works! - not necessary
     // dcdhandle *dcd1;
@@ -60,12 +62,21 @@ void load_chain_to_timestep(Chain *chain,int num_chains,const molfile_timestep_t
 
     for(int h=0; h<num_chains; h++){
 
-        natoms += chain[h].num_atoms_ca;
+        // natoms += chain[h].num_atoms_ca;
+        natoms += chain[h].num_atoms;
 
-        for(int i=0; i<chain[h].num_atoms_ca; i++){
-            ts->coords[count] = (float)chain[h].pos[i].x;
-            ts->coords[count+1] = (float)chain[h].pos[i].y;
-            ts->coords[count+2] = (float)chain[h].pos[i].z;
+        // for(int i=0; i<chain[h].num_atoms_ca; i++){
+        for(int i=0; i<chain[h].num_atoms; i++){
+            // ts->coords[count] = (float)chain[h].pos[i].x;
+            // ts->coords[count+1] = (float)chain[h].pos[i].y;
+            // ts->coords[count+2] = (float)chain[h].pos[i].z;
+
+            // FIX
+
+            // ts->coords[count] = (float)chain[h].pos[i].x;
+            // ts->coords[count+1] = (float)chain[h].pos[i].y;
+            // ts->coords[count+2] = (float)chain[h].pos[i].z;
+
             count += 3;
             count1 ++;
         }
@@ -85,11 +96,18 @@ void load_dcd_to_chain(dcdhandle *dcd,Chain *chain,int num_chains) {
 
     for (int i=0; i<num_chains; i++) {
 
-        for ( int j=0; j<chain[i].num_atoms_ca; j++ ) {
+        // for ( int j=0; j<chain[i].num_atoms_ca; j++ ) {
+        for ( int j=0; j<chain[i].num_atoms; j++ ) {
+
             // printf("%d ",chain[i].indices[j]);
-            chain[i].pos[j].x = dcd->x[chain[i].indices[j]];
-            chain[i].pos[j].y = dcd->y[chain[i].indices[j]];
-            chain[i].pos[j].z = dcd->z[chain[i].indices[j]];
+            // chain[i].pos[j].x = dcd->x[chain[i].indices[j]];
+            // chain[i].pos[j].y = dcd->y[chain[i].indices[j]];
+            // chain[i].pos[j].z = dcd->z[chain[i].indices[j]];
+
+            // FIX
+            // chain[i].pos[j].x = dcd->x[chain[i].indices[j]];
+            // chain[i].pos[j].y = dcd->y[chain[i].indices[j]];
+            // chain[i].pos[j].z = dcd->z[chain[i].indices[j]];
         }
     }
 }

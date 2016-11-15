@@ -22,7 +22,7 @@ extern "C" {
 // #include "topology_charmm.h"
 // #include "curvature.h"
 // #include "chi.h"
-// #include "dcd.h"
+#include "dcd.h"
 
 // headers C++
 // #include <stdlib.h>
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
     debug(">> Welcome to SOPCC! (debug)\n");
     printf(">> Welcome to SOPCC!\n");
 
-    if (argc != 3) {
+    if (argc < 3) {
         std::cout << "Usage: " << argv[0] \
                   << " <Filename-reference-PDB>" \
                   << " <Filename-timelater-DCD>"
@@ -216,8 +216,6 @@ int main(int argc, char *argv[]) {
         std::cout << "Allocation Failure\n";
         exit(1);
     }
-
-
     // Get selection.
     system_select(aa_ref,pickme,num_select,aa_sel);
 
@@ -274,6 +272,305 @@ int main(int argc, char *argv[]) {
 
 
     // LOAD DCD.
+#ifdef DCDREAD
+    int frame_position;
+    frame_position = 0;
+    int start,stop,step;
+
+    // start,stop,step
+    start = atoi(argv[3]);
+    stop = atoi(argv[4]);
+    step = atoi(argv[5]);
+
+
+
+    /* ---------------------------------------------------------
+       write dcd
+       --------------------------------------------------------- */
+#ifdef DCD_WRITE_B
+    std::string str_dcd_read(argv[2]);
+    std::size_t found;
+    found=str_dcd_read.find(".dcd",0);
+
+    std::string str_dcd_name = str_dcd_read.substr(0,found);
+    std::string str_dcd_write = str_dcd_name + "_subset.dcd";
+    char *fn_dcd_write = (char*) str_dcd_write.c_str();
+
+    printf("\nreading dcd >>>  <%s>\n",str_dcd_read.c_str());
+    printf("using name for dcd >>>  <%s>\n",str_dcd_name.c_str());
+    printf("writing dcd >>>  <%s>\n",fn_dcd_write);
+
+    // Write DCD
+    molfile_timestep_t timestep_w;
+    void *vw;
+    dcdhandle *dcdw;
+    int natoms_w = 0;
+
+    dcdw = (dcdhandle *)vw;
+
+    // get atom total for writing.
+    for(int i=0; i<num_chains; i++){
+        natoms_w += chain_ref[i].num_atoms_ca;
+    }
+    printf("for dcd writing >>>  <%d> atoms expected.\n",natoms_w);
+
+
+    vw = open_dcd_write(fn_dcd_write,"dcd",natoms_w);
+    if (!vw) {
+        fprintf(stderr, "main) open_dcd_write failed for file %s\n", *fn_dcd_write);
+        return 1;
+    } else {
+        printf("opened <%s> successfully!!\n\n",fn_dcd_write);
+    }
+
+    timestep_w.coords = (float *)malloc(3*sizeof(float)*natoms_w);
+
+    // dcd = (dcdhandle *)v;
+    // sizeMB = ((natoms * 3.0) * dcd->nsets * 4.0) / (1024.0 * 1024.0);
+    // totalMB += sizeMB;
+    // printf("main) file: %s\n", *argv);
+    // printf("  %d atoms, %d frames, size: %6.1fMB\n", natoms, dcd->nsets, sizeMB);
+    // timestep.coords = (float *)malloc(3*sizeof(float)*natoms);
+#endif // DCD_WRITE_B
+
+
+    /* ---------------------------------------------------------
+       DCD Preface.
+       --------------------------------------------------------- */
+    // Start DCD
+    molfile_timestep_t timestep;
+    void *v;
+    dcdhandle *dcd;
+    // int i, natoms;
+    int natoms;
+    float sizeMB =0.0, totalMB = 0.0;
+    double starttime, endtime, totaltime = 0.0;
+
+    // // 1
+    // while (--argc) {
+    //     ++argv;
+    //     natoms = 0;
+    //     v = open_dcd_read(*argv, "dcd", &natoms);
+    //     if (!v) {
+    //         fprintf(stderr, "main) open_dcd_read failed for file %s\n", *argv);
+    //         return 1;
+    //     }
+    //     dcd = (dcdhandle *)v;
+    //     sizeMB = ((natoms * 3.0) * dcd->nsets * 4.0) / (1024.0 * 1024.0);
+    //     totalMB += sizeMB;
+    //     printf("main) file: %s\n", *argv);
+    //     printf("  %d atoms, %d frames, size: %6.1fMB\n", natoms, dcd->nsets, sizeMB);
+
+    //     // starttime = time_of_day();
+    //     timestep.coords = (float *)malloc(3*sizeof(float)*natoms);
+    //     for (i=0; i<dcd->nsets; i++) {
+    //         int rc = read_next_timestep(v, natoms, &timestep);
+    //         if (rc) {
+    //             fprintf(stderr, "error in read_next_timestep on frame %d\n", i);
+    //             return 1;
+    //         }
+    //     }
+    //     // endtime = time_of_day();
+    //     close_file_read(v);
+    //     // totaltime += endtime - starttime;
+    //     // printf("  Time: %5.1f seconds\n", endtime - starttime);
+    //     // printf("  Speed: %5.1f MB/sec, %5.1f timesteps/sec\n", sizeMB \
+    //     //        / (endtime - starttime), (dcd->nsets / (endtime - starttime)));
+    // }
+    // printf("Overall Size: %6.1f MB\n", totalMB);
+    // // printf("Overall Time: %6.1f seconds\n", totaltime);
+    // // printf("Overall Speed: %5.1f MB/sec\n", totalMB / totaltime);
+
+
+
+    // int atoms_in_chain;
+    // 2. to read a dcd.
+    natoms = 0;
+    v = open_dcd_read(argv[2], "dcd", &natoms);
+    if (!v) {
+        fprintf(stderr, "main) open_dcd_read failed for file %s\n", *argv);
+        return 1;
+    }
+    dcd = (dcdhandle *)v;
+    sizeMB = ((natoms * 3.0) * dcd->nsets * 4.0) / (1024.0 * 1024.0);
+    totalMB += sizeMB;
+    timestep.coords = (float *)malloc(3*sizeof(float)*natoms);
+    // timestep.velocities = (float *)malloc(3*sizeof(float)*natoms);
+
+    // printf("main) file: %s\n", *argv);
+    // printf("  %d atoms, %d frames, size: %6.1fMB\n", natoms, dcd->nsets, sizeMB);
+
+
+    // close_file_read(v);
+    // END DCD
+    // typedef struct {
+    //     fio_fd fd;
+    //     int natoms; 382
+    //     int nsets; 17501 (0-17500)
+    //     int setsread;
+    //     int istart;
+    //     int nsavc;
+    //     double delta;
+    //     int nfixed;
+    //     float *x, *y, *z; ->x[0-381];
+    //     int *freeind;
+    //     float *fixedcoords;
+    //     int reverse;
+    //     int charmm;
+    //     int first;
+    //     int with_unitcell;
+    // } dcdhandle;
+    printf("--------START HERE-------------\n");
+
+    // dcd
+    // 0: (pdb) | ref | chain_0 (from dcd) | chain_later
+    // int advance_dcd(int numframes,int frame,dcdhandle *v,int natoms,molfile_timestep_t *timestep);
+
+    // printf("ref: %f\n",chain_ref[0].pos[105].y);
+    // printf("0-105: %f\n",chain_0[0].pos[105].y);
+
+    // frame_position = advance_dcd(dcd->nsets,0,dcd,natoms,&timestep); // 1
+    // load_dcd_to_chain(dcd,chain_0,num_chains);
+    // printf("frame_position(0): %d\n",frame_position);
+    // printf("0-105: %f\n",chain_0[0].pos[105].y);
+
+    // frame_position = advance_dcd(dcd->nsets,1,dcd,natoms,&timestep); // 1
+    // load_dcd_to_chain(dcd,chain_0,num_chains);
+    // printf("frame_position: %d\n",frame_position);
+    // printf("0-105: %f\n",chain_0[0].pos[105].y);
+
+    // frame_position = advance_dcd(dcd->nsets,10,dcd,natoms,&timestep); // 1
+    // load_dcd_to_chain(dcd,chain_0,num_chains);
+    // printf("frame_position: %d\n",frame_position);
+    // printf("0-105: %f\n",chain_0[0].pos[105].y);
+
+
+    // printf("beginning new loop.\n");
+    // int countd;
+
+    // countd = 0;
+    // for(int df=start; df<=stop; df+=step){
+    //     countd +=1;
+    //     // dummy = my_dcd_read(df);
+    //     frame_position = advance_dcd(dcd->nsets,df,dcd,natoms,&timestep);
+    //     printf("frame_position:--->  %d  <--- %d %d\n",frame_position,countd,df);
+    //     load_dcd_to_chain(dcd,chain_later,num_chains);
+    //     printf("0-105: %f\n",chain_later[0].pos[105].y);
+
+    // }
+    // exit(0);
+
+    // nil.
+
+    frame_position = 1;
+    advance_dcd(dcd->nsets,0,dcd,natoms,&timestep); // 1st advance. 1-vmd
+
+    // THIS ONE
+    // load_dcd_to_chain(dcd,chain_0,num_chains);
+
+    // printf("frame_position: %d\n",frame_position);
+    // printf("ref-findex(%d): %f\n",chain_ref[0].findex,chain_ref[0].pos[chain_ref[0].findex].y);
+    // printf("0-findex(%d): %f\n",chain_0[0].findex,chain_0[0].pos[chain_0[0].findex].y);
+    // printf("later-findex(%d): %f\n",chain_later[0].findex,chain_later[0].pos[chain_later[0].findex].y);
+
+
+    frame_position = 2;
+    advance_dcd(dcd->nsets,0,dcd,natoms,&timestep); // 2nd. 2-vmd
+
+
+    // THIS ONE
+    // load_dcd_to_chain(dcd,chain_later,num_chains);
+
+
+    printf("frame_position: %d\n",frame_position);
+    // exit(0);
+
+    // Advancing Rules.
+    // ----------------
+    // example. step size -> 5.
+    // int advance_size = atoi(argv[3]) - 1;
+
+    // step.
+    int advance_size = step - 1; // 0 counts, so advance_size of 4, advances by 5.
+
+    // stop.
+    if(stop > dcd->nsets){
+        stop = dcd->nsets;
+        printf("use stop value: %d\n",stop);
+    }
+
+    // // start.
+    // debug("starting frame: %d\n",start);
+    // if((start > 2) && (step < start)) {
+    //     // for (int nset1=2; nset1<start; nset1 += advance_size + 1 ) {
+    //     for (int nset1=2; nset1<start-step; nset1 += 1 ) {
+    //         // for (int nset1=2; nset1<dcd->nsets; nset1 += step + 1) {
+    //         debug("forwarding --> current: %d\n",nset1);
+    //         frame_position += advance_dcd(dcd->nsets,0,dcd,natoms,&timestep);
+    //         debug("forwarding --> frame_position: %d\n",frame_position);
+
+    //         // if ( nset1 + advance_size >= start) {
+    //         //     // if ( nset1 + step >= dcd->nsets ) {
+    //         //     break;
+    //         // }
+    //         // frame_position is returned value;
+    //         // frame_position += advance_dcd(dcd->nsets,step,dcd,natoms,&timestep);
+    //         // load_dcd_to_chain(dcd,chain_later,num_chains);
+    //     }
+    // } else if ((start > 2) && (step > start - 2)) {
+    //     for (int nset1=2; nset1<start; nset1 += 1 ) {
+    //         debug("forwarding --> current: %d\n",nset1);
+    //         frame_position += advance_dcd(dcd->nsets,0,dcd,natoms,&timestep);
+    //         debug("forwarding --> frame_position: %d\n",frame_position);
+    //     }
+    // }
+
+    // sleep(0.5);
+    // exit(0);
+
+
+    for (int nset1=2; nset1<start; nset1 += 1 ) {
+        // for (int nset1=2; nset1<dcd->nsets; nset1 += step + 1) {
+        // debug("forwarding --> current: %d\n",nset1);
+        frame_position += advance_dcd(dcd->nsets,0,dcd,natoms,&timestep);
+
+
+        // THIS ONE
+        // load_dcd_to_chain(dcd,chain_later,num_chains);
+
+        debug("forwarding --> frame_position: %d\n",frame_position);
+    }
+
+    // Get initial starting point.
+    printf("--> fast forwarded. to frame: %d\n",frame_position);
+
+
+    /* ---------------------------------------------------------
+       major for loop begin || doloop.
+       --------------------------------------------------------- */
+    // for (int nset2=frame_position; nset2<stop; nset2 += advance_size + 1) {
+    //     // for (int nset=frame_position; nset<dcd->nsets; nset += advance_size + 1 ) {
+
+    //     if ( nset2 + advance_size >= stop) {
+    //         // if ( nset + advance_size >= dcd->nsets ) {
+    //         break;
+    //     }
+
+    //     frame_position += advance_dcd(dcd->nsets,advance_size,dcd,natoms,&timestep);
+    //     load_dcd_to_chain(dcd,chain_later,num_chains);
+    //     debug("current: %d\n",nset2);
+    //     printf("--> frame_position: %d\n",frame_position);
+    //     // check.
+    //     // printf("ref-findex(%d): %f\n",chain_ref[0].findex,chain_ref[0].pos[chain_ref[0].findex].y);
+    //     // printf("0-findex(%d): %f\n",chain_0[0].findex,chain_0[0].pos[chain_0[0].findex].y);
+    //     // printf("later-findex(%d): %f\n",chain_later[0].findex,chain_later[0].pos[chain_later[0].findex].y);
+    //     // continue;
+
+    int nset2;
+    nset2 = frame_position;
+    do {
+
+#endif //DCDREAD
 
 
 
@@ -281,6 +578,113 @@ int main(int argc, char *argv[]) {
 
 
 
+
+#ifdef DCD_WRITE
+    // READ
+    // static void *open_dcd_read(const char *path, const char *filetype,
+    //                            int *natoms) {
+    // int rc = read_next_timestep(v, natoms, timestep);
+
+    // WRITE
+    // static void *open_dcd_write(const char *path, const char *filetype,
+    //                             int natoms) {
+    // static void close_file_write(void *v) {
+
+    // open_dcd_write(fn_dcd_write,"dcd",&natoms);
+
+    // write_dcdstep
+    // static int write_dcdstep(fio_fd fd, int curframe, int curstep, int N,
+    //                          const float *X, const float *Y, const float *Z,
+    //                          const double *unitcell, int charmm) {
+
+    // static int write_dcdheader(fio_fd fd, const char *remarks, int N,
+    //                            int ISTART, int NSAVC, double DELTA, int with_unitcell,
+    //                            int charmm) {
+
+    // load_chain_coords_to_timestep(dcdw,chain_later,chains_to_use,vw,&timestep_w,natoms_w);
+    // load_chain_coords_to_timestep(chain_later,num_chains,&timestep_w);
+
+
+
+    // THIS ONE
+    // load_chain_to_timestep(chain_later,num_chains,&timestep_w);
+
+
+
+#ifdef DCD_WRITE_UNMOD
+    // Write the DCD read in.
+    write_timestep(vw,&timestep);
+// #elif DCD_WRITE_ROT
+
+#else
+    // Write modified coordinates.
+    write_timestep(vw,&timestep_w);
+#endif // A
+#endif
+
+
+#ifdef DCDREAD
+    // } // DCD PRIMARY LOOP
+
+        debug("current: %d\n",nset2);
+        printf("frame: --> %d <-- was evaluated.\n",frame_position);
+
+        if (nset2 + advance_size + 1 <= stop) {
+            frame_position += advance_dcd(dcd->nsets,advance_size,dcd,natoms,&timestep);
+            printf("frame: --> %d <-- loaded.\n",frame_position);
+
+            // THIS ONE
+            // load_dcd_to_chain(dcd,chain_later,num_chains);
+
+
+            // nset2 += advance_size + 1;
+        }
+        nset2 += advance_size + 1;
+    } while (nset2<=stop);
+
+    debug("..closing dcd..\n");
+    close_file_read(v);
+    // END DCD
+    // typedef struct {
+    //     fio_fd fd;
+    //     int natoms; 382
+    //     int nsets; 17501 (0-17500)
+    //     int setsread;
+    //     int istart;
+    //     int nsavc;
+    //     double delta;
+    //     int nfixed;
+    //     float *x, *y, *z; ->x[0-381];
+    //     int *freeind;
+    //     float *fixedcoords;
+    //     int reverse;
+    //     int charmm;
+    //     int first;
+    //     int with_unitcell;
+    // } dcdhandle;
+
+    // delete [] chain_ref;
+    // delete [] chain;
+    // delete [] chain_0;
+    // delete [] chain_later;
+
+    printf("DCDREAD complete.\n\tThe maximum possible frame_position was: %d\n",stop);
+    printf("\tThe last frame evaluated was: %d\n",frame_position);
+#endif //DCDREAD
+
+
+
+#ifdef DCD_WRITE_E
+    // open_dcd_write(fn_dcd_write,"dcd",natoms);
+    // static void close_file_write(void *v) {
+    close_file_write(vw);
+#endif // DCD_WRITE_E
+
+
+
+    /* ---------------------------------------------------------
+       The End.
+       --------------------------------------------------------- */
     std::cout << "\nclosing stdin,stdout,stderr.\n";
     fclose(stdin);
     fclose(stdout);

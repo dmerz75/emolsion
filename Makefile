@@ -60,6 +60,7 @@ EXEF     := $(wildcard /usr/local/bin/$(EXEC)*)
 # ---------------------------------------------------------------------
 # Macros
 MACRO = -D
+DCD = -DDCDREAD
 
 
 # ---------------------------------------------------------------------
@@ -102,7 +103,9 @@ main1:
 main2:
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) -o test/$(EXEC)_def
 	cd test && ./$(EXEC)_def mt.ref.pdb mt_partial.dcd
-
+dcd0:
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) -o test/$(EXEC)_def
+	cd test && ./$(EXEC)_def mt.ref.pdb mt_partial.dcd 0 100 1
 
 
 # -----------------------------------------------------------------------------
