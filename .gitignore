@@ -31,3 +31,5 @@
 
 # My Customization:
 run_*
+test/run_
+test/run_readpdb_def

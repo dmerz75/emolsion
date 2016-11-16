@@ -66,14 +66,13 @@ int main(int argc, char *argv[]) {
 
 
     // Procedure:
-    // 0. Create System.
-    //    ()
     // 1. Read the config file. <conf.sop>
     //    () read_config_file
-    //    1.1 Alter the default parameters. <def_param.h>
-    //    () alter_default_parameters
+    //    () alter_default_parameters. Alter the default parameters. <def_param.h>
     // 2. Read the PDB. <2KHO.pdb>
-    //    () read_pdb
+    //    () ReadPDBfile / Count the atoms.
+    //    () Allocate for the Reference System. aa_ref
+    //    () Populate some System parameters, like the total num_atoms.
     // 3. Open the DCD.
     //    3.0 allocate for aa_later.
     //    3.1 If DCD exists, read coordinates, velocities.
@@ -97,19 +96,18 @@ int main(int argc, char *argv[]) {
 
 
     // 2. Read the pdb.
+    // () ReadPDBfile
+    // () Count the total "num_atoms".
     Atom a1[0];
     std::cout << "1. Currently, there are " << num_atoms << " atoms." << endl;
     num_atoms = ReadPDBfile(argv[1],num_atoms,a1);
+    // delete[] a1;
     // delete a1;
-
+    // delete ?
     std::cout << "2. Currently, there are " << num_atoms << " atoms." << endl;
-    // try Allocation Failure catch here?
 
-    // memory allocation.
-    // #include <iostream>
-    // Chain *chain_ref;
-    // try {
-        // chain_ref = new Chain [num_chains];
+
+    // 2.1 Allocate for the Reference System.
     Atom *aa_ref;
     try
     {
@@ -123,7 +121,7 @@ int main(int argc, char *argv[]) {
     num_atoms = ReadPDBfile(argv[1],num_atoms,aa_ref);
 
 
-    // Assign Total.
+    // 2.2 Populate System Parameters
     for(int i=0; i<num_atoms; i++)
     {
         // aa_ref[i].print_coords();
@@ -131,10 +129,15 @@ int main(int argc, char *argv[]) {
         // printf("%d\n",aa_ref[i].resid);
         aa_ref[i].num_atoms = num_atoms;
     }
-    // aa_ref[0].num_atoms = num_atoms;
 
 
-    // Selection: H, precheck!
+    /* ---------------------------------------------------------
+       Begin Selection:
+       Selection: H, precheck!
+       --------------------------------------------------------- */
+    // system_select() [overloaded] with/without return int (number of matches)
+    // system_select(all_atom_sys,"selection string",num_select);
+    //          opt: selected_atom_sys);
     int total_H = 0;
     for(int i=0; i<num_atoms; i++)
     {
@@ -145,15 +148,7 @@ int main(int argc, char *argv[]) {
     }
     std::cout << "total_atoms_on_chain_H(4EZW-55?): " << total_H << endl;
 
-
-
-
-    /* ---------------------------------------------------------
-       Begin Selection:
-       --------------------------------------------------------- */
-    // overloaded, with/without return selection
-    // select(fromthese,parameter-chain-resid,idn-H,num_select);
-    int num_select;
+    int num_select = -1;
 
     // CHAIN:
     // num_select = select(aa_ref,"chain","A",num_select);
@@ -221,8 +216,6 @@ int main(int argc, char *argv[]) {
 
 
 
-
-
     // Verify Selection.
     for(int i=0; i<num_select; i++)
     {
@@ -245,7 +238,7 @@ int main(int argc, char *argv[]) {
 
 
     /* ---------------------------------------------------------
-       For DCD. create frame0 and time-later reference states.
+       Create aa_zero, aa_later reference states.
        --------------------------------------------------------- */
     Atom *aa_zero;
     try
@@ -258,11 +251,10 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-
-    Atom *aa_lat;
+    Atom *aa_later;
     try
     {
-        aa_lat = new Atom[num_atoms];
+        aa_later = new Atom[num_atoms];
     }
     catch (std::bad_alloc xa)
     {
@@ -270,8 +262,52 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
+    // Verify aa_zero and aa_later.
+    for(int i=0; i<num_atoms; i++)
+    {
+        aa_zero[i].num_atoms = num_atoms;
+        aa_later[i].num_atoms = num_atoms;
+        // aa_ref[i].print_coords();
+        // printf("%s  ",aa_ref[i].chain.c_str());
+        // printf("%d\n",aa_ref[i].resid);
+        // std::cout << "select_i: " << ' '
+        //           << aa_sel[i].num_atoms << ' '
+        //           << aa_sel[i].index << ' '
+        //           << aa_sel[i].resid << ' '
+        //           << aa_sel[i].chain << ' '
+        //           << aa_sel[i].restype << ' '
+        //           << endl;
+    }
 
-    // LOAD DCD.
+
+    /* ---------------------------------------------------------
+       Analysis Before. Start.
+       --------------------------------------------------------- */
+    int someindex = 0;
+    someindex = aa_ref[0].num_atoms / 2;
+    debug("middle-index: %d\n",someindex);
+    debug("coords: %f %f %f\n",aa_ref[someindex].x,aa_ref[someindex].y,aa_ref[someindex].z);
+    debug("coords: %f %f %f\n",aa_zero[someindex].x,aa_zero[someindex].y,aa_zero[someindex].z);
+    debug("coords: %f %f %f\n",aa_later[someindex].x,aa_later[someindex].y,aa_later[someindex].z);
+
+    debug("\n");
+    debug("coords(8)[0]: %f %f %f\n",aa_zero[8].x,aa_zero[8].y,aa_zero[8].z);
+    debug("coords(8)[later]: %f %f %f\n",aa_later[8].x,aa_later[8].y,aa_later[8].z);
+    debug("coords(37)[0]: %f %f %f\n",aa_zero[37].x,aa_zero[37].y,aa_zero[37].z);
+    debug("coords(37)[later]: %f %f %f\n",aa_later[37].x,aa_later[37].y,aa_later[37].z);
+
+
+    /* ---------------------------------------------------------
+       Analysis Before. Finish.
+       --------------------------------------------------------- */
+
+
+
+
+
+    /* ---------------------------------------------------------
+       DCD Read. Preload.
+       --------------------------------------------------------- */
 #ifdef DCDREAD
     int frame_position;
     frame_position = 0;
@@ -285,7 +321,7 @@ int main(int argc, char *argv[]) {
 
 
     /* ---------------------------------------------------------
-       write dcd
+       DCD Write. Preload.
        --------------------------------------------------------- */
 #ifdef DCD_WRITE_B
     std::string str_dcd_read(argv[2]);
@@ -335,16 +371,33 @@ int main(int argc, char *argv[]) {
 
 
     /* ---------------------------------------------------------
-       DCD Preface.
+       DCD Read.
        --------------------------------------------------------- */
-    // Start DCD
     molfile_timestep_t timestep;
     void *v;
     dcdhandle *dcd;
-    // int i, natoms;
-    int natoms;
+    int natoms; // from the opening the dcd.
     float sizeMB =0.0, totalMB = 0.0;
     double starttime, endtime, totaltime = 0.0;
+    // typedef struct {
+    //     fio_fd fd;
+    //     int natoms; 382
+    //     int nsets; 17501 (0-17500)
+    //     int setsread;
+    //     int istart;
+    //     int nsavc;
+    //     double delta;
+    //     int nfixed;
+    //     float *x, *y, *z; ->x[0-381];
+    //     int *freeind;
+    //     float *fixedcoords;
+    //     int reverse;
+    //     int charmm;
+    //     int first;
+    //     int with_unitcell;
+    // } dcdhandle;
+
+
 
     // // 1
     // while (--argc) {
@@ -382,12 +435,13 @@ int main(int argc, char *argv[]) {
     // // printf("Overall Speed: %5.1f MB/sec\n", totalMB / totaltime);
 
 
-
+    printf("----->  READING DCD  <-----\n");
     // int atoms_in_chain;
     // 2. to read a dcd.
     natoms = 0;
-    v = open_dcd_read(argv[2], "dcd", &natoms);
-    if (!v) {
+    v = open_dcd_read(argv[2],"dcd",&natoms);
+    if (!v)
+    {
         fprintf(stderr, "main) open_dcd_read failed for file %s\n", *argv);
         return 1;
     }
@@ -400,27 +454,9 @@ int main(int argc, char *argv[]) {
     // printf("main) file: %s\n", *argv);
     // printf("  %d atoms, %d frames, size: %6.1fMB\n", natoms, dcd->nsets, sizeMB);
 
-
     // close_file_read(v);
-    // END DCD
-    // typedef struct {
-    //     fio_fd fd;
-    //     int natoms; 382
-    //     int nsets; 17501 (0-17500)
-    //     int setsread;
-    //     int istart;
-    //     int nsavc;
-    //     double delta;
-    //     int nfixed;
-    //     float *x, *y, *z; ->x[0-381];
-    //     int *freeind;
-    //     float *fixedcoords;
-    //     int reverse;
-    //     int charmm;
-    //     int first;
-    //     int with_unitcell;
-    // } dcdhandle;
-    printf("--------START HERE-------------\n");
+
+
 
     // dcd
     // 0: (pdb) | ref | chain_0 (from dcd) | chain_later
@@ -466,21 +502,22 @@ int main(int argc, char *argv[]) {
     advance_dcd(dcd->nsets,0,dcd,natoms,&timestep); // 1st advance. 1-vmd
 
     // THIS ONE
-    // load_dcd_to_chain(dcd,chain_0,num_chains);
+    // load_dcd_to_chain(dcd,aa_zero,num_chains);
+    load_dcd_to_atoms(dcd,aa_zero);
+
+    // printf("%f %f %f\n",)
 
     // printf("frame_position: %d\n",frame_position);
     // printf("ref-findex(%d): %f\n",chain_ref[0].findex,chain_ref[0].pos[chain_ref[0].findex].y);
     // printf("0-findex(%d): %f\n",chain_0[0].findex,chain_0[0].pos[chain_0[0].findex].y);
     // printf("later-findex(%d): %f\n",chain_later[0].findex,chain_later[0].pos[chain_later[0].findex].y);
 
-
     frame_position = 2;
     advance_dcd(dcd->nsets,0,dcd,natoms,&timestep); // 2nd. 2-vmd
 
-
     // THIS ONE
     // load_dcd_to_chain(dcd,chain_later,num_chains);
-
+    load_dcd_to_atoms(dcd,aa_later);
 
     printf("frame_position: %d\n",frame_position);
     // exit(0);
@@ -537,6 +574,7 @@ int main(int argc, char *argv[]) {
 
         // THIS ONE
         // load_dcd_to_chain(dcd,chain_later,num_chains);
+        load_dcd_to_atoms(dcd,aa_later);
 
         debug("forwarding --> frame_position: %d\n",frame_position);
     }
@@ -573,7 +611,40 @@ int main(int argc, char *argv[]) {
 #endif //DCDREAD
 
 
+        /* ---------------------------------------------------------
+           Analysis During. Start.
+           --------------------------------------------------------- */
+        debug("middle-index: %d\n",someindex);
+        debug("coords: %f %f %f\n",aa_ref[someindex].x,aa_ref[someindex].y,aa_ref[someindex].z);
+        debug("coords: %f %f %f\n",aa_zero[someindex].x,aa_zero[someindex].y,aa_zero[someindex].z);
+        debug("coords: %f %f %f\n",aa_later[someindex].x,aa_later[someindex].y,aa_later[someindex].z);
 
+        debug("\n");
+        debug("coords(8)[0]: %f %f %f\n",aa_zero[8].x,aa_zero[8].y,aa_zero[8].z);
+        debug("coords(8)[%d]: %f %f %f\n",frame_position,aa_later[8].x,aa_later[8].y,aa_later[8].z);
+        debug("coords(37)[0]: %f %f %f\n",aa_zero[37].x,aa_zero[37].y,aa_zero[37].z);
+        debug("coords(37)[%d]: %f %f %f\n",frame_position,aa_later[37].x,aa_later[37].y,aa_later[37].z);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /* ---------------------------------------------------------
+           Analysis During. Finish.
+           --------------------------------------------------------- */
 
 
 
@@ -607,7 +678,7 @@ int main(int argc, char *argv[]) {
 
 
     // THIS ONE
-    // load_chain_to_timestep(chain_later,num_chains,&timestep_w);
+    load_chain_to_timestep(chain_later,num_chains,&timestep_w);
 
 
 
@@ -623,54 +694,59 @@ int main(int argc, char *argv[]) {
 #endif
 
 
+
 #ifdef DCDREAD
     // } // DCD PRIMARY LOOP
 
         debug("current: %d\n",nset2);
         printf("frame: --> %d <-- was evaluated.\n",frame_position);
 
-        if (nset2 + advance_size + 1 <= stop) {
+        if (nset2 + advance_size + 1 <= stop)
+        {
             frame_position += advance_dcd(dcd->nsets,advance_size,dcd,natoms,&timestep);
             printf("frame: --> %d <-- loaded.\n",frame_position);
 
             // THIS ONE
             // load_dcd_to_chain(dcd,chain_later,num_chains);
-
+            load_dcd_to_atoms(dcd,aa_later);
 
             // nset2 += advance_size + 1;
         }
         nset2 += advance_size + 1;
     } while (nset2<=stop);
 
-    debug("..closing dcd..\n");
+    debug("\n..closing dcd..\n");
     close_file_read(v);
-    // END DCD
-    // typedef struct {
-    //     fio_fd fd;
-    //     int natoms; 382
-    //     int nsets; 17501 (0-17500)
-    //     int setsread;
-    //     int istart;
-    //     int nsavc;
-    //     double delta;
-    //     int nfixed;
-    //     float *x, *y, *z; ->x[0-381];
-    //     int *freeind;
-    //     float *fixedcoords;
-    //     int reverse;
-    //     int charmm;
-    //     int first;
-    //     int with_unitcell;
-    // } dcdhandle;
 
-    // delete [] chain_ref;
-    // delete [] chain;
-    // delete [] chain_0;
-    // delete [] chain_later;
 
-    printf("DCDREAD complete.\n\tThe maximum possible frame_position was: %d\n",stop);
-    printf("\tThe last frame evaluated was: %d\n",frame_position);
+    printf("\n----->  READING DCD completed!  <-----\n");
+    printf("\t\tThe maximum possible frame_position was: %d\n",stop);
+    printf("\t\tThe last frame evaluated was: %d\n",frame_position);
 #endif //DCDREAD
+
+
+    /* ---------------------------------------------------------
+       Analysis After. Start.
+       --------------------------------------------------------- */
+    debug("middle-index: %d\n",someindex);
+    debug("coords: %f %f %f\n",aa_ref[someindex].x,aa_ref[someindex].y,aa_ref[someindex].z);
+    debug("coords: %f %f %f\n",aa_zero[someindex].x,aa_zero[someindex].y,aa_zero[someindex].z);
+    debug("coords: %f %f %f\n",aa_later[someindex].x,aa_later[someindex].y,aa_later[someindex].z);
+
+
+    debug("\n");
+    debug("coords(8)[0]: %f %f %f\n",aa_zero[8].x,aa_zero[8].y,aa_zero[8].z);
+    debug("coords(8)[%d]: %f %f %f\n",frame_position,aa_later[8].x,aa_later[8].y,aa_later[8].z);
+    debug("coords(37)[0]: %f %f %f\n",aa_zero[37].x,aa_zero[37].y,aa_zero[37].z);
+    debug("coords(37)[%d]: %f %f %f\n",frame_position,aa_later[37].x,aa_later[37].y,aa_later[37].z);
+
+
+
+
+
+    /* ---------------------------------------------------------
+       Analysis After. Finish.
+       --------------------------------------------------------- */
 
 
 
@@ -679,6 +755,17 @@ int main(int argc, char *argv[]) {
     // static void close_file_write(void *v) {
     close_file_write(vw);
 #endif // DCD_WRITE_E
+
+
+
+
+    /* ---------------------------------------------------------
+       Delete Malloc Systems.
+       --------------------------------------------------------- */
+    delete [] aa_ref;
+    delete [] aa_zero;
+    delete [] aa_later;
+    delete [] aa_sel;
 
 
 

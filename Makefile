@@ -62,6 +62,9 @@ EXEF     := $(wildcard /usr/local/bin/$(EXEC)*)
 MACRO = -D
 DCD = -DDCDREAD
 
+# Macros: Analysis Before. During. After.
+
+
 
 # ---------------------------------------------------------------------
 # Main target
@@ -106,6 +109,9 @@ main2:
 dcd0:
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) -o test/$(EXEC)_def
 	cd test && ./$(EXEC)_def mt.ref.pdb mt_partial.dcd 0 100 1
+dcd1:
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) -o test/$(EXEC)_def
+	cd test && ./$(EXEC)_def mt.ref.pdb mt_partial.dcd 6 27 3 # 6-9 .. 21-24-27.
 
 
 # -----------------------------------------------------------------------------

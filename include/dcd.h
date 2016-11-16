@@ -28,7 +28,9 @@
 int my_dcd_start(int frame);
 int advance_dcd(int numframes,int frame,dcdhandle *v,int natoms,molfile_timestep_t *timestep);
 void load_dcd_to_chain(dcdhandle *dcd,Chain *chain,int num_chains);
-void load_chain_to_timestep(System *chain,int num_chains,    \
+void load_dcd_to_atoms(dcdhandle *dcd,Atom *aa);
+void load_chain_to_timestep(System *chain,int num_chains,   \
                             const molfile_timestep_t *ts);
+
 
 #endif
