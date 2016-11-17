@@ -110,12 +110,12 @@ main2:
 dcd0:
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) -o test/$(EXEC)_dcdreader
 	cd test && ./$(EXEC)_def mt.ref.pdb mt_partial.dcd 0 100 1
-dcd1:
+dcdr:
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) -o test/$(EXEC)_dcdreader
-	cd test && ./$(EXEC)_def mt.ref.pdb mt_partial.dcd 6 27 3 # 6-9 .. 21-24-27.
+	cd test && ./$(EXEC)_dcdreader mt.ref.pdb mt_partial.dcd 6 27 3 # 6-9 .. 21-24-27.
 dcdw:
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCDW) -o test/$(EXEC)_dcdwriter
-	cd test && ./$(EXEC)_def mt.ref.pdb mt_partial.dcd 6 27 3 # 6-9 .. 21-24-27.
+	cd test && ./$(EXEC)_dcdwriter mt.ref.pdb mt_partial.dcd 6 27 3 # 6-9 .. 21-24-27.
 
 
 # -----------------------------------------------------------------------------
