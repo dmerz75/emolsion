@@ -92,6 +92,37 @@ void load_chain_to_timestep(System *chain,int num_chains,const molfile_timestep_
     return;
 }
 
+void load_atom_to_timestep(const molfile_timestep_t *ts,Atom *aa)
+{
+    // int natoms,count,count1;
+    // natoms = count = count1 = 0;
+    int count;
+    count = 0;
+
+    for (int i=0; i<aa[0].num_atoms; i++)
+    {
+        // ts->coords[count] = (float)chain[h].pos[i].x;
+        // ts->coords[count+1] = (float)chain[h].pos[i].y;
+        // ts->coords[count+2] = (float)chain[h].pos[i].z;
+
+        // FIX
+
+        ts->coords[count] = (float)aa[i].x;
+        ts->coords[count+1] = (float)aa[i].y;
+        ts->coords[count+2] = (float)aa[i].z;
+
+        count += 3;
+        // count1 ++;
+    }
+    debug("total coordinates written: %d\n",count);
+
+    // CHECK TS
+    // for(int i=0; i<natoms; i++){
+    //     printf("i: %d   %f %f %f\n",i*3,ts->coords[i*3],ts->coords[i*3+1],ts->coords[i*3+2]);
+    // }
+    return;
+}
+
 void load_dcd_to_chain(dcdhandle *dcd,Chain *chain,int num_chains)
 {
 

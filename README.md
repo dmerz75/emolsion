@@ -2,16 +2,16 @@
 A pdb and dcd reading/writing molecular mechanics evaluation program.
 
 ## Quickstart:
-To run and see an example:
+1. To run and read a pdb with corresponding dcd, from frames 6 - 27, stepping through every 3 frames
+(i.e. 6, 27, 3 are start, stop, step, respectively, for the frames in a dcd (trajectory) file).
 
     make dcd1
+    emol_dcdreader mt.ref.pdb mt_partial.dcd 6 27 3
 
-To run later (the executables currently write to the test directory):
+2. DCD writing: (i.e. write frames 4 - 30, stepping through every 2 frames).
 
-    run_readpdb_def mt.ref.pdb mt_partial.dcd 6 27 3
-
-where 6, 27, 3 are "start, stop, step," respectively, for the frames in a dcd (trajectory) file.
-
+    make dcdw
+    emol_dcdwriter mt.ref.pdb mt_partial.dcd 4 30 2
 
 
 
@@ -19,8 +19,10 @@ where 6, 27, 3 are "start, stop, step," respectively, for the frames in a dcd (t
 
 ## Dependencies:
 Other softwares I often use with this project include:
-* cscope (extra/cscope 15.8.a-3) A developers tool for browsing program code
-* [Boost] (http://www.boost.org/)
+* cscope - developers tool for browsing program code
+* [Boost] (http://www.boost.org/) - provides free peer-reviewed portable C++ source libraries.
+
+
 
 ## Disclaimer:
 Six header files are not mine. They are currently used because I believe permission was given

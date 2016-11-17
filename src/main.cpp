@@ -344,14 +344,16 @@ int main(int argc, char *argv[]) {
 
     dcdw = (dcdhandle *)vw;
 
-    // get atom total for writing.
-    for(int i=0; i<num_chains; i++){
-        natoms_w += chain_ref[i].num_atoms_ca;
-    }
-    printf("for dcd writing >>>  <%d> atoms expected.\n",natoms_w);
+    // // get atom total for writing.
+    // for(int i=0; i<num_chains; i++){
+    //     natoms_w += chain_ref[i].num_atoms_ca;
+    // }
+    // printf("for dcd writing >>>  <%d> atoms expected.\n",natoms_w);
+    printf("for dcd writing >>>  <%d> atoms expected.\n",num_atoms);
 
 
-    vw = open_dcd_write(fn_dcd_write,"dcd",natoms_w);
+    // vw = open_dcd_write(fn_dcd_write,"dcd",natoms_w);
+    vw = open_dcd_write(fn_dcd_write,"dcd",num_atoms);
     if (!vw) {
         fprintf(stderr, "main) open_dcd_write failed for file %s\n", *fn_dcd_write);
         return 1;
@@ -359,7 +361,8 @@ int main(int argc, char *argv[]) {
         printf("opened <%s> successfully!!\n\n",fn_dcd_write);
     }
 
-    timestep_w.coords = (float *)malloc(3*sizeof(float)*natoms_w);
+    // timestep_w.coords = (float *)malloc(3*sizeof(float)*natoms_w);
+    timestep_w.coords = (float *)malloc(3*sizeof(float)*num_atoms);
 
     // dcd = (dcdhandle *)v;
     // sizeMB = ((natoms * 3.0) * dcd->nsets * 4.0) / (1024.0 * 1024.0);
@@ -651,45 +654,46 @@ int main(int argc, char *argv[]) {
 
 
 #ifdef DCD_WRITE
-    // READ
-    // static void *open_dcd_read(const char *path, const char *filetype,
-    //                            int *natoms) {
-    // int rc = read_next_timestep(v, natoms, timestep);
+        // READ
+        // static void *open_dcd_read(const char *path, const char *filetype,
+        //                            int *natoms) {
+        // int rc = read_next_timestep(v, natoms, timestep);
 
-    // WRITE
-    // static void *open_dcd_write(const char *path, const char *filetype,
-    //                             int natoms) {
-    // static void close_file_write(void *v) {
+        // WRITE
+        // static void *open_dcd_write(const char *path, const char *filetype,
+        //                             int natoms) {
+        // static void close_file_write(void *v) {
 
-    // open_dcd_write(fn_dcd_write,"dcd",&natoms);
+        // open_dcd_write(fn_dcd_write,"dcd",&natoms);
 
-    // write_dcdstep
-    // static int write_dcdstep(fio_fd fd, int curframe, int curstep, int N,
-    //                          const float *X, const float *Y, const float *Z,
-    //                          const double *unitcell, int charmm) {
+        // write_dcdstep
+        // static int write_dcdstep(fio_fd fd, int curframe, int curstep, int N,
+        //                          const float *X, const float *Y, const float *Z,
+        //                          const double *unitcell, int charmm) {
 
-    // static int write_dcdheader(fio_fd fd, const char *remarks, int N,
-    //                            int ISTART, int NSAVC, double DELTA, int with_unitcell,
-    //                            int charmm) {
+        // static int write_dcdheader(fio_fd fd, const char *remarks, int N,
+        //                            int ISTART, int NSAVC, double DELTA, int with_unitcell,
+        //                            int charmm) {
 
-    // load_chain_coords_to_timestep(dcdw,chain_later,chains_to_use,vw,&timestep_w,natoms_w);
-    // load_chain_coords_to_timestep(chain_later,num_chains,&timestep_w);
+        // load_chain_coords_to_timestep(dcdw,chain_later,chains_to_use,vw,&timestep_w,natoms_w);
+        // load_chain_coords_to_timestep(chain_later,num_chains,&timestep_w);
 
 
 
-    // THIS ONE
-    load_chain_to_timestep(chain_later,num_chains,&timestep_w);
+        // THIS ONE
+        // load_chain_to_timestep(chain_later,num_chains,&timestep_w);
+        load_atom_to_timestep(&timestep_w,aa_later);
 
 
 
 #ifdef DCD_WRITE_UNMOD
     // Write the DCD read in.
-    write_timestep(vw,&timestep);
-// #elif DCD_WRITE_ROT
+        write_timestep(vw,&timestep);
 
+    // #elif DCD_WRITE_ROT
 #else
-    // Write modified coordinates.
-    write_timestep(vw,&timestep_w);
+        // Write modified coordinates.
+        write_timestep(vw,&timestep_w);
 #endif // A
 #endif
 

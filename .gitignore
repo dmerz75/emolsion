@@ -31,5 +31,6 @@
 
 # My Customization:
 run_*
-test/run_
-test/run_readpdb_def
+test/run_*
+test/run_readpdb_def*
+test/emol_*

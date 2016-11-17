@@ -31,6 +31,7 @@ void load_dcd_to_chain(dcdhandle *dcd,Chain *chain,int num_chains);
 void load_dcd_to_atoms(dcdhandle *dcd,Atom *aa);
 void load_chain_to_timestep(System *chain,int num_chains,   \
                             const molfile_timestep_t *ts);
+void load_atom_to_timestep(const molfile_timestep_t *ts,Atom *aa);
 
 
 #endif
