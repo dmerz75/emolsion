@@ -19,3 +19,6 @@ provided the copyrights were retained and credit/notice given. They are:
   * fastio.h
   * largefiles.h
   * molfile_plugin.h
+
+Some of the coordinates in the test directory are straight from the [PDB] (http://www.rcsb.org/).
+* [2KHO.pdb] (http://www.rcsb.org/pdb/explore.do?structureId=2kho)
