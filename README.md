@@ -5,15 +5,13 @@ A pdb and dcd reading/writing molecular mechanics evaluation program.
 1. To run and read a pdb with corresponding dcd, from frames 6 - 27, stepping through every 3 frames
 (i.e. 6, 27, 3 are start, stop, step, respectively, for the frames in a dcd (trajectory) file).
 
-    make dcd1
-    emol_dcdreader mt.ref.pdb mt_partial.dcd 6 27 3
+        make dcd1
+        emol_dcdreader mt.ref.pdb mt_partial.dcd 6 27 3
 
 2. DCD writing: (i.e. write frames 4 - 30, stepping through every 2 frames).
 
-    make dcdw
-    emol_dcdwriter mt.ref.pdb mt_partial.dcd 4 30 2
-
-
+        make dcdw
+        emol_dcdwriter mt.ref.pdb mt_partial.dcd 4 30 2
 
 
 
