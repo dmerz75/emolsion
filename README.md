@@ -35,7 +35,7 @@ provided [here.] (http://www.ks.uiuc.edu/Research/vmd/plugins/doxygen/files.html
                         University of Illinois
                          All Rights Reserved
 
-  * dcdio.h ([dcdplugin.h])(http://www.ks.uiuc.edu/Research/vmd/plugins/doxygen/dcdplugin_8c.html)
+  * dcdio.h ([dcdplugin.h](http://www.ks.uiuc.edu/Research/vmd/plugins/doxygen/dcdplugin_8c.html))
   * [endianswap.h] (http://www.ks.uiuc.edu/Research/vmd/plugins/doxygen/endianswap_8h.html)
   * [fastio.h] (http://www.ks.uiuc.edu/Research/vmd/plugins/doxygen/fastio_8h.html)
   * [largefiles.h] (http://www.ks.uiuc.edu/Research/vmd/plugins/doxygen/largefiles_8h.html)

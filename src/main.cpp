@@ -297,6 +297,15 @@ int main(int argc, char *argv[]) {
     debug("coords(37)[later]: %f %f %f\n",aa_later[37].x,aa_later[37].y,aa_later[37].z);
 
 
+
+
+#ifdef CONTACTS_BEFORE
+
+
+
+
+#endif // CONTACTS_BEFORE
+
     /* ---------------------------------------------------------
        Analysis Before. Finish.
        --------------------------------------------------------- */
@@ -633,11 +642,9 @@ int main(int argc, char *argv[]) {
 
 
 
+#ifdef CONTACTS_DURING
 
-
-
-
-
+#endif // CONTACTS_DURING
 
 
 
@@ -745,6 +752,9 @@ int main(int argc, char *argv[]) {
     debug("coords(37)[%d]: %f %f %f\n",frame_position,aa_later[37].x,aa_later[37].y,aa_later[37].z);
 
 
+#ifdef CONTACTS_AFTER
+
+#endif // CONTACTS_AFTER
 
 
 
