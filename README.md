@@ -17,7 +17,7 @@ stepping by 2 frames)..
 
 ## Dependencies:
 Other softwares I often use with this project include:
-* cscope - developers tool for browsing program code
+* cscope - developer's tool for browsing program code. Run `./scope.sh`, creates cscope.files and cscope.out.
 * [Boost] (http://www.boost.org/) - provides free peer-reviewed portable C++ source libraries.
 
 
@@ -26,18 +26,20 @@ Other softwares I often use with this project include:
 Six header files are not mine. They are currently used because I believe permission was given
 provided the copyrights were retained and credit/notice given. They are:
 
-* [debug.h] (https://learncodethehardway.org/c/) is from Zed A. Shaw.
-* These 5 headers are from UIUC, for use with their proprietary 'dcd' format.
+* [Zed A. Shaw's] (https://learncodethehardway.org/c/) awesome debug macros.
+  * debug.h
+* These 5 headers are from UIUC, for use with their proprietary 'dcd' format. Information is
+provided [here.] (http://www.ks.uiuc.edu/Research/vmd/plugins/doxygen/files.html)
 
         (C) Copyright 1995-2006 The Board of Trustees of the
                         University of Illinois
                          All Rights Reserved
 
-  * dcdio.h
-  * endianswap.h
-  * fastio.h
-  * largefiles.h
-  * molfile_plugin.h
+  * dcdio.h ([dcdplugin.h])(http://www.ks.uiuc.edu/Research/vmd/plugins/doxygen/dcdplugin_8c.html)
+  * [endianswap.h] (http://www.ks.uiuc.edu/Research/vmd/plugins/doxygen/endianswap_8h.html)
+  * [fastio.h] (http://www.ks.uiuc.edu/Research/vmd/plugins/doxygen/fastio_8h.html)
+  * [largefiles.h] (http://www.ks.uiuc.edu/Research/vmd/plugins/doxygen/largefiles_8h.html)
+  * [molfile_plugin.h] (http://www.ks.uiuc.edu/Research/vmd/plugins/doxygen/molfile__plugin_8h.html)
 
-Some of the coordinates in the test directory are straight from the [PDB] (http://www.rcsb.org/).
-* [2KHO.pdb] (http://www.rcsb.org/pdb/explore.do?structureId=2kho)
+* Some of the coordinates in the test directory are straight from the [PDB] (http://www.rcsb.org/).
+  * [2KHO.pdb] (http://www.rcsb.org/pdb/explore.do?structureId=2kho)
