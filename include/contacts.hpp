@@ -1,8 +1,8 @@
-# // 1: c++, c: ReadPDBfile
+# // 1: c++, c: contacts
 # // 2: name:
-# // .ReadPDBfile
-#ifndef _ReadPDBfile_hpp_
-#define _ReadPDBfile_hpp_
+# // .contacts
+#ifndef __contacts_hpp_
+#define __contacts_hpp_
 
 /* ---------------------------------------------------------
    libraries:
@@ -19,13 +19,15 @@
 // #include <list>        // std::list
 /* #include <vector> */
 // #include <iterator> // istream_iterator
-
+#include "system.hpp"
+#include "dcd.h"
+// #include "dcdio.h" // inside of dcd.h
 
 /* ---------------------------------------------------------
    headers:
    --------------------------------------------------------- */
 #include "debug.h"
-#include "system.hpp"
+/* #include "system.hpp" */
 // #include "atom.hpp"
 
 
@@ -47,7 +49,9 @@
 /* ---------------------------------------------------------
    function declarations:
    --------------------------------------------------------- */
-int ReadPDBfile(char filename[40],int total_atoms,Atom *aa);
+// void ReadPDBfile(PDBfile *pdbfile,char filename[40]);
+void get_contacts(Atom *a1,char *argv,int num_atoms);
+void get_contacts(Atom *a1,Atom *a2,char dcdfilename[40],int num_atoms);
 
 
 #endif

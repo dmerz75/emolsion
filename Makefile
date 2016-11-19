@@ -60,8 +60,9 @@ EXEF     := $(wildcard /usr/local/bin/$(EXEC)*)
 # ---------------------------------------------------------------------
 # Macros
 MACRO = -D
-DCD = -DDCDREAD
-DCDW= -DDCDREAD -DDCD_WRITE_B -DDCD_WRITE -DDCD_WRITE_E
+DCD   = -DDCDREAD
+DCDW  = -DDCDREAD -DDCD_WRITE_B -DDCD_WRITE -DDCD_WRITE_E
+CONS  = -DGET_CONTACTS
 
 # Macros: Analysis Before. During. After.
 
@@ -116,7 +117,9 @@ dcdr:
 dcdw:
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCDW) -o test/$(EXEC)_dcdwriter
 	cd test && ./$(EXEC)_dcdwriter mt.ref.pdb mt_partial.dcd 6 27 3 # 6-9 .. 21-24-27.
-
+contacts0:
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(CONS) -o test/$(EXEC)_contacts
+	cd test && ./$(EXEC)_contacts mt.ref.pdb mt_partial.dcd 6 27 3 # 6-9 .. 21-24-27.
 
 # -----------------------------------------------------------------------------
 # Make all.

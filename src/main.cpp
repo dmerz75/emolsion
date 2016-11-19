@@ -13,16 +13,16 @@ extern "C" {
 #include "md.h"
 #include "ReadPDBfile.hpp"
 #include "system.hpp"
+#include "dcd.h"
+#include "contacts.hpp"
 // #include "config.hpp"
 // #include "ConfigFile.h"
 // #include "Chameleon.h"
-
 // // #include "contacts.h"
 // #include "topology.h"
 // #include "topology_charmm.h"
 // #include "curvature.h"
 // #include "chi.h"
-#include "dcd.h"
 
 // headers C++
 // #include <stdlib.h>
@@ -280,6 +280,9 @@ int main(int argc, char *argv[]) {
     }
 
 
+
+#if defined (DCDREAD) || defined (DCD_WRITE_B) || defined (DCD_WRITE) || defined (DCD_WRITE_E)
+
     /* ---------------------------------------------------------
        Analysis Before. Start.
        --------------------------------------------------------- */
@@ -295,6 +298,17 @@ int main(int argc, char *argv[]) {
     debug("coords(8)[later]: %f %f %f\n",aa_later[8].x,aa_later[8].y,aa_later[8].z);
     debug("coords(37)[0]: %f %f %f\n",aa_zero[37].x,aa_zero[37].y,aa_zero[37].z);
     debug("coords(37)[later]: %f %f %f\n",aa_later[37].x,aa_later[37].y,aa_later[37].z);
+#endif // multi-dcd
+
+
+
+
+#ifdef GET_CONTACTS
+    // get_contacts(aa_sel,argv[2],num_atoms);
+    get_contacts(aa_sel,aa_sel,argv[2],num_atoms);
+
+
+#endif // GET_CONTACTS
 
 
 
@@ -623,6 +637,8 @@ int main(int argc, char *argv[]) {
 #endif //DCDREAD
 
 
+
+#if defined (DCDREAD) || defined (DCD_WRITE_B) || defined (DCD_WRITE) || defined (DCD_WRITE_E)
         /* ---------------------------------------------------------
            Analysis During. Start.
            --------------------------------------------------------- */
@@ -642,6 +658,7 @@ int main(int argc, char *argv[]) {
 
 
 
+
 #ifdef CONTACTS_DURING
 
 #endif // CONTACTS_DURING
@@ -655,8 +672,7 @@ int main(int argc, char *argv[]) {
         /* ---------------------------------------------------------
            Analysis During. Finish.
            --------------------------------------------------------- */
-
-
+#endif // multi-dcd
 
 
 
@@ -736,6 +752,8 @@ int main(int argc, char *argv[]) {
 #endif //DCDREAD
 
 
+
+#if defined (DCDREAD) || defined (DCD_WRITE_B) || defined (DCD_WRITE) || defined (DCD_WRITE_E)
     /* ---------------------------------------------------------
        Analysis After. Start.
        --------------------------------------------------------- */
@@ -761,7 +779,7 @@ int main(int argc, char *argv[]) {
     /* ---------------------------------------------------------
        Analysis After. Finish.
        --------------------------------------------------------- */
-
+#endif // multi-dcd
 
 
 #ifdef DCD_WRITE_E
