@@ -31,7 +31,7 @@ extern "C" {
 // #include <new> // delete
 // #include <ctype.h> // getopt - stuff
 // #include <unistd.h> // getopt - stuff
-// #include <vector>
+#include <vector>
 // #include <algorithm> // bool & sort
 #include <iostream>
 // #include <iomanip> // setw
@@ -65,7 +65,9 @@ int main(int argc, char *argv[]) {
     }
 
 
-    // Procedure:
+    /* ---------------------------------------------------------
+       Procedure:
+       --------------------------------------------------------- */
     // 1. Read the config file. <conf.sop>
     //    () read_config_file
     //    () alter_default_parameters. Alter the default parameters. <def_param.h>
@@ -87,6 +89,7 @@ int main(int argc, char *argv[]) {
     num_atoms = -1;
 
 
+
     // 0. Create the System.
     // System sys;
     // sys.print_prop();
@@ -99,12 +102,12 @@ int main(int argc, char *argv[]) {
     // () ReadPDBfile
     // () Count the total "num_atoms".
     Atom a1[0];
-    std::cout << "1. Currently, there are " << num_atoms << " atoms." << endl;
+    std::cout << "1. Currently, there are " << num_atoms << " atoms." << std::endl;
     num_atoms = ReadPDBfile(argv[1],num_atoms,a1);
     // delete[] a1;
     // delete a1;
     // delete ?
-    std::cout << "2. Currently, there are " << num_atoms << " atoms." << endl;
+    std::cout << "2. Currently, there are " << num_atoms << " atoms." << std::endl;
 
 
     // 2.1 Allocate for the Reference System.
@@ -122,15 +125,55 @@ int main(int argc, char *argv[]) {
 
 
     // 2.2 Populate System Parameters
+    int chainid, atoms_resid, cur_resid;
+    string chain;
+
+    chainid = 0;
+    chain = aa_ref[0].chain.c_str();
+
+
+    // integer list of chains.
+    std::vector <int> lst_chainid;
+    std::vector <int>::iterator it;
+
+    for(int i=0; i<num_atoms; i++)
+    {
+        // printf("atom: %d  chain: %d  resid: %d  atoms-resid: %d\n",
+        //        aa_ref[i].index,aa_ref[i].chainid,aa_ref[i].resid,
+        //        aa_ref[i].num_atoms_res);
+        // printf("chain: %s\n",aa_ref[i].chain.c_str());
+
+        if(aa_ref[i].chain.c_str() != chain)
+        {
+            chainid += 1;
+            lst_chainid.push_back(chainid);
+        }
+
+        aa_ref[i].chainid = chainid;
+        chain = aa_ref[i].chain.c_str();
+
+
+        // printf("atom: %d  chain: %d  resid: %d  atoms-resid: %d\n",
+        //        aa_ref[i].index,aa_ref[i].chainid,aa_ref[i].resid,
+        //        aa_ref[i].num_atoms_res);
+        // printf("chain: %s\n",aa_ref[i].chain.c_str());
+    }
+
+    chainid += 1;
     for(int i=0; i<num_atoms; i++)
     {
         // aa_ref[i].print_coords();
         // printf("%s  ",aa_ref[i].chain.c_str());
         // printf("%d\n",aa_ref[i].resid);
         aa_ref[i].num_atoms = num_atoms;
+        aa_ref[i].num_chains = chainid;
     }
+    // printf("frames: %d\n",dcd->nsets);
 
 
+
+
+#ifdef DEBUG // Selection
     /* ---------------------------------------------------------
        Begin Selection:
        Selection: H, precheck!
@@ -146,7 +189,7 @@ int main(int argc, char *argv[]) {
             total_H += 1;
         }
     }
-    std::cout << "total_atoms_on_chain_H(4EZW-55?): " << total_H << endl;
+    std::cout << "total_atoms_on_chain_H(4EZW-55?): " << total_H << std::endl;
 
     int num_select = -1;
 
@@ -155,52 +198,69 @@ int main(int argc, char *argv[]) {
     // Example 1.
     num_select = -1;
     num_select = system_select(aa_ref,"chain H",num_select);
-    std::cout << "We found " << num_select << " atoms on chain H." << endl;
+    std::cout << "1. We found " << num_select << " atoms on chain H." << std::endl;
 
     // Example 2.
     num_select = -1;
     num_select = system_select(aa_ref,"chain D",num_select);
-    std::cout << "We found " << num_select << " atoms on chain D." << endl;
+    std::cout << "2. We found " << num_select << " atoms on chain D." << std::endl;
 
     // Example 3.
     num_select = -1;
     num_select = system_select(aa_ref,"chain A",num_select);
-    std::cout << "We found " << num_select << " atoms on chain A." << endl;
+    std::cout << "3. We found " << num_select << " atoms on chain A." << std::endl;
 
 
     // RESIDUE:
     // Example 4.
     num_select = -1;
     num_select = system_select(aa_ref,"resid 539 to 541",num_select);
-    std::cout << "We found " << num_select << " atoms for residues 539 to 541" << endl;
+    std::cout << "4. We found " << num_select << " atoms for residues 539 to 541." << std::endl;
 
     // Example 5.
     num_select = -1;
     num_select = system_select(aa_ref,"resid 397",num_select);
-    std::cout << "We found " << num_select << " atoms for residues 397" << endl;
+    std::cout << "5. We found " << num_select << " atoms for residues 397." << std::endl;
 
 
     // INDEX:
-    // Example 4.
+    // Example 6.
     num_select = -1;
     num_select = system_select(aa_ref,"index 150 to 350",num_select);
-    std::cout << "We found " << num_select << " atoms for indices 150 to 350" << endl;
+    std::cout << "6. We found " << num_select << " atoms for indices 150 to 350." << std::endl;
 
-    // Example 5.
+    // Example 7.
     num_select = -1;
     num_select = system_select(aa_ref,"index 1051",num_select);
-    std::cout << "We found " << num_select << " atoms for index 1050" << endl;
+    std::cout << "7. We found " << num_select << " atoms for index 1050." << std::endl;
 
+    // Example 8.
+    num_select = -1;
+    num_select = system_select(aa_ref,"chainid 0",num_select);
+    std::cout << "8. We found " << num_select << " atoms for chainid 0." << std::endl;
 
+    // Example 9.
+    num_select = -1;
+    num_select = system_select(aa_ref,"chainid 3",num_select);
+    std::cout << "9. We found " << num_select << " atoms for chainid 3." << std::endl;
+
+    // // Example 10.
+    // num_select = -1;
+    // num_select = system_select(aa_ref,"chainid 3",num_select);
+    // std::cout << "10. We found " << num_select << " atoms for chainid 3." << std::endl;
 
     // Working Example.
     num_select = -1;
     const char *pickme = "resid 411 to 418";
     num_select = system_select(aa_ref,pickme,num_select);
-    std::cout << "We found " << num_select << " atoms in this selection: " << pickme << endl;
+    std::cout << "We found " << num_select << " atoms in this selection: " << pickme << std::endl;
 
 
-    // Allocate for selection.
+
+
+    /* ---------------------------------------------------------
+       Allocate for selection.
+       --------------------------------------------------------- */
     Atom *aa_sel;
     try
     {
@@ -216,24 +276,196 @@ int main(int argc, char *argv[]) {
 
 
 
-    // Verify Selection.
+
+    /* ---------------------------------------------------------
+       Verify: aa_sel
+       --------------------------------------------------------- */
     for(int i=0; i<num_select; i++)
     {
         aa_sel[i].num_atoms = num_select;
         // aa_ref[i].print_coords();
         // printf("%s  ",aa_ref[i].chain.c_str());
         // printf("%d\n",aa_ref[i].resid);
+
         std::cout << "select_i: " << ' '
                   << aa_sel[i].num_atoms << ' '
                   << aa_sel[i].index << ' '
                   << aa_sel[i].resid << ' '
                   << aa_sel[i].chain << ' '
                   << aa_sel[i].restype << ' '
-                  << endl;
+                  << std::endl;
     }
+#endif // Selection
+
+
+
+    /* ---------------------------------------------------------
+       Vector of chains.
+       --------------------------------------------------------- */
+#ifdef NDEBUG
+    Atom *aa_sel;
+    int num_select = 0;
+#endif
+
+    std::vector<Atom*> chain_ref;
+    vector<Atom*>::iterator itchain;
+
+    // for(itchain = chain_ref.begin();
+    //     itchain != chain_ref.end();
+    //     itchain++)
+    // {
+    //    cout<<*itchain<<" ";
+    // }
+    // vector<Atom*>::iterator itchain;
+    // chain_ref.erase(itchain.begin(), itchain.end());
+
+    // BUILD chain_ref
+    for(int i=0; i<aa_ref[0].num_chains; i++)
+    {
+        // printf("%d\n",i);
+
+
+        std::string selection = "chainid " + std::to_string(i);
+        const char *pickme = selection.c_str();
+        // std::cout << i << ' ' << pickme << std::endl;
+        num_select = system_select(aa_ref,pickme,num_select);
+
+        // std::cout << i << ' '
+        //           << "We found " << num_select
+        //           << " atoms for this selection: "
+        //           << selection
+        //           << " : "
+        //           << num_select
+        //           << " atoms."
+        //           << std::endl;
+        // std::cout << "size: " << chain_ref.size() << std::endl;
+
+
+        try
+        {
+            // std::cout << "building a chainsize of: " << num_select << std::endl;
+            aa_sel = new Atom[num_select];
+        }
+        catch (std::bad_alloc xa)
+        {
+            std::cout << "Allocation Failure\n";
+            exit(1);
+        }
+
+
+        system_select(aa_ref,pickme,num_select,aa_sel);
+
+
+        for(int i=0; i<num_select; i++)
+        {
+            aa_sel[i].num_atoms = num_select;
+        }
+
+        chain_ref.push_back(aa_sel);
+        // delete *aa_sel;
+
+        // Not necessary.
+        // destruction!
+        // printf("destruction!\n");
+        // aa_sel->~Atom();
+    }
+
+
+    // ACCESS chain_ref
+    // for(itchain = chain_ref.begin(); itchain != chain_ref.end(); itchain++)
+    // {
+    //     std::cout << (*itchain)->num_atoms << std::endl;
+    //     for(int a=0; a<(*itchain)->num_atoms; a++)
+    //     {
+    //         printf("%d ",a);
+    //     }
+    //     printf("\n");
+    // }
+
+
+
+
+#ifdef MTMAP
+    // for (it=lst_chainid.begin(); it<lst_chainid.end(); it++)
+    // {
+    //     std::cout << *it << std::endl;
+    //     // std::cout << lst_chainid[*it] << std::endl;
+    // }
+
+
+
+    // // chain A or B
+    // std::pair <int,int> pair_ab;
+
+
+    // for(int i=0; i<)
+
+
+    // for(int i=0; i<aa_ref[0].num_chains; i++)
+    // {
+    //     // printf("%s\n",aa_ref[i].chain.c_str());
+    //     std::string findchain("A"); // with space, or it will need development...
+    //     std::size_t foundchain = aa_ref[i].chain.find("A");
+
+
+    //     if (found1 != std::string::npos)
+
+    //     if(aa_ref[i].chain.find("A") != 0)
+    //     {
+    //         std::cout << aa_ref[i].chain.c_str() << std::endl;
+    //     }
+
+    //     continue;
+
+    //     // pair_ab =
+
+    //     std::string selection = "chainid " + std::to_string(i);
+    //     const char *pickme = selection.c_str();
+    //     // std::cout << selection << std::endl;
+    //     // printf("%s\n",pickme);
+    //     num_select = -1;
+    //     num_select = system_select(aa_ref,pickme,num_select);
+    //     std::cout << "We found " << num_select
+    //               << " atoms for this selection: "
+    //               << selection << std::endl;
+
+    //     // Allocate for selection.
+    //     Atom *aa_sel;
+    //     try
+    //     {
+    //         aa_sel = new Atom[num_select];
+    //     }
+    //     catch (std::bad_alloc xa)
+    //     {
+    //         std::cout << "Allocation Failure\n";
+    //         exit(1);
+    //     }
+    //     // Get selection.
+    //     system_select(aa_ref,pickme,num_select,aa_sel);
+
+
+
+    //     // printf("%d ",i);
+    //     // printf("%s\n",aa_ref[i].chain.c_str());
+    //     // // if(aa_ref[i].chain.c_str().compare("A") != 0)
+    //     // // {
+    //     // //     printf("%d or %s\n",i,"A");
+    //     // // }
+    // }
+    // printf("\n");
+
+    // printf("%d\n",aa_ref[0].num_chains);
+
+
+
+
+
+#endif // MTMAP
     /* ---------------------------------------------------------
        End Selection.
        --------------------------------------------------------- */
+
+
 
 
 
@@ -262,11 +494,17 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
+    //
+    system_select(aa_ref,"all",num_atoms,aa_zero);
+    system_select(aa_ref,"all",num_atoms,aa_later);
+
+
     // Verify aa_zero and aa_later.
     for(int i=0; i<num_atoms; i++)
     {
         aa_zero[i].num_atoms = num_atoms;
         aa_later[i].num_atoms = num_atoms;
+
         // aa_ref[i].print_coords();
         // printf("%s  ",aa_ref[i].chain.c_str());
         // printf("%d\n",aa_ref[i].resid);
@@ -276,7 +514,7 @@ int main(int argc, char *argv[]) {
         //           << aa_sel[i].resid << ' '
         //           << aa_sel[i].chain << ' '
         //           << aa_sel[i].restype << ' '
-        //           << endl;
+        //           << std::endl;
     }
 
 
@@ -304,21 +542,13 @@ int main(int argc, char *argv[]) {
 
 
 #ifdef GET_CONTACTS
-    // get_contacts(aa_sel,argv[2],num_atoms);
-    get_contacts(aa_sel,aa_sel,argv[2],num_atoms);
+    // void get_contacts(Atom *a1,Atom *a2,char dcdfilename[40],int num_atoms);
+    // get_contacts(aa_sel,aa_sel,argv[2],num_atoms);
 
+
+    // get_contacts(aa_sel,argv[2],num_atoms);
 
 #endif // GET_CONTACTS
-
-
-
-
-#ifdef CONTACTS_BEFORE
-
-
-
-
-#endif // CONTACTS_BEFORE
 
     /* ---------------------------------------------------------
        Analysis Before. Finish.
@@ -479,50 +709,32 @@ int main(int argc, char *argv[]) {
 
     // printf("main) file: %s\n", *argv);
     // printf("  %d atoms, %d frames, size: %6.1fMB\n", natoms, dcd->nsets, sizeMB);
-
     // close_file_read(v);
 
 
 
-    // dcd
-    // 0: (pdb) | ref | chain_0 (from dcd) | chain_later
-    // int advance_dcd(int numframes,int frame,dcdhandle *v,int natoms,molfile_timestep_t *timestep);
-
-    // printf("ref: %f\n",chain_ref[0].pos[105].y);
-    // printf("0-105: %f\n",chain_0[0].pos[105].y);
-
-    // frame_position = advance_dcd(dcd->nsets,0,dcd,natoms,&timestep); // 1
-    // load_dcd_to_chain(dcd,chain_0,num_chains);
-    // printf("frame_position(0): %d\n",frame_position);
-    // printf("0-105: %f\n",chain_0[0].pos[105].y);
-
-    // frame_position = advance_dcd(dcd->nsets,1,dcd,natoms,&timestep); // 1
-    // load_dcd_to_chain(dcd,chain_0,num_chains);
-    // printf("frame_position: %d\n",frame_position);
-    // printf("0-105: %f\n",chain_0[0].pos[105].y);
-
-    // frame_position = advance_dcd(dcd->nsets,10,dcd,natoms,&timestep); // 1
-    // load_dcd_to_chain(dcd,chain_0,num_chains);
-    // printf("frame_position: %d\n",frame_position);
-    // printf("0-105: %f\n",chain_0[0].pos[105].y);
 
 
-    // printf("beginning new loop.\n");
-    // int countd;
 
-    // countd = 0;
-    // for(int df=start; df<=stop; df+=step){
-    //     countd +=1;
-    //     // dummy = my_dcd_read(df);
-    //     frame_position = advance_dcd(dcd->nsets,df,dcd,natoms,&timestep);
-    //     printf("frame_position:--->  %d  <--- %d %d\n",frame_position,countd,df);
-    //     load_dcd_to_chain(dcd,chain_later,num_chains);
-    //     printf("0-105: %f\n",chain_later[0].pos[105].y);
 
-    // }
-    // exit(0);
+    /* ---------------------------------------------------------
+       Analysis Before. But with DCD Open. Begin.
+       --------------------------------------------------------- */
 
-    // nil.
+#ifdef CONTACTS_BEFORE
+
+
+
+
+#endif // CONTACTS_BEFORE
+
+
+
+
+    /* ---------------------------------------------------------
+       Analysis Before. But with DCD Open. End.
+       --------------------------------------------------------- */
+
 
     frame_position = 1;
     advance_dcd(dcd->nsets,0,dcd,natoms,&timestep); // 1st advance. 1-vmd

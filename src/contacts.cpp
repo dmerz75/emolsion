@@ -32,10 +32,12 @@
 void get_contacts(Atom *a1,Atom *a2,char dcdfilename[40],int natoms)
 {
     debug("welcome to get_contacts. 2 (inter)\n");
-
     std::cout << "DCD: " << dcdfilename << endl;
 
-    // 2. to read a dcd.
+
+    /* ---------------------------------------------------------
+       Begin DCD Open.
+       --------------------------------------------------------- */
     // natoms = ;
     molfile_timestep_t timestep;
     void *v;
@@ -54,10 +56,27 @@ void get_contacts(Atom *a1,Atom *a2,char dcdfilename[40],int natoms)
     dcd = (dcdhandle *)v;
     sizeMB = ((natoms * 3.0) * dcd->nsets * 4.0) / (1024.0 * 1024.0);
     totalMB += sizeMB;
+    timestep.coords = (float *)malloc(3*sizeof(float)*natoms);
     printf("main) file: %s\n", dcdfilename);
     printf("  %d atoms, %d frames, size: %6.1fMB\n", natoms, dcd->nsets, sizeMB);
-    timestep.coords = (float *)malloc(3*sizeof(float)*natoms);
 
+
+
+
+    /* ---------------------------------------------------------
+       The Default list of contacts.
+       --------------------------------------------------------- */
+    // By index?
+    // a1 --> a2
+    printf("the_size_of_a1: %d\n",a1[0].num_atoms);
+
+
+
+
+
+    /* ---------------------------------------------------------
+       Begin DCD Loop.
+       --------------------------------------------------------- */
     for (int i=0; i<dcd->nsets; i++)
     {
         int rc = read_next_timestep(v, natoms, &timestep);
@@ -66,7 +85,31 @@ void get_contacts(Atom *a1,Atom *a2,char dcdfilename[40],int natoms)
             fprintf(stderr, "error in read_next_timestep on frame %d\n", i);
             exit(1);
         }
-       // std::cout << i << std::endl;
+
+        // DCD-COORDS:
+        // void load_dcd_to_atoms(dcdhandle *dcd,Atom *aa);
+        load_dcd_to_atoms(dcd,a1);
+        load_dcd_to_atoms(dcd,a2);
+
+
+        for(int j=0; j<a1[0].num_atoms; j++)
+        {
+            if (j <= 5)
+            {
+                printf("%f %f %f\n",a1[j].x,a1[j].y,a1[j].z);
+            }
+        }
+        printf("---\n");
+
+        for(int k=0; k<a2[0].num_atoms; k++)
+        {
+            if (k <= 5)
+            {
+                printf("%f %f %f\n",a1[k].x,a1[k].y,a1[k].z);
+            }
+        }
+
+
     }
 
     close_file_read(v);

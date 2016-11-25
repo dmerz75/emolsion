@@ -94,6 +94,9 @@ void load_chain_to_timestep(System *chain,int num_chains,const molfile_timestep_
 
 void load_atom_to_timestep(const molfile_timestep_t *ts,Atom *aa)
 {
+    /* ---------------------------------------------------------
+       For DCD writing.
+       --------------------------------------------------------- */
     // int natoms,count,count1;
     // natoms = count = count1 = 0;
     int count;
@@ -146,24 +149,40 @@ void load_dcd_to_chain(dcdhandle *dcd,Chain *chain,int num_chains)
 
 void load_dcd_to_atoms(dcdhandle *dcd,Atom *aa)
 {
+    /* ---------------------------------------------------------
+       for DCD reading.
+       natoms: total atoms from DCD
+       --------------------------------------------------------- */
     debug("coordinate loading..\n");
     debug("this many: %d\n",aa[0].num_atoms);
+
+    // for the selection:
     for (int i=0; i<aa[0].num_atoms; i++)
     {
-            // printf("%d ",chain[i].indices[j]);
-            // chain[i].pos[j].x = dcd->x[chain[i].indices[j]];
-            // chain[i].pos[j].y = dcd->y[chain[i].indices[j]];
-            // chain[i].pos[j].z = dcd->z[chain[i].indices[j]];
-
-        // debug("this far: %d\n",i);
-        // debug("%f %f %f\n",dcd->x[i],dcd->y[i],dcd->z[i]);
-        // FIX
-        aa[i].x = dcd->x[i];
-        aa[i].y = dcd->y[i];
-        aa[i].z = dcd->z[i];
-            // chain[i].pos[j].x = dcd->x[chain[i].indices[j]];
-            // chain[i].pos[j].y = dcd->y[chain[i].indices[j]];
-            // chain[i].pos[j].z = dcd->z[chain[i].indices[j]];
+        // printf("index: %d\n",aa[i].index);
+        aa[i].x = dcd->x[aa[i].index];
+        aa[i].y = dcd->y[aa[i].index];
+        aa[i].z = dcd->z[aa[i].index];
     }
+
+
+    // 2nd rendition.
+    // for (int i=0; i<aa[0].num_atoms; i++)
+    // {
+    //         // printf("%d ",chain[i].indices[j]);
+    //         // chain[i].pos[j].x = dcd->x[chain[i].indices[j]];
+    //         // chain[i].pos[j].y = dcd->y[chain[i].indices[j]];
+    //         // chain[i].pos[j].z = dcd->z[chain[i].indices[j]];
+
+    //     // debug("this far: %d\n",i);
+    //     // debug("%f %f %f\n",dcd->x[i],dcd->y[i],dcd->z[i]);
+    //     // FIX
+    //     aa[i].x = dcd->x[i];
+    //     aa[i].y = dcd->y[i];
+    //     aa[i].z = dcd->z[i];
+    //         // chain[i].pos[j].x = dcd->x[chain[i].indices[j]];
+    //         // chain[i].pos[j].y = dcd->y[chain[i].indices[j]];
+    //         // chain[i].pos[j].z = dcd->z[chain[i].indices[j]];
+    // }
 
 }

@@ -35,7 +35,6 @@ public:
     ~System();
     void print_prop();
 
-
     int num_chains;
     int num_residues;
     int num_atoms;
@@ -88,14 +87,42 @@ public:
     Chain();
     ~Chain();
     void print_prop();
+    // void build(int size);
+
+    // try
+    // {
+    //     chain_ref = new Chain[size];
+    // }
+    // catch (std::bad_alloc xa)
+    // {
+    //     std::cout << "Allocation Failure\n";
+    //     exit(1);
+    // }
+
 
     string chain; // by pdb (pdbfile.cpp, 2nd pass)
     int num_residues;
-
-private:
+    // int num_atoms;
     int chainid;
 
+private:
+
 };
+// inline void Chain::build(int size)
+// {
+
+//     try
+//     {
+//         chain_ref = new Chain[size];
+//     }
+//     catch (std::bad_alloc xa)
+//     {
+//         std::cout << "Allocation Failure\n";
+//         exit(1);
+//     }
+
+//     new Chain[size];
+// }
 inline Chain::Chain()
 {
     // cout << "Chain construction commencing." << endl;

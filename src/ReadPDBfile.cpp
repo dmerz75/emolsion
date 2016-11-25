@@ -97,6 +97,7 @@ int ReadPDBfile(char filename[40],int total_atoms,Atom *aa)
                     aa[num_atoms].y = atof(str_y.c_str());
                     aa[num_atoms].z = atof(str_z.c_str());
 
+                    // printf("index: %d\n",num_atoms);
                     aa[num_atoms].index = num_atoms;
                     aa[num_atoms].atomtype = line.substr(13,3);// CA,CG1,OD1
                     aa[num_atoms].restype = line.substr(17,3); // GLY,ILE

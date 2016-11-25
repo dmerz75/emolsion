@@ -50,7 +50,7 @@
    function declarations:
    --------------------------------------------------------- */
 // void ReadPDBfile(PDBfile *pdbfile,char filename[40]);
-void get_contacts(Atom *a1,char *argv,int num_atoms);
+// void get_contacts(Atom *a1,char *argv,int num_atoms);
 void get_contacts(Atom *a1,Atom *a2,char dcdfilename[40],int num_atoms);
 
 

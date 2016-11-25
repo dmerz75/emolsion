@@ -195,6 +195,72 @@ int system_select(Atom *aa,char const *criterion,int total)
     }
 
 
+    std::string str4("all");
+    std::size_t found4 = selection.find(str4);
+
+    if (found4 != std::string::npos) // found "all"
+    {
+        total = num_all;
+    }
+
+
+    std::string str5("chainid ");
+    std::size_t found5 = selection.find(str5);
+
+    if (found5 != std::string::npos) // found "chainid"
+    {
+        // MUST HAVE "chainid .."
+        std::string sel_chainid0 = selection.replace(found5,str5.length(),"");
+        std::string strto("to");
+        std::size_t foundto = sel_chainid0.find("to");
+
+        // std::cout << "sel_chainid0:" << sel_chainid0 << endl;
+
+        if(foundto != std::string::npos) // found "to"
+        {
+            // MUST HAVE "chainid 0 to 5"
+            std::string sel_chainid1 = sel_chainid0.substr(0,foundto);
+            std::string sel_chainid2 = sel_chainid0.substr(foundto+strto.length(),sel_chainid0.length());
+            int cid1,cid2;
+            cid1 = cid2 = -1;
+
+            cid1 = stoi(sel_chainid1);
+            cid2 = stoi(sel_chainid2);
+
+            // std::cout << "sel_chainid1:" << sel_chainid1 << '\t' << cid1 << endl;
+            // std::cout << "sel_chainid2:" << sel_chainid2 << '\t' << cid2 << endl;
+
+
+            for(int i=0; i < num_all; i++)
+            {
+                if((aa[i].chainid >= cid1) and (aa[i].chainid <= cid2))
+                {
+                    num += 1;
+                }
+            }
+        }
+        else
+        {
+            // THIS IS CASE: chainid 14
+            int cid1;
+            cid1 = -1;
+            cid1 = stoi(sel_chainid0);
+            // std::cout << "sel_chainid0:" << sel_chainid0 << '\t' << cid1 << endl;
+
+            for(int i=0; i < num_all; i++)
+            {
+
+                if(aa[i].chainid == cid1)
+                {
+                    num += 1;
+                }
+            }
+        }
+        total = num;
+        return total;
+    }
+
+
     total = num;
     return total;
 }
@@ -374,6 +440,17 @@ void system_select(Atom *aa,char const *criterion,int total,Atom *asel)
         }
     }
 
+    std::string str4("all");
+    std::size_t found4 = selection.find(str4);
+
+    if (found4 != std::string::npos) // found "all"
+    {
+        for(int i=0; i < num_all; i++)
+        {
+            asel[num] = aa[i];
+            num += 1;
+        }
+    }
 
     total = num;
     // return total;
