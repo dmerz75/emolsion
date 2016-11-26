@@ -122,3 +122,49 @@ void get_contacts(Atom *a1,char *argv)
 
 
 }
+
+
+void get_map_of_mtneighbors(std::vector<Atom*> chain_ref,std::vector<std::vector<int>> matrix)
+{
+    // std::vector<Atom*> chain_ref;
+
+    printf("Welcome to get_map_of_mtneighbors!\n");
+    std::cout << matrix.size() << std::endl;
+
+    // for(auto vec: matrix)
+    // {
+    //     // std::cout << vec[0] << vec[1] << vec[2] << vec[3] << std::endl;
+    //     for(auto x: vec)
+    //     {
+    //         std::cout << x << std::endl;
+    //     }
+    //     std::cout << "\n" << std::endl;
+    // }
+
+
+    for(auto ch: chain_ref)
+    {
+        // if <Atom>
+        // std::cout << ch.num_atoms << std::endl;
+        // if <Atom*>
+        std::cout << ch->num_atoms << std::endl;
+        // std::cout << ch->size() << std::endl;
+
+        for(int i=0; i<ch->num_atoms; i++)
+        {
+            // std::cout << ch[i].num_atoms << std::endl;
+            std::cout << ch[i].x << std::endl;
+        }
+
+        // std::cout << ch.num_atoms << std::endl;
+
+        // for(auto a: ch)
+        // {
+        //     std::cout << aa->num_atoms << std::endl;
+        // }
+
+        // std::cout << "\n" << std::endl;
+    }
+
+
+}
