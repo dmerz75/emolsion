@@ -124,10 +124,22 @@ int main(int argc, char *argv[]) {
     }
     num_atoms = ReadPDBfile(argv[1],num_atoms,aa_ref);
 
+    // SUCCESS! Copy constructor implemented!
+    // Atom *aa_ref2 = aa_ref;
+    // Atom aa_ref2_1 = aa_ref[0];
+    // aa_ref2_1.print_coords();
+    // aa_ref[0].print_coords();
+
+
+
+
+    printf("Stop here.\n");
+    exit(0);
+
 
     // 2.2 Populate System Parameters
     int chainid, atoms_resid, cur_resid;
-    string chain;
+    std::string chain;
 
     chainid = 0;
     chain = aa_ref[0].chain.c_str();

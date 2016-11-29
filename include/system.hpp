@@ -19,7 +19,7 @@
 // Definitions:
 /* #define BUFFERSIZE 900 */
 
-using namespace std;
+// using namespace std;
 
 /* ---------------------------------------------------------
    Class declarations
@@ -49,7 +49,7 @@ private:
 };
 inline System::System()
 {
-    // cout << "System construction commencing." << endl;
+    // std::cout << "System construction commencing." << std::endl;
     // debug("System construction commencing.\n");
     num_chains = -1;
     num_residues = -1;
@@ -60,22 +60,22 @@ inline System::System()
 }
 inline System::~System()
 {
-    // cout << "System destruction commencing." << endl;
+    // std::cout << "System destruction commencing." << std::endl;
     // debug("System destruction commencing.\n");
 
 }
 inline void System::print_prop()
 {
-    cout << "SYSTEM:"
-         << "\n\tChains: " << num_chains
-         << "\n\tResidues: " << num_residues
-         << "\n\tAtoms: " << num_atoms
-         << endl;
-    cout << "SIZE:"
-         << "\n\tX: " << minx << " " << maxx
-         << "\n\tY: " << miny << " " << maxy
-         << "\n\tZ: " << minz << " " << maxz
-         << endl;
+    std::cout << "SYSTEM:"
+              << "\n\tChains: " << num_chains
+              << "\n\tResidues: " << num_residues
+              << "\n\tAtoms: " << num_atoms
+              << std::endl;
+    std::cout << "SIZE:"
+              << "\n\tX: " << minx << " " << maxx
+              << "\n\tY: " << miny << " " << maxy
+              << "\n\tZ: " << minz << " " << maxz
+              << std::endl;
 }
 
 /* ---------------------------------------------------------
@@ -85,22 +85,11 @@ class Chain: public System
 {
 public:
     Chain();
+    Chain(const Chain &obj);
     ~Chain();
     void print_prop();
-    // void build(int size);
 
-    // try
-    // {
-    //     chain_ref = new Chain[size];
-    // }
-    // catch (std::bad_alloc xa)
-    // {
-    //     std::cout << "Allocation Failure\n";
-    //     exit(1);
-    // }
-
-
-    string chain; // by pdb (pdbfile.cpp, 2nd pass)
+    std::string chain; // by pdb (pdbfile.cpp, 2nd pass)
     int num_residues;
     // int num_atoms;
     int chainid;
@@ -108,40 +97,32 @@ public:
 private:
 
 };
-// inline void Chain::build(int size)
-// {
-
-//     try
-//     {
-//         chain_ref = new Chain[size];
-//     }
-//     catch (std::bad_alloc xa)
-//     {
-//         std::cout << "Allocation Failure\n";
-//         exit(1);
-//     }
-
-//     new Chain[size];
-// }
 inline Chain::Chain()
 {
-    // cout << "Chain construction commencing." << endl;
+    // std::cout << "Chain construction commencing." << std::endl;
     // debug("Chain construction commencing.\n");
     chainid = -1;
     num_residues = -1;
     chain = "zz";
 }
+inline Chain::Chain(const Chain &obj)
+{
+    // Copy constructor.
+    chain = obj.chain;
+    num_residues = obj.num_residues;
+    chainid = obj.chainid;
+}
 inline Chain::~Chain()
 {
-    // cout << "Chain destruction commencing." << endl;
+    // std::cout << "Chain destruction commencing." << std::endl;
     // debug("Chain destruction commencing.\n");
 
 }
 inline void Chain::print_prop()
 {
-    cout << "Chain: "
-         << "\n\t" << chainid << " has " << num_residues
-         << "." << endl;
+    std::cout << "Chain: "
+              << "\n\t" << chainid << " has " << num_residues
+              << "." << std::endl;
 
 }
 
@@ -152,6 +133,7 @@ class Residue: public Chain
 {
 public:
     Residue();
+    Residue(const Residue &obj);
     ~Residue();
     void print_prop();
 
@@ -159,31 +141,43 @@ public:
     int id_local;
     int resid;
     int num_atoms_res;
-    string restype;   // HIS, GLU, ILE, LEU ..
+    std::string restype;   // HIS, GLU, ILE, LEU ..
 
 private:
 
 };
 inline Residue::Residue()
 {
-    // cout << "Residue construction commencing." << endl;
+    // std::cout << "Residue construction commencing." << std::endl;
     // debug("Residue construction commencing.\n");
     id_global = -1;
     id_local = -1;
     resid = -1;
     num_atoms_res = -1;
 }
+inline Residue::Residue(const Residue &obj)
+{
+    // Copy Constructor.
+    std::cout << "Allocating with copy constructor.(R)" << std::endl;
+    // ptr = new int;
+    // *ptr = *obj.ptr; // copy the value
+    id_global = obj.id_global;
+    id_local = obj.id_local;
+    resid = obj.resid;
+    num_atoms_res = obj.num_atoms_res;
+    restype = obj.restype;
+}
 inline Residue::~Residue()
 {
-    // cout << "Residue destruction commencing." << endl;
+    // std::cout << "Residue destruction commencing." << std::endl;
     // debug("Residue destruction commencing.\n");
 
 }
 inline void Residue::print_prop()
 {
-    cout << "Residue: "
-         << "\n\tglobal,local,resid: "
-         << id_global << " " << id_local << " " << resid << endl;
+    std::cout << "Residue: "
+              << "\n\tglobal,local,resid: "
+              << id_global << " " << id_local << " " << resid << std::endl;
 
 }
 
@@ -195,18 +189,19 @@ class Atom: public Residue
 {
 public:
     Atom();
+    Atom(const Atom &obj);
+    // Atom(const Atom &a) : Atom(a);
+
+
     ~Atom();
     void print_coords();
 
     float x, y, z;
     int index;
 
-
     float radius;     // VDW, Richards, Gerstein.
-
-    string atomtype;  // N, CA, C, O, CB, ..
-
-    string general_atomtype; // 77,1
+    std::string atomtype;  // N, CA, C, O, CB, ..
+    std::string general_atomtype; // 77,1
 
 private:
     /* std::string str_index = line.substr(5,6);      // int */
@@ -217,11 +212,11 @@ private:
     /* std::string str_x = line.substr(30,8);         // float */
     /* std::string str_y = line.substr(38,8);         // float */
     /* std::string str_z = line.substr(46,8);         // float */
-
+    int *ptr;
 };
 inline Atom::Atom()
 {
-    // cout << "Atom construction commencing." << endl;
+    // std::cout << "Atom construction commencing." << std::endl;
     // debug("Atom construction commencing.\n");
     x = 0.00000;
     y = 0.00000;
@@ -230,10 +225,26 @@ inline Atom::Atom()
     index = -1;
 
 }
+inline Atom::Atom(const Atom &obj)
+{
+    // Copy Constructor.
+    std::cout << "Allocating with copy constructor." << std::endl;
+    // ptr = new int;
+    // *ptr = *obj.ptr; // copy the value
+    x = obj.x;
+    y = obj.y;
+    z = obj.z;
+    radius = obj.radius;
+    index = obj.index;
+
+    atomtype = obj.atomtype;
+    general_atomtype = obj.general_atomtype;
+}
 inline Atom::~Atom()
 {
-    // cout << "Atom destruction commencing." << endl;
+    // std::cout << "Atom destruction commencing." << std::endl;
     // debug("Atom destruction commencing.\n");
+    // delete ptr;
 
 }
 inline void Atom::print_coords()

@@ -32,7 +32,7 @@
 void get_contacts(Atom *a1,Atom *a2,char dcdfilename[40],int natoms)
 {
     debug("welcome to get_contacts. 2 (inter)\n");
-    std::cout << "DCD: " << dcdfilename << endl;
+    std::cout << "DCD: " << dcdfilename << std::endl;
 
 
     /* ---------------------------------------------------------
