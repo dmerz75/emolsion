@@ -8,7 +8,7 @@
 /* #include <stdlib.h> */
 #include <string>
 #include <iostream>
-// #include<vector>
+#include<vector>
 
 
 // headers:
@@ -228,7 +228,9 @@ inline Atom::Atom()
 inline Atom::Atom(const Atom &obj)
 {
     // Copy Constructor.
-    std::cout << "Allocating with copy constructor." << std::endl;
+    // std::cout << "Allocating with copy constructor." << std::endl;
+
+
     // ptr = new int;
     // *ptr = *obj.ptr; // copy the value
     x = obj.x;
@@ -245,6 +247,7 @@ inline Atom::~Atom()
     // std::cout << "Atom destruction commencing." << std::endl;
     // debug("Atom destruction commencing.\n");
     // delete ptr;
+    // delete obj;
 
 }
 inline void Atom::print_coords()
@@ -271,6 +274,8 @@ inline void Atom::print_coords()
 // int select(Atom *aa,char criterion[40],int num);
 int system_select(Atom *aa,char const *criterion,int total);
 void system_select(Atom *aa,char const *criterion,int total,Atom *asel);
+// Atom system_select(Atom *aa,char const *criterion,int total);
+// std::vector<Atom> system_select(Atom *aa,char const *criterion);
 
 
 // int select(Atom aa,Atom asel,string param,string criterion,int num);
