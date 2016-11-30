@@ -124,10 +124,11 @@ void get_contacts(Atom *a1,char *argv)
 }
 
 
-void get_map_of_mtneighbors(std::vector<Atom*> chain_ref,std::vector<std::vector<int>> matrix)
+// void get_map_of_mtneighbors(std::vector<std::vectorAtom> chain_ref,std::vector<std::vector<int>> matrix,
+//                             std::)
+void get_map_of_mtneighbors(std::vector<std::vector <Atom>> chain_ref,std::vector<std::vector<int>> matrix,
+                            std::vector<std::pair<int,int>> dimers)
 {
-    // std::vector<Atom*> chain_ref;
-
     printf("Welcome to get_map_of_mtneighbors!\n");
     std::cout << matrix.size() << std::endl;
 
@@ -142,29 +143,63 @@ void get_map_of_mtneighbors(std::vector<Atom*> chain_ref,std::vector<std::vector
     // }
 
 
+    int ic;
+    ic = 0;
+
+    // Vector centroid;
+    // centroid.print_Vector();
+
+    // std::vector<std::tuple<int,float,float,float>> mtcentroid;
+    // std::vector<std::vector <float>> mtcentroid;
+    // std::vector<double> centroid {0.0,0.0,0.0};
+    // std::cout << "Centroid: " << std::endl;
+    // std::cout << centroid[0] << " " << centroid[1] << " " << centroid[2] << std::endl;
+
+
+    // for(auto mtc: mtcentroid)
+    // {
+    //     std::cout << mtc[0] << std::endl;
+    // }
+
+
+    // std::vector<std::vector<int>> mtcentroid(chain_ref.size(),
+    //                                          std::vector<float>(3,0.0));
+
+    // std::vector<std::vector<int>> mt_matrix(dimers.size(), std::vector<int>(8,-1));
+
+
     for(auto ch: chain_ref)
     {
-        // if <Atom>
-        // std::cout << ch.num_atoms << std::endl;
-        // if <Atom*>
-        std::cout << ch->num_atoms << std::endl;
-        // std::cout << ch->size() << std::endl;
+        std::cout << ch.size() << std::endl;
 
-        for(int i=0; i<ch->num_atoms; i++)
-        {
-            // std::cout << ch[i].num_atoms << std::endl;
-            std::cout << ch[i].x << std::endl;
-        }
 
-        // std::cout << ch.num_atoms << std::endl;
+        // get_centroid(ch,&centroid);
 
-        // for(auto a: ch)
-        // {
-        //     std::cout << aa->num_atoms << std::endl;
-        // }
 
-        // std::cout << "\n" << std::endl;
+
+        // std::cout << "Return_Centroid: "
+        //           << centroid[0]
+        //           << " "
+        //           << centroid[1]
+        //           << " "
+        //           << centroid[2]
+        //           << std::endl;
+
+
+
+        ic += 1;
     }
 
 
+    int id;
+    id = 0;
+    for(auto d: dimers)
+    {
+
+        std::cout << d.first << " " << d.second << std::endl;
+        matrix[id][0] = d.first;
+        matrix[id][1] = d.second;
+
+        id += 1;
+    }
 }

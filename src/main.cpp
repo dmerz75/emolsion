@@ -6,24 +6,6 @@ extern "C" {
 
 }
 
-// my headers
-#include "debug.h"
-// #include "readfile.h"
-// #include "chain.h"
-#include "md.h"
-#include "ReadPDBfile.hpp"
-#include "system.hpp"
-#include "dcd.h"
-#include "contacts.hpp"
-// #include "config.hpp"
-// #include "ConfigFile.h"
-// #include "Chameleon.h"
-// // #include "contacts.h"
-// #include "topology.h"
-// #include "topology_charmm.h"
-// #include "curvature.h"
-// #include "chi.h"
-
 // headers C++
 // #include <stdlib.h>
 // #include <stdio.h> // printf
@@ -42,6 +24,26 @@ extern "C" {
 
 // boost
 // #include "boost/multi_array.hpp"
+
+
+// my headers
+#include "debug.h"
+// #include "readfile.h"
+// #include "chain.h"
+#include "md.h"
+#include "ReadPDBfile.hpp"
+#include "system.hpp"
+#include "dcd.h"
+#include "contacts.hpp"
+// #include "mt.hpp"
+// #include "config.hpp"
+// #include "ConfigFile.h"
+// #include "Chameleon.h"
+// // #include "contacts.h"
+// #include "topology.h"
+// #include "topology_charmm.h"
+// #include "curvature.h"
+// #include "chi.h"
 
 
 // VMD
@@ -318,21 +320,23 @@ int main(int argc, char *argv[]) {
 
 
     /* ---------------------------------------------------------
-       Vector of chains.
+       Vector of chain-vectors of Atoms.
        --------------------------------------------------------- */
 // #ifdef NDEBUG
     // Atom *aa_sel;
     // int num_select = 0;
 // #endif
 
-    std::vector<std::vector<Atom*>> chain_ref;
+    std::vector<std::vector<Atom>> chain_ref;
     // std::vector<std::pair<int,int>> dimers;
-    std::vector<std::vector<Atom*>>::iterator itchain;
-    std::vector<Atom*>::iterator ita;
+
+    // ITERATORS: itchain, ita for chain, atom.
+    std::vector<std::vector<Atom>>::iterator itchain;
+    std::vector<Atom>::iterator ita;
 
     for(int i=0; i<aa_ref[0].num_chains; i++)
     {
-        std::vector<Atom*> atombin; // Empty?
+        std::vector<Atom> atombin; // Empty?
 
         // Atom *aa_sel;
         std::string selection = "chainid " + std::to_string(i);
@@ -348,11 +352,10 @@ int main(int argc, char *argv[]) {
         //           << num_select
         //           << " atoms."
         //           << std::endl;
-        // std::cout << "size: " << chain_ref.size() << std::endl;
+        // std::cout << "Number of chains in chain_ref(size): " << chain_ref.size() << std::endl;
 
         try
         {
-            // std::cout << "building a chainsize of: " << num_select << std::endl;
             aa_sel = new Atom[num_select];
         }
         catch (std::bad_alloc xa)
@@ -360,22 +363,18 @@ int main(int argc, char *argv[]) {
             std::cout << "Allocation Failure\n";
             exit(1);
         }
-
         system_select(aa_ref,pickme,num_select,aa_sel);
-
-        // Atom asel = aa_sel;
-        // for
-
-        // system_select(aa_ref,pickme);
 
 
         for(int j=0; j<num_select; j++)
         {
             // aa_sel[j].print_coords();
-            Atom a1 = aa_sel[j];
-            atombin.push_back(&a1);
+            Atom a1 = aa_sel[j]; // Copy Constructor
+            // a1.print_coords();
+            atombin.push_back(a1);
+            // atombin.push_back(&a1);
+            // atombin.push_back(aa_sel[j]);
 
-            // Atom a(aa_sel)
             // if(j>3)
             // {
             //     break;
@@ -384,261 +383,66 @@ int main(int argc, char *argv[]) {
         chain_ref.push_back(atombin);
         // printf("\n");
         // std::cout << "binsize: " << atombin.size() << std::endl; // 439, 427, 2..
-
     }
     std::cout << "# of chains: " << chain_ref.size() << std::endl;
-
-
-
-
-
-    // for(itchain = chain_ref.begin();
-    //     itchain != chain_ref.end();
-    //     itchain++)
-    // {
-    //    cout<<*itchain<<" ";
-    // }
-    // vector<Atom*>::iterator itchain;
-    // chain_ref.erase(itchain.begin(), itchain.end());
-
-    // BUILD chain_ref
-    // Atom atom_chain_sel[aa_ref[0].num_chains];
-
-    // for(int i=0; i<aa_ref[0].num_chains; i++)
-    // {
-    //     Atom *aa_sel1;
-    //     // Atom *asel;
-    //     // printf("%d\n",i);
-
-
-    //     std::string selection = "chainid " + std::to_string(i);
-    //     const char *pickme = selection.c_str();
-    //     // std::cout << i << ' ' << pickme << std::endl;
-    //     num_select = system_select(aa_ref,pickme,num_select);
-
-    //     // std::cout << i << ' '
-    //     //           << "We found " << num_select
-    //     //           << " atoms for this selection: "
-    //     //           << selection
-    //     //           << " : "
-    //     //           << num_select
-    //     //           << " atoms."
-    //     //           << std::endl;
-    //     // std::cout << "size: " << chain_ref.size() << std::endl;
-
-    //     try
-    //     {
-    //         // std::cout << "building a chainsize of: " << num_select << std::endl;
-    //         aa_sel1 = new Atom[num_select];
-    //     }
-    //     catch (std::bad_alloc xa)
-    //     {
-    //         std::cout << "Allocation Failure\n";
-    //         exit(1);
-    //     }
-
-    //     system_select(aa_ref,pickme,num_select,aa_sel1);
-
-
-    //     printf("%d\n",num_select);
-    //     for(int j=0; j<num_select; j++)
-    //     {
-    //         printf("%d ",j);
-    //         Atom asel(aa_sel1[j]);
-    //         asel.print_coords();
-
-    //     }
-    //     printf("\n");
-
-    //     delete asel;
-
-        // std::cout << "lastj: " << j << std::endl;
-
-
-        // system_select(aa_ref,pickme,num_select);
-
-        // Atom asel = *aa_sel1;
-        // std::cout << "x: " << asel.x << std::endl;
-        // std::cout << "y: " << asel.y << std::endl;
-        // std::cout << "z: " << asel.z << std::endl;
-
-        // exit(0);
-
-
-        // system_select(aa_ref,pickme,num_select,&atom_chain_sel[i]);
-        // std::cout << "30: " << aa_ref[30].x << std::endl;
-        // std::cout << "--: " << aa_sel[30].x << std::endl;
-
-
-
-
-        // for(int j=0; j<num_select; j++)
-        // {
-        //     aa_sel1[j].num_atoms = num_select;
-        //     // aa_ref[i].print_coords();
-        //     // printf("%s  ",aa_ref[i].chain.c_str());
-        //     // printf("%d\n",aa_ref[i].resid);
-
-        //     std::cout << "select_Achain: " << ' '
-        //               << aa_sel1[j].num_atoms << ' '
-        //               << aa_sel1[j].index << ' '
-        //               << aa_sel1[j].resid << ' '
-        //               << aa_sel1[j].chain << ' '
-        //               << aa_sel1[j].restype << ' '
-        //               << aa_sel1[j].x << ' '
-        //               << aa_sel1[j].y << ' '
-        //               << aa_sel1[j].z << ' '
-        //               << std::endl;
-        // }
-
-
-
-
-
-
-
-
-        // for(int j=0; j<num_select; j++)
-        // {
-        //     aa_sel[j].num_atoms = num_select;
-        //     // aa_ref[i].print_coords();
-        //     // printf("%s  ",aa_ref[i].chain.c_str());
-        //     // printf("%d\n",aa_ref[i].resid);
-
-        //     std::cout << "select_array_chain: " << ' '
-        //               << aa_sel[j].num_atoms << ' '
-        //               << aa_sel[j].index << ' '
-        //               << aa_sel[j].resid << ' '
-        //               << aa_sel[j].chain << ' '
-        //               << aa_sel[j].restype << ' '
-        //               << aa_sel[j].x << ' '
-        //               << aa_sel[j].y << ' '
-        //               << aa_sel[j].z << ' '
-        //               << std::endl;
-        // }
-
-
-        // for(int j=0; j<num_select; j++)
-        // {
-        //     aa_sel[j].num_atoms = num_select;
-        //     aa_sel[j].chainid = i;
-        //     // aa_sel[j] =
-
-
-        //     // std::cout << "x " << aa_sel[j].x << " "
-        //     //           << "y " << aa_sel[j].y << " "
-        //     //           << "z " << aa_sel[j].z << " "
-        //     //           << std::endl;
-
-        //     // std::cout <<
-        // }
-
-
-        // chain_ref.push_back(asel);
-        // chain_ref.push_back(*aa_sel);
-        // delete *aa_sel;
-
-        // Not necessary.
-        // destruction!
-        // printf("destruction!\n");
-        // aa_sel->~Atom();
-    // }
 
     // exit(0);
 
 
-    // ACCESS chain_ref
-    // COPY class?
+    // // EXAMPLE Iteration:
     // for(itchain = chain_ref.begin(); itchain != chain_ref.end(); itchain++)
     // {
-    //     std::cout << (*itchain)->num_atoms << std::endl;
-    //     // (*itchain) = ;
+    //     std::cout << "Atoms in chain: " << (*itchain).size() << std::endl;
 
-    //     for(int a=0; a<(*itchain)->num_atoms; a++)
+    //     for(ita = (*itchain).begin(); ita != (*itchain).end(); ita++)
     //     {
-    //         // printf("%d ",a);
-    //         // std::cout << "x:" << (*itchain)->x << std::endl;
+    //         (*ita).print_coords();
     //     }
-    //     printf("\n");
     // }
+    // // exit(0);
 
-
-    for(itchain = chain_ref.begin(); itchain != chain_ref.end(); itchain++)
-    {
-        std::cout << (*itchain).size()
-                  << std::endl;
-
-        for(ita = (*itchain).begin(); ita != (*itchain).end(); ita++)
-        {
-            std::cout << (*ita)->index
-                      << " "
-                      << (*ita)->chainid
-                      << " "
-                      << (*ita)->x
-                      // << (*ita).chain
-                      // << (*ita).num_atoms
-                      << std::endl;
-        }
-
-    }
+    /* ---------------------------------------------------------
+       Vector of chain-vectors of Atoms. END.
+       --------------------------------------------------------- */
 
 
 
 
 
 #ifdef MTMAP
-
     // Pairs: A and B.
     std::vector<std::pair<int,int>> dimers;
-    std::vector<std::pair<int,int>>::iterator itdimers;
-    // std::vector<Atom*>::iterator itchain;
-
 
     // ACCESS chain_ref
     int amon, bmon;
-    amon = bmon = 0;
+    amon = 0;
+    bmon = 1;
 
     for(itchain = chain_ref.begin(); itchain != chain_ref.end(); itchain++)
     {
-        // std::cout << (*itchain)->num_atoms << std::endl;
-        // std::cout << (*itchain)->chainid << std::endl;
-
-        amon = (*itchain)->chainid;
-        // amon = itchain->chainid;
-
-        bmon = amon + 1;
-        if((*itchain)->num_atoms > 435)
-        // if(itchain->num_atoms > 435)
+        if((*itchain).size() >= 433)
         {
             dimers.push_back(std::make_pair(amon,bmon));
+            amon += 2;
+            bmon += 2;
         }
-
-
-        // std::cout << (*itchain)->x << std::endl; // 0
-        // std::cout << (*itchain)->y << std::endl;
-        // std::cout << (*itchain)->z << std::endl;
-
-        // for(int a=0; a<(*itchain)->num_atoms; a++)
-        // {
-        //     printf("%d ",a);
-        // }
-        // printf("\n");
-
     }
 
-    // DIMERS
+    // // DIMERS
+    // std::vector<std::pair<int,int>>::iterator itdimers;
     // for(itdimers = dimers.begin(); itdimers != dimers.end(); itdimers++)
     // {
     //     std::cout << (*itdimers).first << ' ' << (*itdimers).second << std::endl;
     // }
-
+    // exit(0);
 
 
     // External Neighbor (chainid).
-    std::vector<std::vector<int>> mt_matrix(aa_ref[0].num_chains, std::vector<int>(8,-1));
+    // std::vector<std::vector<int>> mt_matrix(aa_ref[0].num_chains, std::vector<int>(8,-1));
+    std::vector<std::vector<int>> mt_matrix(dimers.size(), std::vector<int>(8,-1));
 
     // Get Map of MT neighbors.
-    get_map_of_mtneighbors(chain_ref,mt_matrix);
+    get_map_of_mtneighbors(chain_ref,mt_matrix,dimers);
 
 
     // std::vector<std::vector<int>>::iterator itm_cid; // for chainid
