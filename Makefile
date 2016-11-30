@@ -126,8 +126,7 @@ contacts1:
 	cd test && ./$(EXEC)_contactsbda mt.ref.pdb mt_partial.dcd 6 27 3 # 6-9 .. 21-24-27.
 contacts2:
 # $(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(MT) $(DCD) $(CON_BDA) -DNDEBUG -o test/$(EXEC)_mtcontacts
-# $(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(MT) $(DCD) $(CON_BDA) -o test/$(EXEC)_mtcontacts
-	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $() $(DCD) $(CON_BDA) -o test/$(EXEC)_mtcontacts
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(MT) $(DCD) $(CON_BDA) -o test/$(EXEC)_mtcontacts
 	cd test && ./$(EXEC)_mtcontacts mt.ref.pdb mt_partial.dcd 6 27 3 # 6-9 .. 21-24-27.
 
 # -----------------------------------------------------------------------------
