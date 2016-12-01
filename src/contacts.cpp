@@ -165,7 +165,7 @@ std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <At
 
         ic += 1;
     }
-    std::cout << "# of centroids: " << centroids.size() << std::endl;
+    // std::cout << "# of centroids: " << centroids.size() << std::endl;
 
 
     int id;
@@ -181,11 +181,11 @@ std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <At
 
     for(auto d: dimers)
     {
-        std::cout << d.first
-                  << " "
-                  << d.second
-                  << " "
-                  << std::endl;
+        // std::cout << d.first
+        //           << " "
+        //           << d.second
+        //           << " "
+        //           << std::endl;
 
         monomers.push_back(d.first);
         monomers.push_back(d.second);
@@ -211,7 +211,7 @@ std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <At
 
     for(auto m1: monomers)
     {
-        std::cout << "monomer: " << m1 << std::endl;
+        // std::cout << "monomer: " << m1 << std::endl;
 
         for(auto m2: monomers)
         {
@@ -236,7 +236,7 @@ std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <At
         chain_candidates.push_back(candidates);
         candidates.clear();
     }
-    std::cout << "Candidates acquired." << std::endl;
+    // std::cout << "Candidates acquired." << std::endl;
 
 
     int ican,pdim;
@@ -255,7 +255,7 @@ std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <At
 
     for(auto cc: chain_candidates)
     {
-        std::cout << "monomer: " << ican << std::endl;
+        // std::cout << "monomer: " << ican << std::endl;
 
         if(ican % 2 == 0)
         {
@@ -272,36 +272,28 @@ std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <At
             avec_n = normalize(avec);
             avec_mag = magnitude(avec);
 
-            std::cout << dimers[pdim].first
-                      << "-"
-                      << dimers[pdim].second
-                      << "   "
-                      << avec_mag
-                      << " "
-                      << std::endl;
+            // std::cout << dimers[pdim].first
+            //           << "-"
+            //           << dimers[pdim].second
+            //           << "   "
+            //           << avec_mag
+            //           << " "
+            //           << std::endl;
 
 
-            // if(ican > can)
-            // {
-            //     vdist = get_vector(centroids[ican],centroids[can]);
-            // }
-            // else
-            // {
-            //     vdist = get_vector(centroids[can],centroids[ican]);
-            // }
+
+
             vdist = get_vector(centroids[ican],centroids[can]);
-
             vdist_n = normalize(vdist);
             vdist_mag = magnitude(vdist);
-
-            std::cout << can << " " << vdist_mag << " " << std::endl;
+            // std::cout << can << " " << vdist_mag << " " << std::endl;
 
 
             dsin = get_sintheta(avec_n,vdist_n);
             dcos = get_costheta(avec_n,vdist_n);
 
-            std::cout << "sin: " << dsin << std::endl;
-            std::cout << "cos: " << dcos << std::endl;
+            // std::cout << "sin: " << dsin << std::endl;
+            // std::cout << "cos: " << dcos << std::endl;
 
             // std::cout << std::endl;
 
@@ -319,45 +311,38 @@ std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <At
                 {
                     if(ican % 2 == 0)
                     {
-                        std::cout << "same-pf-south: " << can << std::endl;
+                        // std::cout << "same-pf-south: " << can << std::endl;
                         matrix[pdim][2] = can;
                         continue;
                     }
                     else
                     {
-                        std::cout << "same-pf-north: " << can << std::endl;
+                        // std::cout << "same-pf-north: " << can << std::endl;
                         matrix[pdim][5] = can;
                         continue;
                     }
                 }
-                else
-                {
-                    std::cout << "intra-dimer: "<< can << std::endl;
-                }
+                // else
+                // {
+                //     std::cout << "intra-dimer: "<< can << std::endl;
+                // }
             }
             // else if ((std::abs(dcos) > 0.3) && (std::abs(dcos) < 0.6))
             // {
-
-            //     std::cout << "west^ " << std::endl;
+            //     if(dsin > 0.0)
+            //     {
+            //         std::cout << "45-east-west^ " << std::endl;
+            //     }
+            //     else // dsin < 0.0
+            //     {
+            //         std::cout << "45-east-west^ " << std::endl;
+            //     }
             // }
-            else if ((std::abs(dcos) > 0.3) && (std::abs(dcos) < 0.6))
-            {
-                if(dsin > 0.0)
-                {
-                    std::cout << "45-east-west^ " << std::endl;
-                }
-                else // dsin < 0.0
-                {
-                    std::cout << "45-east-west^ " << std::endl;
-                }
-                // std::cout << "45-west^ " << std::endl;
-                // continue;
-            }
             else if ((dsin > 0.95) && (std::abs(dcos) < 0.28))
             {
                 if(dcos > 0)
                 {
-                    std::cout << "WEST " << std::endl;
+                    // std::cout << "WEST " << std::endl;
                     if(ican % 2 == 0)
                     {
                         matrix[pdim][4] = can;
@@ -369,7 +354,7 @@ std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <At
                 }
                 else
                 {
-                    std::cout << "EAST " << std::endl;
+                    // std::cout << "EAST " << std::endl;
                     if(ican % 2 == 0)
                     {
                         matrix[pdim][3] = can;
@@ -380,22 +365,9 @@ std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <At
                     }
                 }
             }
-
-            // else if ((dcos < -0.3) && (dcos > -0.6) && (dsin < 0.0))
-            // {
-
-            //     std::cout << "45-east^ " << std::endl;
-            //     continue;
-            // }
-            // else
-            // {
-            //     std::cout << "leftover: " << std::endl;
-            // }
-
-
         } // monomer-candidates
 
-        std::cout << std::endl;
+        // std::cout << std::endl;
 
         ican += 1;
 

@@ -17,7 +17,7 @@ extern "C" {
 // #include <utility>
 // #include <algorithm> // bool & sort
 #include <iostream>
-// #include <iomanip> // setw
+#include <iomanip> // setw
 // #include <fstream> //
 // #include <map> // map
 
@@ -445,64 +445,23 @@ int main(int argc, char *argv[]) {
     // std::vector<Atom>::iterator ita;
 
     std::vector<std::vector<int>> mt_matrix(dimers.size(), std::vector<int>(8,-1));
-
-    // Get Map of MT neighbors.
-    mt_matrix = get_map_of_mtneighbors(chain_ref,dimers);
     std::vector<std::vector<int>>::iterator itmap;
     std::vector<int>::iterator itmap_n;
 
+    // Get Map of MT neighbors.
+    mt_matrix = get_map_of_mtneighbors(chain_ref,dimers);
+
+    // Print Map of MT neighbors.
     for(itmap = mt_matrix.begin(); itmap != mt_matrix.end(); itmap++)
     {
         // std::cout << (*itmap).size() << std::endl;
 
         for(itmap_n = (*itmap).begin(); itmap_n != (*itmap).end(); itmap_n++)
         {
-            std::cout << (*itmap_n) << " ";
+            std::cout << std::setw(4) << (*itmap_n) << " ";
         }
                 std::cout << std::endl;
     }
-
-
-
-    // std::vector<std::vector<int>>::iterator itm_cid; // for chainid
-    // std::vector<std::vector<int>>::iterator itm_n; // for the neighbor
-    // std::cout << "0,0 \t" <<mt_matrix[0][0] << '\n'
-    //           << "150,150 \t" << mt_matrix[150][150] << '\n'
-    //           << std::endl;
-
-    // for(itm_cid = mt_matrix.begin(); itm_cid != mt_matrix.end(); itm_cid++)
-    // {
-    //     std::cout << (*itm_cid).size() << std::endl;
-    //     std::cout << (*itm_cid)[0] << std::endl;
-    //     std::cout << (*itm_cid)[2] << std::endl;
-    //     std::cout << (*itm_cid)[3] << std::endl;
-    //     std::cout << (*itm_cid)[6] << std::endl;
-    //     std::cout << (*itm_cid)[7] << std::endl;
-
-    //     // for(itm_n = (*itm_cid)->begin(); itm_n != (*itm_cid).end(); itm_n++)
-    //     // {
-    //     //     printf("hello\n.");
-    //     // }
-    //     // std::cout <<
-    // }
-
-
-
-
-
-    // for(auto vec: mt_matrix)
-    // {
-    //     // std::cout << vec[0] << vec[1] << vec[2] << vec[3] << std::endl;
-    //     for(auto x: vec)
-    //     {
-    //         std::cout << x << std::endl;
-    //     }
-    //     std::cout << "\n" << std::endl;
-    // }
-
-
-
-
 
 
 #endif // MTMAP
