@@ -53,7 +53,9 @@
 // void get_contacts(Atom *a1,char *argv,int num_atoms);
 void get_contacts(Atom *a1,Atom *a2,char dcdfilename[40],int num_atoms);
 // void get_map_of_mtneighbors(std::vector<Atom*> chain_ref,std::vector<std::vector<int>> matrix);
-void get_map_of_mtneighbors(std::vector<std::vector <Atom>> chain_ref,std::vector<std::vector<int>> matrix,
-                            std::vector<std::pair<int,int>> dimers);
+// void get_map_of_mtneighbors(std::vector<std::vector <Atom>> chain_ref,std::vector<std::vector<int>> matrix,
+//                             std::vector<std::pair<int,int>> dimers);
+std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <Atom>> chain_ref,
+                                                     std::vector<std::pair<int,int>> dimers);
 
 #endif

@@ -13,6 +13,7 @@
 
 // headers:
 #include "debug.h"
+#include "md.h"
 // #include "radius.hpp"
 // #include "pdbfile.hpp"
 
@@ -280,6 +281,7 @@ void system_select(Atom *aa,char const *criterion,int total,Atom *asel);
 
 // int select(Atom aa,Atom asel,string param,string criterion,int num);
 void get_minmax(System sys);
+Vector get_centroid(std::vector<Atom> a);
 
 
 #endif

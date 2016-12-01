@@ -15,6 +15,7 @@
 // #include <list>        // std::list
 // #include <vector>
 // #include <iterator> // istream_iterator
+#include <cmath>
 
 
 /* ---------------------------------------------------------
@@ -22,6 +23,8 @@
    --------------------------------------------------------- */
 #include "debug.h"
 #include "contacts.hpp"
+#include "md.h"
+#include "system.hpp"
 // #include "dcd.h"
 // #include "dcdio.h"
 
@@ -126,55 +129,29 @@ void get_contacts(Atom *a1,char *argv)
 
 // void get_map_of_mtneighbors(std::vector<std::vectorAtom> chain_ref,std::vector<std::vector<int>> matrix,
 //                             std::)
-void get_map_of_mtneighbors(std::vector<std::vector <Atom>> chain_ref,std::vector<std::vector<int>> matrix,
-                            std::vector<std::pair<int,int>> dimers)
+// std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <Atom>> chain_ref,std::vector<std::vector<int>> matrix,
+//                             std::vector<std::pair<int,int>> dimers)
+std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <Atom>> chain_ref,
+                                                     std::vector<std::pair<int,int>> dimers)
 {
-    printf("Welcome to get_map_of_mtneighbors!\n");
-    std::cout << matrix.size() << std::endl;
-
-    // for(auto vec: matrix)
-    // {
-    //     // std::cout << vec[0] << vec[1] << vec[2] << vec[3] << std::endl;
-    //     for(auto x: vec)
-    //     {
-    //         std::cout << x << std::endl;
-    //     }
-    //     std::cout << "\n" << std::endl;
-    // }
-
+    // printf("Welcome to get_map_of_mtneighbors!\n");
+    // std::cout << matrix.size() << std::endl;
+    std::vector<std::vector<int>> matrix(dimers.size(), std::vector<int>(8,-1));
 
     int ic;
     ic = 0;
 
-    // Vector centroid;
+    Vector centroid;
     // centroid.print_Vector();
-
-    // std::vector<std::tuple<int,float,float,float>> mtcentroid;
-    // std::vector<std::vector <float>> mtcentroid;
-    // std::vector<double> centroid {0.0,0.0,0.0};
-    // std::cout << "Centroid: " << std::endl;
-    // std::cout << centroid[0] << " " << centroid[1] << " " << centroid[2] << std::endl;
-
-
-    // for(auto mtc: mtcentroid)
-    // {
-    //     std::cout << mtc[0] << std::endl;
-    // }
-
-
-    // std::vector<std::vector<int>> mtcentroid(chain_ref.size(),
-    //                                          std::vector<float>(3,0.0));
-
-    // std::vector<std::vector<int>> mt_matrix(dimers.size(), std::vector<int>(8,-1));
+    std::vector<Vector> centroids;
 
 
     for(auto ch: chain_ref)
     {
-        std::cout << ch.size() << std::endl;
-
-
-        // get_centroid(ch,&centroid);
-
+        // std::cout << ch.size() << std::endl;
+        centroid = get_centroid(ch);
+        // centroid.print_Vector();
+        centroids.push_back(centroid);
 
 
         // std::cout << "Return_Centroid: "
@@ -186,20 +163,243 @@ void get_map_of_mtneighbors(std::vector<std::vector <Atom>> chain_ref,std::vecto
         //           << std::endl;
 
 
-
         ic += 1;
     }
+    std::cout << "# of centroids: " << centroids.size() << std::endl;
 
 
     int id;
     id = 0;
+
+    Vector vdist;
+    Vector vdist_n;
+    float vdist_mag;
+    vdist_mag = 0.0;
+
+
+    std::vector<int> monomers;
+
     for(auto d: dimers)
     {
+        std::cout << d.first
+                  << " "
+                  << d.second
+                  << " "
+                  << std::endl;
 
-        std::cout << d.first << " " << d.second << std::endl;
+        monomers.push_back(d.first);
+        monomers.push_back(d.second);
+
+        // centroids[d.first].print_Vector();
+        // centroids[d.second].print_Vector();
+
+        // vdist = get_vector(centroids[d.first],centroids[d.second]);
+        // vdist.print_Vector();
+        // vdist_mag = magnitude(vdist);
+        // std::cout << "Magnitude: " << vdist_mag << std::endl;
+
         matrix[id][0] = d.first;
         matrix[id][1] = d.second;
 
         id += 1;
     }
+
+
+    // 83.0 Angstroms;
+    std::vector<std::vector<int>> chain_candidates;
+    std::vector<int> candidates;
+
+    for(auto m1: monomers)
+    {
+        std::cout << "monomer: " << m1 << std::endl;
+
+        for(auto m2: monomers)
+        {
+            if(m2 == m1)
+            {
+                continue;
+            }
+            else
+            {
+
+                // std::cout << "comparing: m2-m1 " << m2 << " <-> "<< m1 << std::endl;
+                vdist = get_vector(centroids[m1],centroids[m2]);
+                // vdist.print_Vector();
+                vdist_mag = magnitude(vdist);
+                // std::cout << "Magnitude: " << vdist_mag << std::endl;
+                if (vdist_mag < 83.0)
+                {
+                    candidates.push_back(m2);
+                }
+            }
+        }
+        chain_candidates.push_back(candidates);
+        candidates.clear();
+    }
+    std::cout << "Candidates acquired." << std::endl;
+
+
+    int ican,pdim;
+    ican = pdim = 0;
+
+    // Axis of dimer.
+    Vector avec;
+    Vector avec_n;
+    float avec_mag;
+    avec_mag = 0.0;
+
+    // SINE and COSINE
+    double dsin;
+    double dcos;
+
+
+    for(auto cc: chain_candidates)
+    {
+        std::cout << "monomer: " << ican << std::endl;
+
+        if(ican % 2 == 0)
+        {
+            pdim = ican / 2;
+        }
+        else
+        {
+            pdim = (ican - 1) / 2;
+        }
+
+        for(auto can: cc)
+        {
+            avec = get_vector(centroids[dimers[pdim].second],centroids[dimers[pdim].first]);
+            avec_n = normalize(avec);
+            avec_mag = magnitude(avec);
+
+            std::cout << dimers[pdim].first
+                      << "-"
+                      << dimers[pdim].second
+                      << "   "
+                      << avec_mag
+                      << " "
+                      << std::endl;
+
+
+            // if(ican > can)
+            // {
+            //     vdist = get_vector(centroids[ican],centroids[can]);
+            // }
+            // else
+            // {
+            //     vdist = get_vector(centroids[can],centroids[ican]);
+            // }
+            vdist = get_vector(centroids[ican],centroids[can]);
+
+            vdist_n = normalize(vdist);
+            vdist_mag = magnitude(vdist);
+
+            std::cout << can << " " << vdist_mag << " " << std::endl;
+
+
+            dsin = get_sintheta(avec_n,vdist_n);
+            dcos = get_costheta(avec_n,vdist_n);
+
+            std::cout << "sin: " << dsin << std::endl;
+            std::cout << "cos: " << dcos << std::endl;
+
+            // std::cout << std::endl;
+
+
+            //     West
+            //     4  7
+            //  2  0  1  5
+            //     3  6
+            //     East
+
+            // find intra-dimer.
+            if((dsin < 0.1) && (std::abs(dcos) > 0.95))
+            {
+                if((can != dimers[pdim].first) && (can != dimers[pdim].second))
+                {
+                    if(ican % 2 == 0)
+                    {
+                        std::cout << "same-pf-south: " << can << std::endl;
+                        matrix[pdim][2] = can;
+                        continue;
+                    }
+                    else
+                    {
+                        std::cout << "same-pf-north: " << can << std::endl;
+                        matrix[pdim][5] = can;
+                        continue;
+                    }
+                }
+                else
+                {
+                    std::cout << "intra-dimer: "<< can << std::endl;
+                }
+            }
+            // else if ((std::abs(dcos) > 0.3) && (std::abs(dcos) < 0.6))
+            // {
+
+            //     std::cout << "west^ " << std::endl;
+            // }
+            else if ((std::abs(dcos) > 0.3) && (std::abs(dcos) < 0.6))
+            {
+                if(dsin > 0.0)
+                {
+                    std::cout << "45-east-west^ " << std::endl;
+                }
+                else // dsin < 0.0
+                {
+                    std::cout << "45-east-west^ " << std::endl;
+                }
+                // std::cout << "45-west^ " << std::endl;
+                // continue;
+            }
+            else if ((dsin > 0.95) && (std::abs(dcos) < 0.28))
+            {
+                if(dcos > 0)
+                {
+                    std::cout << "WEST " << std::endl;
+                    if(ican % 2 == 0)
+                    {
+                        matrix[pdim][4] = can;
+                    }
+                    else
+                    {
+                        matrix[pdim][7] = can;
+                    }
+                }
+                else
+                {
+                    std::cout << "EAST " << std::endl;
+                    if(ican % 2 == 0)
+                    {
+                        matrix[pdim][3] = can;
+                    }
+                    else
+                    {
+                        matrix[pdim][6] = can;
+                    }
+                }
+            }
+
+            // else if ((dcos < -0.3) && (dcos > -0.6) && (dsin < 0.0))
+            // {
+
+            //     std::cout << "45-east^ " << std::endl;
+            //     continue;
+            // }
+            // else
+            // {
+            //     std::cout << "leftover: " << std::endl;
+            // }
+
+
+        } // monomer-candidates
+
+        std::cout << std::endl;
+
+        ican += 1;
+
+    } // monomers.
+
+    return matrix;
 }

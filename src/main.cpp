@@ -439,10 +439,29 @@ int main(int argc, char *argv[]) {
 
     // External Neighbor (chainid).
     // std::vector<std::vector<int>> mt_matrix(aa_ref[0].num_chains, std::vector<int>(8,-1));
+
+
+    // std::vector<std::vector<Atom>>::iterator itchain;
+    // std::vector<Atom>::iterator ita;
+
     std::vector<std::vector<int>> mt_matrix(dimers.size(), std::vector<int>(8,-1));
 
     // Get Map of MT neighbors.
-    get_map_of_mtneighbors(chain_ref,mt_matrix,dimers);
+    mt_matrix = get_map_of_mtneighbors(chain_ref,dimers);
+    std::vector<std::vector<int>>::iterator itmap;
+    std::vector<int>::iterator itmap_n;
+
+    for(itmap = mt_matrix.begin(); itmap != mt_matrix.end(); itmap++)
+    {
+        // std::cout << (*itmap).size() << std::endl;
+
+        for(itmap_n = (*itmap).begin(); itmap_n != (*itmap).end(); itmap_n++)
+        {
+            std::cout << (*itmap_n) << " ";
+        }
+                std::cout << std::endl;
+    }
+
 
 
     // std::vector<std::vector<int>>::iterator itm_cid; // for chainid

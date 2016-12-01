@@ -27,7 +27,8 @@
 /* } */
 
 
-class Vector {
+class Vector
+{
 public:
     double x;
     double y;
@@ -35,13 +36,15 @@ public:
     Vector (); // Constructor declared.
     void print_Vector();
 };
-inline Vector::Vector() {
+inline Vector::Vector()
+{
     x = 0.0;
     y = 0.0;
     z = 0.0;
 }
-inline void Vector::print_Vector() {
-    printf("\nxyz: %f %f %f\n",x,y,z);
+inline void Vector::print_Vector()
+{
+    printf("xyz: %f %f %f\n",x,y,z);
 }
 
 class Matrix {

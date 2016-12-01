@@ -789,3 +789,26 @@ void get_minmax(System sys)
 //     // return asel;
 //     // return total;
 // }
+
+Vector get_centroid(std::vector<Atom> a)
+{
+    // std::cout << "Welcome to get_centroid!" << std::endl;
+    // std::cout << a.size() << std::endl;
+
+    Vector v;
+    float x,y,z;
+    x = y = z = 0.0;
+
+    for(auto atom: a)
+    {
+        x += atom.x;
+        y += atom.y;
+        z += atom.z;
+    }
+
+    v.x = x / a.size();
+    v.y = y / a.size();
+    v.z = z / a.size();
+
+    return v;
+}
