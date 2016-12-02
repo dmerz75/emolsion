@@ -22,6 +22,7 @@
 #include "system.hpp"
 #include "dcd.h"
 // #include "dcdio.h" // inside of dcd.h
+#include "boost/tuple/tuple.hpp"
 
 /* ---------------------------------------------------------
    headers:
@@ -57,5 +58,14 @@ void get_contacts(Atom *a1,Atom *a2,char dcdfilename[40],int num_atoms);
 //                             std::vector<std::pair<int,int>> dimers);
 std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <Atom>> chain_ref,
                                                      std::vector<std::pair<int,int>> dimers);
+
+// void get_contacts_for_chain();
+// std::vector<boost::tuple<int,int,int>> get_contacts_for_chain(std::vector<std::vector <Atom>> chain_ref);
+std::vector<boost::tuple<int,int,int>> get_contacts_for_chain(std::vector <Atom> chain1,
+                                                              std::vector <Atom> chain2,
+                                                              float cutoff);
+    // ,
+                                                              // float extra);
+
 
 #endif

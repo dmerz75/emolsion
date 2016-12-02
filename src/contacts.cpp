@@ -13,9 +13,10 @@
 // #include <fstream>
 // #include <ctime>
 // #include <list>        // std::list
-// #include <vector>
 // #include <iterator> // istream_iterator
 #include <cmath>
+#include <vector>
+// #include "boost/tuple/tuple.hpp"
 
 
 /* ---------------------------------------------------------
@@ -125,6 +126,93 @@ void get_contacts(Atom *a1,char *argv)
 
 
 }
+
+// void get_contacts_for_chain()
+std::vector<boost::tuple<int,int,int>> get_contacts_for_chain(std::vector <Atom> chain1,
+                                                              std::vector <Atom> chain2,
+                                                              float cutoff)
+    // ,
+    //                                                           float extra)
+{
+    std::cout << "Welcome to get_contacts_for_chain!" << std::endl;
+    std::cout << "Cutoff: " << cutoff << std::endl;
+              // << " +/- " << extra << std::endl;
+
+
+    std::vector<boost::tuple<int,int,int>> contacts;
+
+    // if
+
+
+    std::cout << "chain1: " << chain1.size() << std::endl;
+    std::cout << "chain2: " << chain2.size() << std::endl;
+
+    // int i1, i2;
+    // i1 = i2 = 0;
+    // int i = 0;
+
+    Vector a1v,a2v;
+    double dist = 0.0;
+
+    for(auto a1: chain1)
+    {
+        // std::cout << i1 << " " << a1.index << std::endl;
+        // std::cout << a1.index << std::endl;
+        a1v.x = a1.x;
+        a1v.y = a1.y;
+        a1v.z = a1.z;
+
+        for(auto a2: chain2)
+        {
+
+            // if(a2.index <)
+
+            // if(i2 <= i1)
+            // {
+            //     continue;
+            // }
+
+
+            if(a2.index == a1.index)
+            {
+                continue;
+            }
+
+
+                // std::cout << "\t" << i2 << "\t" << a2.index << std::endl;
+                // std::cout << "\t" << a2.index << std::endl;
+
+                a2v.x = a2.x;
+                a2v.y = a2.y;
+                a2v.z = a2.z;
+
+                dist = distance(a1v,a2v);
+
+
+                // a1.print_coords();
+                // a2.print_coords();
+
+
+                if(dist <= cutoff)
+                {
+                    contacts.push_back(boost::tuple<int,int,int>(a1.index,a2.index,1));
+                }
+                // i2 += 1;
+
+            // }
+        }
+
+        // i1 += 1;
+        // i2 = 0;
+        // i += 1;
+    }
+
+
+    return contacts;
+}
+
+
+
 
 
 // void get_map_of_mtneighbors(std::vector<std::vectorAtom> chain_ref,std::vector<std::vector<int>> matrix,

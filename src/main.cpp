@@ -20,7 +20,7 @@ extern "C" {
 #include <iomanip> // setw
 // #include <fstream> //
 // #include <map> // map
-
+#include "boost/tuple/tuple.hpp"
 
 // boost
 // #include "boost/multi_array.hpp"
@@ -520,6 +520,16 @@ int main(int argc, char *argv[]) {
         //           << aa_sel[i].restype << ' '
         //           << std::endl;
     }
+    /* ---------------------------------------------------------
+       Create aa_zero, aa_later reference states. End.
+       --------------------------------------------------------- */
+
+
+
+
+
+
+
 
 
 
@@ -724,16 +734,173 @@ int main(int argc, char *argv[]) {
     /* ---------------------------------------------------------
        Analysis Before. But with DCD Open. Begin.
        --------------------------------------------------------- */
-
 #ifdef CONTACTS_BEFORE
 
 
 
 
+#ifdef MTMAP
+    // std::vector<std::vector<boost::tuple<int,int,int>>> chain_contacts; // vector chain contacts
+    std::vector<boost::tuple<int,int,int>> chain_contact; // 1
+    std::vector<boost::tuple<int,int,int>>::iterator i_con;
+
+    // for(itchain = chain_ref.begin(); itchain != chain_ref.end(); itchain++)
+    // {
+    //     // chain_contact = get_contacts_for_chain();
+    //     chain_contact = get_contacts_for_chain(chain_ref[3],chain_ref[3],8.0);
+    //     std::cout << "# of contacts: " << chain_contact.size() << std::endl;
+    //     chain_contacts.push_back(chain_contact);
+    //     chain_contact.clear();
+    //     break;
+    // }
+
+    // 0:
+    // 1:
+    // 2:
+    // 3:
+    // 4:
+    // 5:
+    // 6:
+    // 7:
+    //     West         0 is the alpha monomer.
+    //     4  7
+    //  2  0  1  5
+    //     3  6
+    //     East
+    std::vector<std::vector<boost::tuple<int,int,int>>> chain_contacts_0; // vector chain contacts
+    std::vector<std::vector<boost::tuple<int,int,int>>> chain_contacts_1; // vector chain contacts
+    std::vector<std::vector<boost::tuple<int,int,int>>> chain_contacts_2; // vector chain contacts
+    std::vector<std::vector<boost::tuple<int,int,int>>> chain_contacts_3; // vector chain contacts
+    std::vector<std::vector<boost::tuple<int,int,int>>> chain_contacts_4; // vector chain contacts
+    std::vector<std::vector<boost::tuple<int,int,int>>> chain_contacts_5; // vector chain contacts
+    std::vector<std::vector<boost::tuple<int,int,int>>> chain_contacts_6; // vector chain contacts
+    std::vector<std::vector<boost::tuple<int,int,int>>> chain_contacts_7; // vector chain contacts
+
+    // int con1, con2 = -1;
+
+    for(itmap = mt_matrix.begin(); itmap != mt_matrix.end(); itmap++)
+    {
+        // if((*itmap)[0] != 234) // 266-all, 234-badone
+        // {
+        //     continue;
+        // }
+
+        // con1 = (*itmap)[0];
+
+        for(itmap_n = (*itmap).begin(); itmap_n != (*itmap).end(); itmap_n++)
+        {
+            // con2 = (*itmap_n);
+
+            std :: cout << (*itmap)[0] << " " << (*itmap_n) << std::endl;
+            if(((*itmap)[0] == -1) or ((*itmap_n) == -1))
+            {
+                std::cout << "No interface here." << std::endl;
+                continue;
+            }
+
+            chain_contact = get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap_n)],8.0);
+            std::cout << "# of contacts: " << chain_contact.size() << std::endl;
+
+            if((*itmap_n) == 0)
+            {
+                chain_contacts_0.push_back(chain_contact);
+            }
+            else if((*itmap_n) == 1)
+            {
+                chain_contacts_1.push_back(chain_contact);
+            }
+            else if((*itmap_n) == 2)
+            {
+                chain_contacts_2.push_back(chain_contact);
+            }
+            else if((*itmap_n) == 3)
+            {
+                chain_contacts_3.push_back(chain_contact);
+            }
+            else if((*itmap_n) == 4)
+            {
+                chain_contacts_4.push_back(chain_contact);
+            }
+            else if((*itmap_n) == 5)
+            {
+                chain_contacts_5.push_back(chain_contact);
+            }
+            else if((*itmap_n) == 6)
+            {
+                chain_contacts_6.push_back(chain_contact);
+            }
+            else if((*itmap_n) == 7)
+            {
+                chain_contacts_7.push_back(chain_contact);
+            }
+
+            chain_contact.clear();
+        }
+
+
+
+
+        // std::cout << (*itmap).size() << std::endl;
+        // std::cout
+        // std::cout << (*itmap)[0] << std::endl;
+        // (*itmap)[0] (*itmap)[0]
+        chain_contact = get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap)[0]],8.0);
+        std::cout << "# of contacts: " << chain_contact.size() << std::endl;
+        chain_contacts_0.push_back(chain_contact);
+        chain_contact.clear();
+
+        chain_contact = get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap)[1]],8.0);
+        std::cout << "# of contacts: " << chain_contact.size() << std::endl;
+        chain_contacts_1.push_back(chain_contact);
+        chain_contact.clear();
+
+        chain_contact = get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap)[2]],8.0);
+        std::cout << "# of contacts: " << chain_contact.size() << std::endl;
+        chain_contacts_2.push_back(chain_contact);
+        chain_contact.clear();
+
+        chain_contact = get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap)[3]],8.0);
+        std::cout << "# of contacts: " << chain_contact.size() << std::endl;
+        chain_contacts_3.push_back(chain_contact);
+        chain_contact.clear();
+
+        chain_contact = get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap)[4]],8.0);
+        std::cout << "# of contacts: " << chain_contact.size() << std::endl;
+        chain_contacts_4.push_back(chain_contact);
+        chain_contact.clear();
+
+        chain_contact = get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap)[5]],8.0);
+        std::cout << "# of contacts: " << chain_contact.size() << std::endl;
+        chain_contacts_5.push_back(chain_contact);
+        chain_contact.clear();
+
+        chain_contact = get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap)[6]],8.0);
+        std::cout << "# of contacts: " << chain_contact.size() << std::endl;
+        chain_contacts_6.push_back(chain_contact);
+        chain_contact.clear();
+
+        chain_contact = get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap)[7]],8.0);
+        std::cout << "# of contacts: " << chain_contact.size() << std::endl;
+        chain_contacts_7.push_back(chain_contact);
+        chain_contact.clear();
+
+        // break;
+    }
+
+
+
+
+    // // DIMERS
+    // std::vector<std::pair<int,int>>::iterator itdimers;
+    // for(itdimers = dimers.begin(); itdimers != dimers.end(); itdimers++)
+    // {
+    //     std::cout << (*itdimers).first << ' ' << (*itdimers).second << std::endl;
+
+    // }
+    // exit(0);
+
+#endif // MTMAP
 #endif // CONTACTS_BEFORE
-
-
-
 
     /* ---------------------------------------------------------
        Analysis Before. But with DCD Open. End.
@@ -986,7 +1153,7 @@ int main(int argc, char *argv[]) {
     debug("coords(37)[%d]: %f %f %f\n",frame_position,aa_later[37].x,aa_later[37].y,aa_later[37].z);
 
 
-#ifdef CONTACTS_AFTER
+#ifdef CONTACT_AFTER
 
 #endif // CONTACTS_AFTER
 
