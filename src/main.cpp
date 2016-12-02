@@ -778,58 +778,58 @@ int main(int argc, char *argv[]) {
 
     // int con1, con2 = -1;
 
+
     for(itmap = mt_matrix.begin(); itmap != mt_matrix.end(); itmap++)
     {
-        // if((*itmap)[0] != 234) // 266-all, 234-badone
-        // {
-        //     continue;
-        // }
-
-        // con1 = (*itmap)[0];
+        int ibin = -1;
 
         for(itmap_n = (*itmap).begin(); itmap_n != (*itmap).end(); itmap_n++)
         {
-            // con2 = (*itmap_n);
+            ibin += 1;
+            // std::cout << "bin: " << ibin << std::endl;
+            // std :: cout << (*itmap)[0] << " " << (*itmap_n) << std::endl;
 
-            std :: cout << (*itmap)[0] << " " << (*itmap_n) << std::endl;
+
             if(((*itmap)[0] == -1) or ((*itmap_n) == -1))
             {
-                std::cout << "No interface here." << std::endl;
+                // std::cout << "No interface here." << std::endl;
                 continue;
             }
 
             chain_contact = get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap_n)],8.0);
-            std::cout << "# of contacts: " << chain_contact.size() << std::endl;
+            // std::cout << "# of contacts: " << chain_contact.size() << std::endl;
 
-            if((*itmap_n) == 0)
+            // std::cout << "bin: " << (*itmap_n) << std::endl;
+
+            if(ibin == 0)
             {
                 chain_contacts_0.push_back(chain_contact);
             }
-            else if((*itmap_n) == 1)
+            else if(ibin == 1)
             {
                 chain_contacts_1.push_back(chain_contact);
             }
-            else if((*itmap_n) == 2)
+            else if(ibin == 2)
             {
                 chain_contacts_2.push_back(chain_contact);
             }
-            else if((*itmap_n) == 3)
+            else if(ibin == 3)
             {
                 chain_contacts_3.push_back(chain_contact);
             }
-            else if((*itmap_n) == 4)
+            else if(ibin == 4)
             {
                 chain_contacts_4.push_back(chain_contact);
             }
-            else if((*itmap_n) == 5)
+            else if(ibin == 5)
             {
                 chain_contacts_5.push_back(chain_contact);
             }
-            else if((*itmap_n) == 6)
+            else if(ibin == 6)
             {
                 chain_contacts_6.push_back(chain_contact);
             }
-            else if((*itmap_n) == 7)
+            else if(ibin == 7)
             {
                 chain_contacts_7.push_back(chain_contact);
             }
@@ -837,58 +837,8 @@ int main(int argc, char *argv[]) {
             chain_contact.clear();
         }
 
-
-
-
-        // std::cout << (*itmap).size() << std::endl;
-        // std::cout
-        // std::cout << (*itmap)[0] << std::endl;
-        // (*itmap)[0] (*itmap)[0]
-        chain_contact = get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap)[0]],8.0);
-        std::cout << "# of contacts: " << chain_contact.size() << std::endl;
-        chain_contacts_0.push_back(chain_contact);
-        chain_contact.clear();
-
-        chain_contact = get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap)[1]],8.0);
-        std::cout << "# of contacts: " << chain_contact.size() << std::endl;
-        chain_contacts_1.push_back(chain_contact);
-        chain_contact.clear();
-
-        chain_contact = get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap)[2]],8.0);
-        std::cout << "# of contacts: " << chain_contact.size() << std::endl;
-        chain_contacts_2.push_back(chain_contact);
-        chain_contact.clear();
-
-        chain_contact = get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap)[3]],8.0);
-        std::cout << "# of contacts: " << chain_contact.size() << std::endl;
-        chain_contacts_3.push_back(chain_contact);
-        chain_contact.clear();
-
-        chain_contact = get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap)[4]],8.0);
-        std::cout << "# of contacts: " << chain_contact.size() << std::endl;
-        chain_contacts_4.push_back(chain_contact);
-        chain_contact.clear();
-
-        chain_contact = get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap)[5]],8.0);
-        std::cout << "# of contacts: " << chain_contact.size() << std::endl;
-        chain_contacts_5.push_back(chain_contact);
-        chain_contact.clear();
-
-        chain_contact = get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap)[6]],8.0);
-        std::cout << "# of contacts: " << chain_contact.size() << std::endl;
-        chain_contacts_6.push_back(chain_contact);
-        chain_contact.clear();
-
-        chain_contact = get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap)[7]],8.0);
-        std::cout << "# of contacts: " << chain_contact.size() << std::endl;
-        chain_contacts_7.push_back(chain_contact);
-        chain_contact.clear();
-
-        // break;
+        // std::cout << "-------------------------------------------" << std::endl;
     }
-
-
-
 
     // // DIMERS
     // std::vector<std::pair<int,int>>::iterator itdimers;
@@ -1044,6 +994,14 @@ int main(int argc, char *argv[]) {
 
 #ifdef CONTACTS_DURING
 
+
+
+#ifdef MTMAP
+        std::cout << "Now checking contacts at a time later!" << std::endl;
+
+
+
+#endif // MTMAP
 #endif // CONTACTS_DURING
 
 

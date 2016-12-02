@@ -134,18 +134,15 @@ std::vector<boost::tuple<int,int,int>> get_contacts_for_chain(std::vector <Atom>
     // ,
     //                                                           float extra)
 {
-    std::cout << "Welcome to get_contacts_for_chain!" << std::endl;
-    std::cout << "Cutoff: " << cutoff << std::endl;
-              // << " +/- " << extra << std::endl;
-
+    // std::cout << "Welcome to get_contacts_for_chain!" << std::endl;
+    // std::cout << "Cutoff: " << cutoff << std::endl;
 
     std::vector<boost::tuple<int,int,int>> contacts;
 
-    // if
+    // std::cout << "chain1: " << chain1.size() << std::endl;
+    // std::cout << "chain2: " << chain2.size() << std::endl;
 
 
-    std::cout << "chain1: " << chain1.size() << std::endl;
-    std::cout << "chain2: " << chain2.size() << std::endl;
 
     // int i1, i2;
     // i1 = i2 = 0;
