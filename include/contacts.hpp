@@ -65,6 +65,14 @@ std::vector<boost::tuple<int,int,int,double>> get_contacts_for_chain(std::vector
                                                                      std::vector <Atom> chain2,
                                                                      float cutoff);
 
+std::vector<boost::tuple<int,int,int,double>> get_contacts_for_chain_later(Atom *aalater,
+                                                                           double cutoff,
+                                                                           double tolerance,
+                                                                           std::vector<boost::tuple
+                                                                           <int,int,int,double>> contacts);
+// chain_contact = get_contacts_for_chain_later(aa_later,8.0,2.0,chain_contacts_0[0]);
+
+
 // std::vector<boost::tuple<int,int,int,double>> get_contacts_for_chain(std::vector <Atom> chain1,
 //                                                                      std::vector <Atom> chain2,
 //                                                                      float cutoff);

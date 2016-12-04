@@ -199,10 +199,7 @@ std::vector<Atom> load_dcd_to_atoms(dcdhandle *dcd,std::vector<Atom> chain)
        for DCD reading.
        natoms: total atoms from DCD
        --------------------------------------------------------- */
-    debug("coordinate loading for Vector of Atoms..\n");
-    // debug("this many: %d\n",chain.size());
-    // debug("this many: %d\n",aa[0]);
-
+    // debug("coordinate loading for Vector of Atoms..\n");
 
     for(auto aa: chain)
     {
