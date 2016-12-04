@@ -383,23 +383,32 @@ int main(int argc, char *argv[]) {
         chain_ref.push_back(atombin);
         // printf("\n");
         // std::cout << "binsize: " << atombin.size() << std::endl; // 439, 427, 2..
+
+
+        if(i>4)
+        {
+            break;
+        }
+        // break;
     }
     std::cout << "# of chains: " << chain_ref.size() << std::endl;
 
     // exit(0);
 
 
-    // // EXAMPLE Iteration:
-    // for(itchain = chain_ref.begin(); itchain != chain_ref.end(); itchain++)
-    // {
-    //     std::cout << "Atoms in chain: " << (*itchain).size() << std::endl;
+    // // EXAMPLE Iteration: chain_ref
+    for(itchain = chain_ref.begin(); itchain != chain_ref.end(); itchain++)
+    {
+        std::cout << "Atoms in chain: " << (*itchain).size() << std::endl;
 
-    //     for(ita = (*itchain).begin(); ita != (*itchain).end(); ita++)
-    //     {
-    //         (*ita).print_coords();
-    //     }
-    // }
-    // // exit(0);
+        for(ita = (*itchain).begin(); ita != (*itchain).end(); ita++)
+        {
+            (*ita).print_coords();
+        }
+
+        break;
+    }
+    // exit(0);
 
     /* ---------------------------------------------------------
        Vector of chain-vectors of Atoms. END.
@@ -737,12 +746,10 @@ int main(int argc, char *argv[]) {
 #ifdef CONTACTS_BEFORE
 
 
-
-
 #ifdef MTMAP
     // std::vector<std::vector<boost::tuple<int,int,int>>> chain_contacts; // vector chain contacts
-    std::vector<boost::tuple<int,int,int>> chain_contact; // 1
-    std::vector<boost::tuple<int,int,int>>::iterator i_con;
+    std::vector<boost::tuple<int,int,int,double>> chain_contact; // 1
+    std::vector<boost::tuple<int,int,int,double>>::iterator i_con;
 
     // for(itchain = chain_ref.begin(); itchain != chain_ref.end(); itchain++)
     // {
@@ -767,14 +774,14 @@ int main(int argc, char *argv[]) {
     //  2  0  1  5
     //     3  6
     //     East
-    std::vector<std::vector<boost::tuple<int,int,int>>> chain_contacts_0; // vector chain contacts
-    std::vector<std::vector<boost::tuple<int,int,int>>> chain_contacts_1; // vector chain contacts
-    std::vector<std::vector<boost::tuple<int,int,int>>> chain_contacts_2; // vector chain contacts
-    std::vector<std::vector<boost::tuple<int,int,int>>> chain_contacts_3; // vector chain contacts
-    std::vector<std::vector<boost::tuple<int,int,int>>> chain_contacts_4; // vector chain contacts
-    std::vector<std::vector<boost::tuple<int,int,int>>> chain_contacts_5; // vector chain contacts
-    std::vector<std::vector<boost::tuple<int,int,int>>> chain_contacts_6; // vector chain contacts
-    std::vector<std::vector<boost::tuple<int,int,int>>> chain_contacts_7; // vector chain contacts
+    std::vector<std::vector<boost::tuple<int,int,int,double>>> chain_contacts_0; // vector chain contacts
+    std::vector<std::vector<boost::tuple<int,int,int,double>>> chain_contacts_1; // vector chain contacts
+    std::vector<std::vector<boost::tuple<int,int,int,double>>> chain_contacts_2; // vector chain contacts
+    std::vector<std::vector<boost::tuple<int,int,int,double>>> chain_contacts_3; // vector chain contacts
+    std::vector<std::vector<boost::tuple<int,int,int,double>>> chain_contacts_4; // vector chain contacts
+    std::vector<std::vector<boost::tuple<int,int,int,double>>> chain_contacts_5; // vector chain contacts
+    std::vector<std::vector<boost::tuple<int,int,int,double>>> chain_contacts_6; // vector chain contacts
+    std::vector<std::vector<boost::tuple<int,int,int,double>>> chain_contacts_7; // vector chain contacts
 
     // int con1, con2 = -1;
 
@@ -835,9 +842,12 @@ int main(int argc, char *argv[]) {
             }
 
             chain_contact.clear();
+
+
         }
 
         // std::cout << "-------------------------------------------" << std::endl;
+        // break;
     }
 
     // // DIMERS
@@ -996,9 +1006,162 @@ int main(int argc, char *argv[]) {
 
 
 
-#ifdef MTMAP
+#ifdef MTMAP1
         std::cout << "Now checking contacts at a time later!" << std::endl;
+        std::vector<Atom> amov;
+        std::vector<std::vector<Atom>> chain_later;
 
+        // Atom *aa_con;
+        // EXAMPLE Iteration: chain_ref
+        for(itchain = chain_ref.begin(); itchain != chain_ref.end(); itchain++)
+        {
+            std::cout << "Atoms in chain: " << (*itchain).size() << std::endl;
+
+
+
+            for(ita = (*itchain).begin(); ita != (*itchain).end(); ita++)
+            {
+                (*ita).print_coords();
+            }
+
+            // // aa_con = &(*ita);
+
+            // load_dcd_to_atoms(dcd,&(*ita));
+            // load_dcd_to_atoms(dcd,(*ita));
+            amov = load_dcd_to_atoms(dcd,(*itchain));
+
+            // ATOM    438  CA                 83.230 104.659 560.812
+            // ATOM    438  CA                 86.611 102.589 557.086
+
+            // for(ita = amov.begin(); ita != amov.end(); ita++)
+            // {
+            //     (*ita).print_coords();
+            // }
+
+            chain_later.push_back(amov);
+            break;
+        }
+        // exit(0);
+
+
+
+        // Iteration Later.
+        // for(itchain = chain_later.begin(); itchain != chain_later.end(); itchain++)
+        // {
+        //     std::cout << "Atoms in chain: " << (*itchain).size() << std::endl;
+
+        //     for(ita = (*itchain).begin(); ita != (*itchain).end(); ita++)
+        //     {
+        //         (*ita).print_coords();
+        //     }
+
+        //     // break;
+        // }
+        // exit(0);
+
+
+
+
+
+
+    for(itmap = mt_matrix.begin(); itmap != mt_matrix.end(); itmap++)
+    {
+        int ibin = -1;
+
+        for(itmap_n = (*itmap).begin(); itmap_n != (*itmap).end(); itmap_n++)
+        {
+            ibin += 1;
+            // std::cout << "bin: " << ibin << std::endl;
+            // std :: cout << (*itmap)[0] << " " << (*itmap_n) << std::endl;
+
+
+            if(((*itmap)[0] == -1) or ((*itmap_n) == -1))
+            {
+                // std::cout << "No interface here." << std::endl;
+                continue;
+            }
+
+            // std::cout << "# of contacts: " << chain_contact.size() << std::endl;
+            // std::cout << "bin: " << (*itmap_n) << std::endl;
+
+            if(ibin == 0)
+            {
+                chain_contact = get_contacts_for_chain_later(chain_later[(*itmap)[0]],
+                                                             chain_later[(*itmap_n)],
+                                                             8.0,
+                                                             2.0,
+                                                             chain_contacts_0[-1]);
+                chain_contacts_0.push_back(chain_contact);
+            }
+            else if(ibin == 1)
+            {
+                chain_contact = get_contacts_for_chain_later(chain_later[(*itmap)[0]],
+                                                             chain_later[(*itmap_n)],
+                                                             8.0,
+                                                             2.0,
+                                                             chain_contacts_1[-1]);
+                chain_contacts_1.push_back(chain_contact);
+            }
+            else if(ibin == 2)
+            {
+                chain_contact = get_contacts_for_chain_later(chain_later[(*itmap)[0]],
+                                                             chain_later[(*itmap_n)],
+                                                             8.0,
+                                                             2.0,
+                                                             chain_contacts_2[-1]);
+                chain_contacts_2.push_back(chain_contact);
+            }
+            else if(ibin == 3)
+            {
+                chain_contact = get_contacts_for_chain_later(chain_later[(*itmap)[0]],
+                                                             chain_later[(*itmap_n)],
+                                                             8.0,
+                                                             2.0,
+                                                             chain_contacts_3[-1]);
+                chain_contacts_3.push_back(chain_contact);
+            }
+            else if(ibin == 4)
+            {
+                chain_contact = get_contacts_for_chain_later(chain_later[(*itmap)[0]],
+                                                             chain_later[(*itmap_n)],
+                                                             8.0,
+                                                             2.0,
+                                                             chain_contacts_4[-1]);
+                chain_contacts_4.push_back(chain_contact);
+            }
+            else if(ibin == 5)
+            {
+                chain_contact = get_contacts_for_chain_later(chain_later[(*itmap)[0]],
+                                                             chain_later[(*itmap_n)],
+                                                             8.0,
+                                                             2.0,
+                                                             chain_contacts_5[-1]);
+                chain_contacts_5.push_back(chain_contact);
+            }
+            else if(ibin == 6)
+            {
+                chain_contact = get_contacts_for_chain_later(chain_later[(*itmap)[0]],
+                                                             chain_later[(*itmap_n)],
+                                                             8.0,
+                                                             2.0,
+                                                             chain_contacts_6[-1]);
+                chain_contacts_6.push_back(chain_contact);
+            }
+            else if(ibin == 7)
+            {
+                chain_contact = get_contacts_for_chain_later(chain_later[(*itmap)[0]],
+                                                             chain_later[(*itmap_n)],
+                                                             8.0,
+                                                             2.0,
+                                                             chain_contacts_7[-1]);
+                chain_contacts_7.push_back(chain_contact);
+            }
+            chain_contact.clear();
+        }
+
+        // std::cout << "-------------------------------------------" << std::endl;
+        break;
+    }
 
 
 #endif // MTMAP

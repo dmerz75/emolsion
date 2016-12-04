@@ -155,6 +155,7 @@ void load_dcd_to_atoms(dcdhandle *dcd,Atom *aa)
        --------------------------------------------------------- */
     debug("coordinate loading..\n");
     debug("this many: %d\n",aa[0].num_atoms);
+    // debug("this many: %d\n",aa[0]);
 
     // for the selection:
     for (int i=0; i<aa[0].num_atoms; i++)
@@ -186,3 +187,92 @@ void load_dcd_to_atoms(dcdhandle *dcd,Atom *aa)
     // }
 
 }
+
+std::vector<Atom> load_dcd_to_atoms(dcdhandle *dcd,std::vector<Atom> chain)
+// void load_dcd_to_atoms(dcdhandle *dcd,std::vector<Atom> chain)
+{
+    // Vector of Atoms...
+    std::vector<Atom> movedatoms;
+    Atom ma;
+
+    /* ---------------------------------------------------------
+       for DCD reading.
+       natoms: total atoms from DCD
+       --------------------------------------------------------- */
+    debug("coordinate loading for Vector of Atoms..\n");
+    // debug("this many: %d\n",chain.size());
+    // debug("this many: %d\n",aa[0]);
+
+
+    for(auto aa: chain)
+    {
+        // aa.print_Atom();
+        aa.x = dcd->x[aa.index];
+        aa.y = dcd->y[aa.index];
+        aa.z = dcd->z[aa.index];
+        ma = aa;
+        // aa.print_Atom();
+        // ma.print_Atom();
+        // std::cout << std::endl;
+
+        // ma.x = dcd->x[aa.index];
+        // ma.y = dcd->y[aa.index];
+        // ma.z = dcd->z[aa.index];
+        movedatoms.push_back(ma);
+    }
+
+
+    // for the selection:
+    // for (int i=0; i<chain.size(); i++)
+    // {
+    //     // printf("index: %d\n",chain[i].index);
+    //     chain[i].x = dcd->x[chain[i].index];
+    //     chain[i].y = dcd->y[chain[i].index];
+    //     chain[i].z = dcd->z[chain[i].index];
+    // }
+
+
+    return movedatoms;
+}
+
+
+
+// void load_dcd_to_atoms(dcdhandle *dcd,Atom aa)
+// {
+//     /* ---------------------------------------------------------
+//        for DCD reading.
+//        natoms: total atoms from DCD
+//        --------------------------------------------------------- */
+//     debug("coordinate loading..\n");
+//     debug("this many: %d\n",aa[0]->num_atoms);
+
+//     // for the selection:
+//     for (int i=0; i<aa[0]->num_atoms; i++)
+//     {
+//         // printf("index: %d\n",aa[i].index);
+//         aa[i]->x = dcd->x[aa[i].index];
+//         aa[i]->y = dcd->y[aa[i].index];
+//         aa[i]->z = dcd->z[aa[i].index];
+//     }
+
+
+//     // 2nd rendition.
+//     // for (int i=0; i<aa[0].num_atoms; i++)
+//     // {
+//     //         // printf("%d ",chain[i].indices[j]);
+//     //         // chain[i].pos[j].x = dcd->x[chain[i].indices[j]];
+//     //         // chain[i].pos[j].y = dcd->y[chain[i].indices[j]];
+//     //         // chain[i].pos[j].z = dcd->z[chain[i].indices[j]];
+
+//     //     // debug("this far: %d\n",i);
+//     //     // debug("%f %f %f\n",dcd->x[i],dcd->y[i],dcd->z[i]);
+//     //     // FIX
+//     //     aa[i].x = dcd->x[i];
+//     //     aa[i].y = dcd->y[i];
+//     //     aa[i].z = dcd->z[i];
+//     //         // chain[i].pos[j].x = dcd->x[chain[i].indices[j]];
+//     //         // chain[i].pos[j].y = dcd->y[chain[i].indices[j]];
+//     //         // chain[i].pos[j].z = dcd->z[chain[i].indices[j]];
+//     // }
+
+// }

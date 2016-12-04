@@ -61,9 +61,13 @@ std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <At
 
 // void get_contacts_for_chain();
 // std::vector<boost::tuple<int,int,int>> get_contacts_for_chain(std::vector<std::vector <Atom>> chain_ref);
-std::vector<boost::tuple<int,int,int>> get_contacts_for_chain(std::vector <Atom> chain1,
-                                                              std::vector <Atom> chain2,
-                                                              float cutoff);
+std::vector<boost::tuple<int,int,int,double>> get_contacts_for_chain(std::vector <Atom> chain1,
+                                                                     std::vector <Atom> chain2,
+                                                                     float cutoff);
+
+// std::vector<boost::tuple<int,int,int,double>> get_contacts_for_chain(std::vector <Atom> chain1,
+//                                                                      std::vector <Atom> chain2,
+//                                                                      float cutoff);
     // ,
                                                               // float extra);
 

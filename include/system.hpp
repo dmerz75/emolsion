@@ -196,6 +196,7 @@ public:
 
     ~Atom();
     void print_coords();
+    void print_Atom();
 
     float x, y, z;
     int index;
@@ -250,6 +251,19 @@ inline Atom::~Atom()
     // delete ptr;
     // delete obj;
 
+}
+inline void Atom::print_Atom()
+{
+    std::cout << " "
+              << "index: "
+              << index << "   "
+              << "x: "
+              << x << "  "
+              << "y: "
+              << y << "  "
+              << "z: "
+              << z << "  "
+              << std::endl;
 }
 inline void Atom::print_coords()
 {

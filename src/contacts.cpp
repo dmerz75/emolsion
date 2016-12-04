@@ -128,16 +128,16 @@ void get_contacts(Atom *a1,char *argv)
 }
 
 // void get_contacts_for_chain()
-std::vector<boost::tuple<int,int,int>> get_contacts_for_chain(std::vector <Atom> chain1,
-                                                              std::vector <Atom> chain2,
-                                                              float cutoff)
+std::vector<boost::tuple<int,int,int,double>> get_contacts_for_chain(std::vector <Atom> chain1,
+                                                                     std::vector <Atom> chain2,
+                                                                     float cutoff)
     // ,
     //                                                           float extra)
 {
     // std::cout << "Welcome to get_contacts_for_chain!" << std::endl;
     // std::cout << "Cutoff: " << cutoff << std::endl;
 
-    std::vector<boost::tuple<int,int,int>> contacts;
+    std::vector<boost::tuple<int,int,int,double>> contacts;
 
     // std::cout << "chain1: " << chain1.size() << std::endl;
     // std::cout << "chain2: " << chain2.size() << std::endl;
@@ -192,7 +192,7 @@ std::vector<boost::tuple<int,int,int>> get_contacts_for_chain(std::vector <Atom>
 
                 if(dist <= cutoff)
                 {
-                    contacts.push_back(boost::tuple<int,int,int>(a1.index,a2.index,1));
+                    contacts.push_back(boost::tuple<int,int,int,double>(a1.index,a2.index,1,dist));
                 }
                 // i2 += 1;
 
