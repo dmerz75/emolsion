@@ -278,6 +278,12 @@ std::vector<boost::tuple<int,int,int,double>> get_contacts_for_chain_later(Atom 
         if((dist < cutoff) or (dist < odist + tolerance))
         {
             onoff = 1;
+            // Contact:
+            // tuple: <index,index, 0 or 1, current-distance>
+            cur_contacts.push_back(boost::tuple<int,int,int,double>(boost::get<0>(c),
+                                                                    boost::get<1>(c),
+                                                                    onoff,
+                                                                    dist));
         }
         else
         {
@@ -286,16 +292,44 @@ std::vector<boost::tuple<int,int,int,double>> get_contacts_for_chain_later(Atom 
 
         // Contact:
         // tuple: <index,index, 0 or 1, current-distance>
-        cur_contacts.push_back(boost::tuple<int,int,int,double>(boost::get<0>(c),
-                                                                boost::get<1>(c),
-                                                                onoff,
-                                                                dist));
+        // cur_contacts.push_back(boost::tuple<int,int,int,double>(boost::get<0>(c),
+        //                                                         boost::get<1>(c),
+        //                                                         onoff,
+        //                                                         dist));
+
         // cur_contacts.clear();
     }
     // break;
 
     return cur_contacts;
     // }
+}
+
+std::vector<boost::tuple<int,int,int,double>> output_contacts(std::vector<std::vector<boost::tuple
+                                                              <int,int,int,double>>> contacts)
+{
+    std::cout << "Now printing contact file." << std::endl;
+    std::cout << "1st-dimension: " << contacts.size() << std::endl;
+
+
+    // FILE
+    FILE * fp_contacts;
+    fp_contacts = fopen("emol_contacts.dat","a+");
+
+    for(auto cl: contacts)
+    {
+        // std::cout << cl.size() << std::endl;
+
+        for(auto c: cl)
+        {
+
+
+        }
+        fprintf(fp_contacts,"%d ",cl.size());
+        // fprintf(fp_contacts,"%d ");
+    }
+
+    fclose(fp_contacts);
 }
 
 

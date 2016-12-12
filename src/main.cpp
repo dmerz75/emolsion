@@ -1260,104 +1260,193 @@ int main(int argc, char *argv[]) {
     std::cout << "7: " << chain_contacts_7.size() << std::endl;
 
 
-    for(itmap = mt_matrix.begin(); itmap != mt_matrix.end(); itmap++)
-    {
-        int ibin = -1;
-
-        for(itmap_n = (*itmap).begin(); itmap_n != (*itmap).end(); itmap_n++)
-        {
-            ibin += 1;
-            // std::cout << "bin: " << ibin << std::endl;
-            // std :: cout << (*itmap)[0] << " " << (*itmap_n) << std::endl;
+    output_contacts(chain_contacts_0); // 936 = 156 * 6
+    // output_contacts(chain_contacts_1);
+    // output_contacts(chain_contacts_0);
+    // output_contacts(chain_contacts_0);
+    // output_contacts(chain_contacts_0);
+    // output_contacts(chain_contacts_0);
 
 
-            if(((*itmap)[0] == -1) or ((*itmap_n) == -1))
-            {
-                // std::cout << "No interface here." << std::endl;
-                std::cout << " -- ";
-                // continue;
-            }
+    // // int count,count1;
+    // for(itmap = mt_matrix.begin(); itmap != mt_matrix.end(); itmap++)
+    // {
+    //     int ibin = -1;
 
-            std::cout << "ibin-" << ibin << ": "
-                      << std::endl;
+    //     for(itmap_n = (*itmap).begin(); itmap_n != (*itmap).end(); itmap_n++)
+    //     {
+    //         ibin += 1;
+    //         // std::cout << "bin: " << ibin << std::endl;
+    //         // std :: cout << (*itmap)[0] << " " << (*itmap_n) << std::endl;
 
-            // 0
-            if(ibin == 3)
-            {
-                for(auto cl: chain_contacts_3)
-                {
-                    std::cout << cl.size() << " ";
-                    // std::endl;
-                    // for(auto c: cl)
-                    // {
-                    //     std::cout << boost::get<0>(c) << " ";
-                    //     std::cout << boost::get<1>(c) << " ";
-                    // }
-                    // std::cout << std::endl;
-                }
-                std::cout << std::endl;
-                // std::cout << "in time, complete." << std::endl;
 
-                // std::cout << chain_contacts_0[0].size() << " <-> " << chain_contacts_0[-1].size() << std::endl;
-            }
-            else if(ibin == 1)
-            {
-                // for(auto cl: chain_contacts_1)
-                // {
-                //     std::cout << cl.size() << std::endl;
-                // }
-                // std::cout << chain_contacts_0[0] << " <-> " << chain_contacts_0[-1].size() << std::endl;
-            }
-            else if(ibin == 1)
-            {
-                // for(auto cl: chain_contacts_2)
-                // {
-                //     std::cout << cl.size() << std::endl;
-                // }
-                // std::cout << chain_contacts_0[0] << " <-> " << chain_contacts_0[-1].size() << std::endl;
-            }
-            else if(ibin == 1)
-            {
-                // for(auto cl: chain_contacts_3)
-                // {
-                //     std::cout << cl.size() << std::endl;
-                // }
-                // std::cout << chain_contacts_0[0] << " <-> " << chain_contacts_0[-1].size() << std::endl;
-            }
-            else if(ibin == 1)
-            {
-                // for(auto cl: chain_contacts_4)
-                // {
-                //     std::cout << cl.size() << std::endl;
-                // }
-                // std::cout << chain_contacts_0[0] << " <-> " << chain_contacts_0[-1].size() << std::endl;
-            }
-            else if(ibin == 1)
-            {
-                // for(auto cl: chain_contacts_5)
-                // {
-                //     std::cout << cl.size() << std::endl;
-                // }
-                // std::cout << chain_contacts_0[0] << " <-> " << chain_contacts_0[-1].size() << std::endl;
-            }
-            else if(ibin == 1)
-            {
-                // for(auto cl: chain_contacts_6)
-                // {
-                //     std::cout << cl.size() << std::endl;
-                // }
-                // std::cout << chain_contacts_0[0] << " <-> " << chain_contacts_0[-1].size() << std::endl;
-            }
-            else if(ibin == 1)
-            {
-                // for(auto cl: chain_contacts_7)
-                // {
-                //     std::cout << cl.size() << std::endl;
-                // }
-                // std::cout << chain_contacts_0[0] << " <-> " << chain_contacts_0[-1].size() << std::endl;
-            }
-        }
-    }
+    //         if(((*itmap)[0] == -1) or ((*itmap_n) == -1))
+    //         {
+    //             // std::cout << "No interface here." << std::endl;
+    //             std::cout << " -- ";
+    //             // continue;
+    //         }
+    //         std::cout << "ibin-" << ibin << ": "
+    //                   << std::endl;
+
+    //         // 0
+
+    //         // count = 0;
+    //         if(ibin == 0)
+    //         {
+    //             for(auto cl: chain_contacts_0)
+    //             {
+    //                 output_contacts(chain_contacts_0);
+    //                 // count += 1;
+    //                 // std::cout << cl.size() << " ";
+    //                 // std::cout << boost::get<0>(cl) << " "
+    //                 //           << boost::get<1>(cl) << " "
+    //                 //           << boost::get<2>(cl) << " "
+    //                 //           << boost::get<3>(cl) << std::endl;
+
+    //                 // if(count > 10)
+    //                 // {
+    //                 //     break;
+    //                 // }
+    //                 // std::endl;
+    //                 // for(auto c: cl)
+    //                 // {
+    //                 //     std::cout << boost::get<0>(c) << " ";
+    //                 //     std::cout << boost::get<1>(c) << " ";
+    //                 //     std::cout << boost::get<2>(c) << " ";
+    //                 //     std::cout << boost::get<3>(c) << " ";
+    //                 // }
+    //                 // std::cout << std::endl;
+    //             }
+    //             // std::cout << std::endl;
+    //             // std::cout << "in time, complete." << std::endl;
+    //             // std::cout << chain_contacts_0[0].size() << " <-> " << chain_contacts_0[-1].size() << std::endl;
+    //         }
+    //         // else if(ibin == 1)
+    //         // {
+    //         //     for(auto cl: chain_contacts_1)
+    //         //     {
+    //         //         std::cout << cl.size() << " ";
+    //         //         // std::endl;
+    //         //         // for(auto c: cl)
+    //         //         // {
+    //         //         //     std::cout << boost::get<0>(c) << " ";
+    //         //         //     std::cout << boost::get<1>(c) << " ";
+    //         //         // }
+    //         //         // std::cout << std::endl;
+    //         //     }
+    //         //     // std::cout << std::endl;
+    //         //     // std::cout << "in time, complete." << std::endl;
+    //         //     // std::cout << chain_contacts_0[0].size() << " <-> " << chain_contacts_0[-1].size() << std::endl;
+    //         // }
+    //         // else if(ibin == 2)
+    //         // {
+    //         //     for(auto cl: chain_contacts_2)
+    //         //     {
+    //         //         std::cout << cl.size() << " ";
+    //         //         // std::endl;
+    //         //         // for(auto c: cl)
+    //         //         // {
+    //         //         //     std::cout << boost::get<0>(c) << " ";
+    //         //         //     std::cout << boost::get<1>(c) << " ";
+    //         //         // }
+    //         //         // std::cout << std::endl;
+    //         //     }
+    //         //     // std::cout << std::endl;
+    //         //     // std::cout << "in time, complete." << std::endl;
+    //         //     // std::cout << chain_contacts_0[0].size() << " <-> " << chain_contacts_0[-1].size() << std::endl;
+    //         // }
+    //         // else if(ibin == 3)
+    //         // {
+    //         //     for(auto cl: chain_contacts_3)
+    //         //     {
+    //         //         std::cout << cl.size() << " ";
+    //         //         // std::endl;
+    //         //         // for(auto c: cl)
+    //         //         // {
+    //         //         //     std::cout << boost::get<0>(c) << " ";
+    //         //         //     std::cout << boost::get<1>(c) << " ";
+    //         //         // }
+    //         //         // std::cout << std::endl;
+    //         //     }
+    //         //     // std::cout << std::endl;
+    //         //     // std::cout << "in time, complete." << std::endl;
+    //         //     // std::cout << chain_contacts_0[0].size() << " <-> " << chain_contacts_0[-1].size() << std::endl;
+    //         // }
+    //         // else if(ibin == 4)
+    //         // {
+    //         //     for(auto cl: chain_contacts_4)
+    //         //     {
+    //         //         std::cout << cl.size() << " ";
+    //         //         // std::endl;
+    //         //         // for(auto c: cl)
+    //         //         // {
+    //         //         //     std::cout << boost::get<0>(c) << " ";
+    //         //         //     std::cout << boost::get<1>(c) << " ";
+    //         //         // }
+    //         //         // std::cout << std::endl;
+    //         //     }
+    //         //     // std::cout << std::endl;
+    //         //     // std::cout << "in time, complete." << std::endl;
+    //         //     // std::cout << chain_contacts_0[0].size() << " <-> " << chain_contacts_0[-1].size() << std::endl;
+    //         // }
+    //         // else if(ibin == 5)
+    //         // {
+    //         //     for(auto cl: chain_contacts_5)
+    //         //     {
+    //         //         std::cout << cl.size() << " ";
+    //         //         // std::endl;
+    //         //         // for(auto c: cl)
+    //         //         // {
+    //         //         //     std::cout << boost::get<0>(c) << " ";
+    //         //         //     std::cout << boost::get<1>(c) << " ";
+    //         //         // }
+    //         //         // std::cout << std::endl;
+    //         //     }
+    //         //     // std::cout << std::endl;
+    //         //     // std::cout << "in time, complete." << std::endl;
+    //         //     // std::cout << chain_contacts_0[0].size() << " <-> " << chain_contacts_0[-1].size() << std::endl;
+    //         // }
+    //         // else if(ibin == 6)
+    //         // {
+    //         //     for(auto cl: chain_contacts_6)
+    //         //     {
+    //         //         std::cout << cl.size() << " ";
+    //         //         // std::endl;
+    //         //         // for(auto c: cl)
+    //         //         // {
+    //         //         //     std::cout << boost::get<0>(c) << " ";
+    //         //         //     std::cout << boost::get<1>(c) << " ";
+    //         //         // }
+    //         //         // std::cout << std::endl;
+    //         //     }
+    //         //     // std::cout << std::endl;
+    //         //     // std::cout << "in time, complete." << std::endl;
+    //         //     // std::cout << chain_contacts_0[0].size() << " <-> " << chain_contacts_0[-1].size() << std::endl;
+    //         // }
+    //         // else if(ibin == 7)
+    //         // {
+    //         //     for(auto cl: chain_contacts_7)
+    //         //     {
+    //         //         std::cout << cl.size() << " ";
+    //         //         // std::endl;
+    //         //         // for(auto c: cl)
+    //         //         // {
+    //         //         //     std::cout << boost::get<0>(c) << " ";
+    //         //         //     std::cout << boost::get<1>(c) << " ";
+    //         //         // }
+    //         //         // std::cout << std::endl;
+    //         //     }
+    //         //     // std::cout << std::endl;
+    //         //     // std::cout << "in time, complete." << std::endl;
+    //         //     // std::cout << chain_contacts_0[0].size() << " <-> " << chain_contacts_0[-1].size() << std::endl;
+    //         // }
+    //     }
+
+    //     // Only cycle once for 8 interfaces..
+    //     break;
+
+    // }
 
 
 

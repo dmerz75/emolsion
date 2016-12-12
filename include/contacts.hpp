@@ -70,6 +70,12 @@ std::vector<boost::tuple<int,int,int,double>> get_contacts_for_chain_later(Atom 
                                                                            double tolerance,
                                                                            std::vector<boost::tuple
                                                                            <int,int,int,double>> contacts);
+// std::vector<boost::tuple<int,int,int,double>> output_contacts(std::vector<boost::tuple
+//                                                               <int,int,int,double>> contacts);
+std::vector<boost::tuple<int,int,int,double>> output_contacts(std::vector<std::vector<boost::tuple
+                                                              <int,int,int,double>>> contacts);
+
+
 // chain_contact = get_contacts_for_chain_later(aa_later,8.0,2.0,chain_contacts_0[0]);
 
 
