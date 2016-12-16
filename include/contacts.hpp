@@ -1,8 +1,8 @@
 # // 1: c++, c: contacts
 # // 2: name:
 # // .contacts
-#ifndef __contacts_hpp_
-#define __contacts_hpp_
+#ifndef _contacts_hpp_
+#define _contacts_hpp_
 
 /* ---------------------------------------------------------
    libraries:
@@ -44,6 +44,97 @@
    Classes:
    --------------------------------------------------------- */
 // header_class
+typedef boost::tuple<int,int,double> Contact;
+typedef std::vector<Contact> SetContacts;
+typedef std::vector<SetContacts> SetNeighbors;
+typedef std::vector<SetNeighbors> SetChains;
+typedef std::vector<SetChains> SetGlobalContacts;
+
+
+/* ---------------------------------------------------------
+   Contacts
+   --------------------------------------------------------- */
+// class Contacts
+// {
+// public:
+//     Contacts();
+//     Contacts(const Contacts &obj);
+//     ~Contacts();
+//     void print_all_contacts();
+
+//     // int size;
+//     int index;
+
+//     std::vector<std::vector<boost::tuple<int,int,double>>> frame_contacts;
+//     std::vector<boost::tuple<int,int,double>> chain_contacts;
+//     std::vector<boost::tuple<int,int,double>> initial_contacts;
+
+// private:
+
+// };
+// inline Contacts::Contacts()
+// {
+//     // std::cout << "Contacts construction commencing." << std::endl;
+//     // debug("Contacts construction commencing.\n");
+//     // chainid = -1;
+//     // num_residues = -1;
+//     // chain = "zz";
+// }
+// inline Contacts::Contacts(const Contacts &obj)
+// {
+//     // Copy constructor.
+//     index = obj.index;
+//     // chain = obj.chain;
+//     // num_residues = obj.num_residues;
+//     // chainid = obj.chainid;
+// }
+// inline Contacts::~Contacts()
+// {
+//     // std::cout << "Contacts destruction commencing." << std::endl;
+//     // debug("Contacts destruction commencing.\n");
+//     // chain_contacts.clear();
+//     frame_contacts.clear();
+
+// }
+// inline void Contacts::print_all_contacts()
+// {
+//     std::cout << "Contacts: " << std::endl;
+
+//     // for(auto c: contact)
+//     // {
+//     //     std::cout << c[0] << " "
+//     //               << c[1] << " "
+//     //               << c[2] << std::endl;
+//     // }
+// }
+
+// class Residue: public Chain
+// {
+// public:
+//     Residue();
+//     Residue(const Residue &obj);
+//     ~Residue();
+//     void print_prop();
+
+//     int id_global;
+//     int id_local;
+//     int resid;
+//     int num_atoms_res;
+//     std::string restype;   // HIS, GLU, ILE, LEU ..
+
+// private:
+
+// };
+// inline Residue::Residue()
+// {
+//     // std::cout << "Residue construction commencing." << std::endl;
+//     // debug("Residue construction commencing.\n");
+//     id_global = -1;
+//     id_local = -1;
+//     resid = -1;
+//     num_atoms_res = -1;
+// }
+
 
 
 
@@ -61,15 +152,42 @@ std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <At
 
 // void get_contacts_for_chain();
 // std::vector<boost::tuple<int,int,int>> get_contacts_for_chain(std::vector<std::vector <Atom>> chain_ref);
-std::vector<boost::tuple<int,int,int,double>> get_contacts_for_chain(std::vector <Atom> chain1,
-                                                                     std::vector <Atom> chain2,
-                                                                     float cutoff);
+// std::vector<boost::tuple<int,int,int,double>> get_contacts_for_chain(std::vector <Atom> chain1,
+//                                                                      std::vector <Atom> chain2,
+//                                                                      float cutoff);
+// std::vector<boost::tuple<int,int,double>> get_contacts_for_chain(std::vector <Atom> chain1,
+//                                                                  std::vector <Atom> chain2,
+//                                                                  float cutoff);
+// std::vector<boost::tuple<int,int,double>> get_contacts_for_chain(std::vector <Atom> chain1,
+//                                                                  std::vector <Atom> chain2,
+//                                                                  float cutoff,
+//                                   std::vector<boost::tuple<int,int,double>> chain_contacts);
+// void get_contacts_for_chain(std::vector <Atom> chain1,
+//                             std::vector <Atom> chain2,
+//                             float cutoff,
+//                             std::vector<boost::tuple<int,int,double>> contacts);
+SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
+                                   std::vector <Atom> chain2,
+                                   double cutoff);
 
-std::vector<boost::tuple<int,int,int,double>> get_contacts_for_chain_later(Atom *aalater,
-                                                                           double cutoff,
-                                                                           double tolerance,
-                                                                           std::vector<boost::tuple
-                                                                           <int,int,int,double>> contacts);
+
+
+// std::vector<boost::tuple<int,int,int,double>> get_contacts_for_chain_later(Atom *aalater,
+//                                                                            double cutoff,
+//                                                                            double tolerance,
+//                                                                            std::vector<boost::tuple
+//                                                                            <int,int,int,double>> contacts);
+
+
+// SetContacts get_contacts_for_chain_later(Atom *alater,
+//                                          double cutoff,
+//                                          double tolerance,
+//                                          SetContacts contacts);
+
+
+
+
+
 // std::vector<boost::tuple<int,int,int,double>> output_contacts(std::vector<boost::tuple
 //                                                               <int,int,int,double>> contacts);
 std::vector<boost::tuple<int,int,int,double>> output_contacts(std::vector<std::vector<boost::tuple

@@ -128,18 +128,30 @@ void get_contacts(Atom *a1,char *argv)
 }
 
 // void get_contacts_for_chain()
-std::vector<boost::tuple<int,int,int,double>> get_contacts_for_chain(std::vector <Atom> chain1,
-                                                                     std::vector <Atom> chain2,
-                                                                     float cutoff)
+// std::vector<boost::tuple<int,int,int,double>> get_contacts_for_chain(std::vector <Atom> chain1,
+//                                                                      std::vector <Atom> chain2,
+//                                                                      float cutoff)
+// std::vector<boost::tuple<int,int,double>> get_contacts_for_chain(std::vector <Atom> chain1,
+//                                                                  std::vector <Atom> chain2,
+//                                                                  float cutoff)
+// std::vector<boost::tuple<int,int,double>> get_contacts_for_chain(std::vector <Atom> chain1,
+//                                                                  std::vector <Atom> chain2,
+//                                                                  float cutoff,
+//                                                                  std::vector<boost::tuple<int,int,double>> contacts)
+// void get_contacts_for_chain(std::vector <Atom> chain1,
+//                             std::vector <Atom> chain2,
+//                             float cutoff,
+//                             std::vector<boost::tuple<int,int,double>> contacts)
+SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
+                                   std::vector <Atom> chain2,
+                                   double cutoff)
 {
     // std::cout << "Welcome to get_contacts_for_chain!" << std::endl;
     // std::cout << "Cutoff: " << cutoff << std::endl;
-
-    std::vector<boost::tuple<int,int,int,double>> contacts;
-
+    // std::vector<boost::tuple<int,int,double>> contacts;
+    SetContacts contacts;
     // std::cout << "chain1: " << chain1.size() << std::endl;
     // std::cout << "chain2: " << chain2.size() << std::endl;
-
 
 
     // int i1, i2;
@@ -148,6 +160,7 @@ std::vector<boost::tuple<int,int,int,double>> get_contacts_for_chain(std::vector
 
     Vector a1v,a2v;
     double dist = 0.0;
+    // int total_contacts = 0;
 
     for(auto a1: chain1)
     {
@@ -159,7 +172,6 @@ std::vector<boost::tuple<int,int,int,double>> get_contacts_for_chain(std::vector
 
         for(auto a2: chain2)
         {
-
             // if(a2.index <)
 
             // if(i2 <= i1)
@@ -169,9 +181,10 @@ std::vector<boost::tuple<int,int,int,double>> get_contacts_for_chain(std::vector
 
 
             // Directive: Exclude an index being in contact with itself,
-            // or its +/- 1 neighbor.
-            if((a2.index == a1.index) or (a2.index + 1 == a1.index) or
-               (a2.index - 1 == a1.index))
+            // or its +/- 2 neighbor.
+            if((a2.index - 2 >= a1.index) and (a2.index + 2 <= a1.index))
+               // or
+               // (a2.index - 1 == a1.index))
             {
                 continue;
             }
@@ -193,117 +206,149 @@ std::vector<boost::tuple<int,int,int,double>> get_contacts_for_chain(std::vector
 
                 if(dist <= cutoff)
                 {
-                    contacts.push_back(boost::tuple<int,int,int,double>(a1.index,a2.index,1,dist));
+                    // contacts.push_back(boost::tuple<int,int,int,double>(a1.index,a2.index,1,dist));
+                    // total_contacts += 1;
+
+                    contacts.push_back(boost::tuple<int,int,double>(a1.index,a2.index,dist));
+                    // try
+                    // {
+                    //     contacts.push_back(boost::tuple<int,int,double>(a1.index,a2.index,dist));
+
+                    // }
+                    // catch (const std::bad_alloc &contacts)
+                    // {
+                    //     std::cout << "Allocation failed for single contact: " << contacts.what() << std::endl;
+                    // }
                 }
                 // i2 += 1;
 
             // }
         }
-
         // i1 += 1;
         // i2 = 0;
         // i += 1;
     }
 
-
+    // std::cout << "contacts_size: " << contacts.size() << std::endl;
+    // std::cout << "contacts_counted: " << total_contacts << std::endl;
     return contacts;
+
+    // if (total_contacts > 0)
+    // {
+    //     return contacts;
+    // }
+    // else
+    // {
+    //     // contacts.push_back(boost::tuple<int,int,double>(-1,-1,0));
+    //     return std::vector<boost::tuple<int,int,double>>(1,(-1,-1,0));
+    // }
+
+
+
 }
 
 // void load_dcd_to_atoms(dcdhandle *dcd,Atom *aa);
 
-std::vector<boost::tuple<int,int,int,double>> get_contacts_for_chain_later(Atom *alater,
-                                                                           double cutoff,
-                                                                           double tolerance,
-                                                                           std::vector<boost::tuple
-                                                                           <int,int,int,double>> contacts)
-{
-    // std::cout << "Welcome to Contacts - Later!" << std::endl;
+// std::vector<boost::tuple<int,int,int,double>> get_contacts_for_chain_later(Atom *alater,
+//                                                                            double cutoff,
+//                                                                            double tolerance,
+//                                                                            std::vector<boost::tuple
+//                                                                            <int,int,int,double>> contacts)
+// SetContacts get_contacts_for_chain_later(Atom *alater,
+//                                          double cutoff,
+//                                          double tolerance,
+//                                          SetContacts contacts)
+// {
+//     // std::cout << "Welcome to Contacts - Later!" << std::endl;
+//     // std::vector<std::vector<boost::tuple<int,int,int,double>>> vec_contacts;
 
-    // std::vector<std::vector<boost::tuple<int,int,int,double>>> vec_contacts;
-    std::vector<boost::tuple<int,int,int,double>> cur_contacts;
-    // std::cout << std::get<0>(contacts[0]); << std::endl;
-
-    Vector p1, p2;
-    double dist;
-    double odist;
-    int onoff; // onoff; 0/1.
-
-
-    // Note to self.. fix the distance function to account for x,y,z
-    // possibly with template or overloaded function.
-
-    // for(auto a: contacts) // 156 in the 312 monomer case.
-    // {
-    // std::cout << "size: " << a.size() << std::endl;
-
-    // std::cout << "evaluating " << contacts.size() << " contacts." << std::endl;
-
-    for(auto c: contacts)
-    {
-        onoff = -1; // will be set to 0,1 in all cases.
-        dist = 0.0;
-        odist = 0.0;
-
-        // std::cout << boost::get<0>(c) << std::endl;
-        // std::cout << boost::get<1>(c) << std::endl;
-        // std::cout << boost::get<2>(c) << std::endl;
-        // std::cout << "orig_dist: " << boost::get<3>(c) << std::endl;
-        odist = boost::get<3>(c);
+//     // std::vector<boost::tuple<int,int,int,double>> cur_contacts;
+//     SetContacts cur_contacts;
 
 
-        // std::cout << std::endl;
-        // std::cout << alater[boost::get<0>(c)].x << std::endl;
-        // std::cout << alater[boost::get<0>(c)].y << std::endl;
-        // std::cout << alater[boost::get<0>(c)].z << std::endl;
+//     // std::cout << std::get<0>(contacts[0]); << std::endl;
 
-        p1.x = alater[boost::get<0>(c)].x;
-        p1.y = alater[boost::get<0>(c)].y;
-        p1.z = alater[boost::get<0>(c)].z;
-
-        // std::cout << std::endl;
-        // std::cout << alater[boost::get<1>(c)].x << std::endl;
-        // std::cout << alater[boost::get<1>(c)].y << std::endl;
-        // std::cout << alater[boost::get<1>(c)].z << std::endl;
-
-        p2.x = alater[boost::get<1>(c)].x;
-        p2.y = alater[boost::get<1>(c)].y;
-        p2.z = alater[boost::get<1>(c)].z;
+//     Vector p1, p2;
+//     double dist;
+//     double odist;
+//     int onoff; // onoff; 0/1.
 
 
-        dist = distance(p1,p2);
+//     // Note to self.. fix the distance function to account for x,y,z
+//     // possibly with template or overloaded function.
 
-        // std::cout << "cur_dist: " << dist << std::endl;
-        // std::cout << std::endl;
+//     // for(auto a: contacts) // 156 in the 312 monomer case.
+//     // {
+//     // std::cout << "size: " << a.size() << std::endl;
 
-        if((dist < cutoff) or (dist < odist + tolerance))
-        {
-            onoff = 1;
-            // Contact:
-            // tuple: <index,index, 0 or 1, current-distance>
-            cur_contacts.push_back(boost::tuple<int,int,int,double>(boost::get<0>(c),
-                                                                    boost::get<1>(c),
-                                                                    onoff,
-                                                                    dist));
-        }
-        else
-        {
-            onoff = 0;
-        }
+//     // std::cout << "evaluating " << contacts.size() << " contacts." << std::endl;
 
-        // Contact:
-        // tuple: <index,index, 0 or 1, current-distance>
-        // cur_contacts.push_back(boost::tuple<int,int,int,double>(boost::get<0>(c),
-        //                                                         boost::get<1>(c),
-        //                                                         onoff,
-        //                                                         dist));
+//     for(auto c: contacts)
+//     {
+//         onoff = -1; // will be set to 0,1 in all cases.
+//         dist = 0.0;
+//         odist = 0.0;
 
-        // cur_contacts.clear();
-    }
-    // break;
+//         // std::cout << boost::get<0>(c) << std::endl;
+//         // std::cout << boost::get<1>(c) << std::endl;
+//         // std::cout << boost::get<2>(c) << std::endl;
+//         // std::cout << "orig_dist: " << boost::get<3>(c) << std::endl;
+//         odist = boost::get<3>(c);
 
-    return cur_contacts;
-    // }
-}
+
+//         // std::cout << std::endl;
+//         // std::cout << alater[boost::get<0>(c)].x << std::endl;
+//         // std::cout << alater[boost::get<0>(c)].y << std::endl;
+//         // std::cout << alater[boost::get<0>(c)].z << std::endl;
+
+//         p1.x = alater[boost::get<0>(c)].x;
+//         p1.y = alater[boost::get<0>(c)].y;
+//         p1.z = alater[boost::get<0>(c)].z;
+
+//         // std::cout << std::endl;
+//         // std::cout << alater[boost::get<1>(c)].x << std::endl;
+//         // std::cout << alater[boost::get<1>(c)].y << std::endl;
+//         // std::cout << alater[boost::get<1>(c)].z << std::endl;
+
+//         p2.x = alater[boost::get<1>(c)].x;
+//         p2.y = alater[boost::get<1>(c)].y;
+//         p2.z = alater[boost::get<1>(c)].z;
+
+
+//         dist = distance(p1,p2);
+
+//         // std::cout << "cur_dist: " << dist << std::endl;
+//         // std::cout << std::endl;
+
+//         if((dist < cutoff) or (dist < odist + tolerance))
+//         {
+//             onoff = 1;
+//             // Contact:
+//             // tuple: <index,index, 0 or 1, current-distance>
+//             cur_contacts.push_back(boost::tuple<int,int,int,double>(boost::get<0>(c),
+//                                                                     boost::get<1>(c),
+//                                                                     onoff,
+//                                                                     dist));
+//         }
+//         else
+//         {
+//             onoff = 0;
+//         }
+
+//         // Contact:
+//         // tuple: <index,index, 0 or 1, current-distance>
+//         // cur_contacts.push_back(boost::tuple<int,int,int,double>(boost::get<0>(c),
+//         //                                                         boost::get<1>(c),
+//         //                                                         onoff,
+//         //                                                         dist));
+
+//         // cur_contacts.clear();
+//     }
+//     // break;
+
+//     return cur_contacts;
+//     // }
+// }
 
 std::vector<boost::tuple<int,int,int,double>> output_contacts(std::vector<std::vector<boost::tuple
                                                               <int,int,int,double>>> contacts)

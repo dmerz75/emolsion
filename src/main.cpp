@@ -418,7 +418,7 @@ int main(int argc, char *argv[]) {
 
 
 
-#ifdef MTMAP
+#ifdef MTMAP_PRE
     // Pairs: A and B.
     std::vector<std::pair<int,int>> dimers;
 
@@ -746,6 +746,169 @@ int main(int argc, char *argv[]) {
 #ifdef CONTACTS_BEFORE
 
 
+
+#ifdef MTMAP2
+    std::cout << "MTMAP2: Beginnning contacts by sector." << std::endl;
+
+    //   time        chain       contacts      contact
+    // std::vector<std::vector<std::vector<boost::tuple<int,int,double>>>> all_contacts;
+
+    // std::vector<boost::tuple<int,int,double>> contacts0; // * 8
+    // std::vector<std::vector<std::vector<boost::tuple<int,int,double>>>>  contacts8 (8,boost::tuple<int,int,double>);
+
+
+    // std::vector<std::vector<boost::tuple>> frame_contacts (boost::tuple<int,int,double>(8));
+    // std::vector<std::vector<boost::tuple<int,int,double>>> frame_contacts;
+    // std::vector<boost::tuple<int,int,double>> chain_contacts;
+    // std::cout << frame_contacts.size() << std::endl;
+
+    // std::vector<std::vector<boost::tuple<int,int,double>>>
+    //     frame_contacts(8,std::vector<boost::tuple<int,int,double>>);
+
+
+    // std::vector<std::vector<int>> mt_matrix(18, std::vector<int>(8,-1));
+
+
+
+    // exit(0);
+
+    // std::vector<std::vector<int>> mt_matrix(dimers.size(), std::vector<int>(8,-1));
+    // std::vector<boost::tuple<int,int,double>> chain_contacts;
+
+    // iterators:
+    // std::vector<boost::tuple<int,int,double>>::iterator icc;
+
+
+    // Contacts **contacts_all = new Contacts *;
+    // contacts_all = Contacts[8][aa_ref[0].num_chains];
+
+    // Contacts *contacts_0;
+    // try
+    // {
+    //     contacts_0 = new Contacts[aa_ref[0].num_chains];
+    // }
+    // catch (std::bad_alloc xa)
+    // {
+    //     std::cout << "Allocation Failure\n";
+    //     exit(1);
+    // }
+    // std::cout << "frame_contacts: " << contacts_0[0].frame_contacts.size() << std::endl;
+    // std::cout << "chain_contacts: " << contacts_0[0].chain_contacts.size() << std::endl;
+    // std::cout << "initial_contacts: " << contacts_0[0].initial_contacts.size() << std::endl;
+    // exit(0);
+
+
+
+
+    // FrameNeighborSetContact
+    // ChainContacts NeighborContacts (8,Contact(0));
+    // for(auto c: NeighborContacts)
+    // {
+    //     std::cout << n.size() << std::endl;
+    // }
+
+
+
+    SetContacts contact_set;
+    SetNeighbors neighbor_set;
+    SetChains chain_set;
+    SetGlobalContacts global_contacts;
+
+
+    // iterate through the connectivity matrix.
+    // dimers only. all 8 neighbors.
+    for(itmap = mt_matrix.begin(); itmap != mt_matrix.end(); itmap++)
+    {
+        int ibin = -1;
+
+        // std::cout << (*itmap)[0] << std::endl;
+        // get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap_n)],
+        //                        8.0,contacts_0[(*itmap)[0]].chain_set);
+
+        // std::cout << "contact_size: " << contacts_0[(*itmap)[0]].chain_set.size() << std::endl;
+
+
+        // INJECT Neighbors here. 8!
+
+        for(itmap_n = (*itmap).begin(); itmap_n != (*itmap).end(); itmap_n++)
+        {
+            ibin += 1;
+            // std::cout << "bin: " << ibin << std::endl; // 0-7
+            // std :: cout << (*itmap)[0] << " " << (*itmap_n) << std::endl;
+
+
+            // This loop prevents the need for the following Allocation failure...
+            if(((*itmap)[0] == -1) or ((*itmap_n) == -1))
+            {
+                // std::cout << "No interface here." << std::endl;
+                contact_set.clear();
+                // continue;
+            }
+            else
+            {
+                contact_set = get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap_n)],8.0);
+            }
+            neighbor_set.push_back(contact_set); // builds up to 8.
+            // std::cout << neighbor_set.size() << std::endl;
+            // neighbor_set[ibin] = contact_set;
+
+            // std::cout << "# of contacts: " << contact_set.size() << std::endl;
+            contact_set.clear();
+
+            // std::cout << "# of contacts: " << chain_set.size() << std::endl;
+            // try
+            // {
+            //     chain_set = get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap_n)],8.0);
+
+            // }
+            // catch (const std::bad_alloc &chain_set)
+            // {
+            //     std::cout << "Allocation failed: " << chain_set.what() << std::endl;
+            //     continue;
+            // }
+
+            // std::cout << "chain: " << (*itmap_n) << std::endl;
+            // std::cout << frame_contacts.size() << std::endl;
+            // std::cout << frame_contacts[ibin].size() << std::endl;
+            // frame_contacts[ibin]->push_back(chain_set);
+        }
+        chain_set.push_back(neighbor_set);
+        neighbor_set.clear();
+
+        // std::cout << "-------------------------------------------" << std::endl;
+        // break;
+    }
+    global_contacts.push_back(chain_set);
+
+    std::cout << "Original Contacts obtained!" << std::endl;
+    std::cout << global_contacts.size() << std::endl;
+
+    int cmax = 0;
+
+    for(auto f: global_contacts)
+    {
+        std::cout << f.size() << std::endl;
+
+        for(auto c: f)
+        {
+            cmax += 1;
+            if (cmax > 5)
+            {
+                break;
+            }
+            std::cout << "\t" << c.size() << std::endl;
+
+            for(auto n: c)
+            {
+                std::cout << "\t\t" << n.size() << std::endl;
+            }
+        }
+    }
+    // exit(0);
+
+
+#endif // MTMAP2
+
 #ifdef MTMAP
     // std::vector<std::vector<boost::tuple<int,int,int>>> chain_contacts; // vector chain contacts
     std::vector<boost::tuple<int,int,int,double>> chain_contact; // 1
@@ -1003,6 +1166,97 @@ int main(int argc, char *argv[]) {
 #ifdef CONTACTS_DURING
 
 
+#ifdef MTMAP2asdf
+        std::cout << "MTMAP2: Evaluating contacts by sector." << std::endl;
+
+        std::vector<Atom> amov;
+        std::vector<std::vector<Atom>> chain_later;
+
+        // EXAMPLE Iteration: chain_ref
+        for(itchain = chain_ref.begin(); itchain != chain_ref.end(); itchain++)
+        {
+            // std::cout << "Atoms in chain: " << (*itchain).size() << std::endl;
+            // for(ita = (*itchain).begin(); ita != (*itchain).end(); ita++)
+            // {
+            //     (*ita).print_coords();
+            // }
+
+            amov = load_dcd_to_atoms(dcd,(*itchain));
+
+            // ATOM    438  CA                 83.230 104.659 560.812
+            // ATOM    438  CA                 86.611 102.589 557.086
+            // for(ita = amov.begin(); ita != amov.end(); ita++)
+            // {
+            //     (*ita).print_coords();
+            // }
+
+            chain_later.push_back(amov);
+            // break;
+        }
+        // exit(0);
+
+        // Iteration Later.
+        // for(itchain = chain_later.begin(); itchain != chain_later.end(); itchain++)
+        // {
+        //     std::cout << "Atoms in chain: " << (*itchain).size() << std::endl;
+
+        //     for(ita = (*itchain).begin(); ita != (*itchain).end(); ita++)
+        //     {
+        //         (*ita).print_coords();
+        //     }
+
+        //     // break;
+        // }
+        // exit(0);
+
+
+        // SetContacts contact_set;
+        // SetNeighbors neighbor_set;
+        // SetChains chain_set;
+        // SetGlobalContacts global_contacts;
+        contact_set.clear();
+        neighbor_set.clear();
+        chain_set.clear();
+
+        for(itmap = mt_matrix.begin(); itmap != mt_matrix.end(); itmap++)
+        {
+            int ibin = -1;
+
+            contact_set.clear();
+            for(itmap_n = (*itmap).begin(); itmap_n != (*itmap).end(); itmap_n++)
+            {
+                ibin += 1;
+                // std::cout << "bin: " << ibin << std::endl;
+                // std :: cout << (*itmap)[0] << " " << (*itmap_n) << std::endl;
+
+
+                if(((*itmap)[0] == -1) or ((*itmap_n) == -1))
+                {
+                    // std::cout << "No interface here." << std::endl;
+                    // continue;
+                    contact_set.clear();
+                }
+                else
+                {
+                    // contact_set = get_contacts_for_chain_later(aa_later,
+                    //                                            8.0,2.0,
+                    //                                            global_contacts[0][(*itmap)][ibin]);
+
+                }
+                neighbor_set.push_back(contact_set); // builds up to 8.
+                // neighbor_set.clear();
+            }
+            chain_set.push_back(neighbor_set);
+            neighbor_set.clear();
+            // neighbor_set.push_back(contact_set); // builds up to 8.
+            // neighbor_set.clear();
+            // std::cout << "-------------------------------------------" << std::endl;
+            // break;
+        }
+        global_contacts.push_back(chain_set);
+
+
+#endif // MTMAP2
 
 #ifdef MTMAP
         std::cout << "Now checking contacts at a time later!" << std::endl;
@@ -1245,6 +1499,12 @@ int main(int argc, char *argv[]) {
 
 #ifdef CONTACTS_AFTER
 
+
+#ifdef MTMAP2
+    std::cout << "MTMAP2: Contacts by sector complete." << std::endl;
+
+
+#endif // MTMAP2
 
 #ifdef MTMAP
     std::cout << "The evaluation of MTMAP is now complete." << std::endl;

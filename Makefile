@@ -65,6 +65,7 @@ DCDW    = -DDCDREAD -DDCD_WRITE_B -DDCD_WRITE -DDCD_WRITE_E
 CONS    = -DGET_CONTACTS
 CON_BDA = -DCONTACTS_BEFORE -DCONTACTS_DURING -DCONTACTS_AFTER
 MT      = -DMTMAP
+MT2     = -DMTMAP_PRE -DMTMAP2
 # Macros: Analysis Before. During. After.
 
 
@@ -128,6 +129,10 @@ contacts2:
 # $(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(MT) $(DCD) $(CON_BDA) -DNDEBUG -o test/$(EXEC)_mtcontacts
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(MT) $(DCD) $(CON_BDA) -o test/$(EXEC)_mtcontacts
 	cd test && ./$(EXEC)_mtcontacts mt.ref.pdb mt_partial.dcd 6 30 6 # 6-9 .. 21-24-27.
+contacts3:
+# $(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(MT2) $(DCD) $(CON_BDA) -DNDEBUG -o test/$(EXEC)_mtcontacts2
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(MT2) $(DCD) $(CON_BDA) -o test/$(EXEC)_mtcontacts2
+	cd test && ./$(EXEC)_mtcontacts2 mt.ref.pdb mt_partial.dcd 6 30 6 # 6-9 .. 21-24-27.
 
 
 # -----------------------------------------------------------------------------
