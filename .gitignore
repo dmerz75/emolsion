@@ -34,3 +34,4 @@ run_*
 test/run_*
 test/run_readpdb_def*
 test/emol_*
+test/fig

@@ -183,6 +183,10 @@ SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
 //                                          double cutoff,
 //                                          double tolerance,
 //                                          SetContacts contacts);
+SetContacts get_contacts_for_chain_later(Atom *alater,
+                                         double cutoff,
+                                         double tolerance,
+                                         SetContacts contacts);
 
 
 
@@ -192,6 +196,7 @@ SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
 //                                                               <int,int,int,double>> contacts);
 std::vector<boost::tuple<int,int,int,double>> output_contacts(std::vector<std::vector<boost::tuple
                                                               <int,int,int,double>>> contacts);
+void output_global_contacts(SetGlobalContacts gc);
 
 
 // chain_contact = get_contacts_for_chain_later(aa_later,8.0,2.0,chain_contacts_0[0]);

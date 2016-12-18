@@ -35,6 +35,7 @@ extern "C" {
 #include "system.hpp"
 #include "dcd.h"
 #include "contacts.hpp"
+#include "microtubule.hpp"
 // #include "mt.hpp"
 // #include "config.hpp"
 // #include "ConfigFile.h"
@@ -419,23 +420,29 @@ int main(int argc, char *argv[]) {
 
 
 #ifdef MTMAP_PRE
-    // Pairs: A and B.
-    std::vector<std::pair<int,int>> dimers;
+    // Pairs: A(~439) and B(427-8).
+    DimerList dimers;
 
     // ACCESS chain_ref
-    int amon, bmon;
-    amon = 0;
-    bmon = 1;
+    int imonomer = 0;
 
-    for(itchain = chain_ref.begin(); itchain != chain_ref.end(); itchain++)
+    for(auto c: chain_ref)
     {
-        if((*itchain).size() >= 433)
+        imonomer += 1;
+        if(c.size() >= 433)
         {
-            dimers.push_back(std::make_pair(amon,bmon));
-            amon += 2;
-            bmon += 2;
+            dimers.push_back(std::make_pair(imonomer-1,imonomer));
         }
     }
+
+    // Print DimerList dimers.
+    // imonomer = 0;
+    // for(auto d: dimers)
+    // {
+    //     std::cout << dimers[imonomer].first << " " << dimers[imonomer].second << std::endl;
+    //     imonomer += 1;
+    // }
+    // exit(0);
 
     // // DIMERS
     // std::vector<std::pair<int,int>>::iterator itdimers;
@@ -446,6 +453,7 @@ int main(int argc, char *argv[]) {
     // exit(0);
 
 
+
     // External Neighbor (chainid).
     // std::vector<std::vector<int>> mt_matrix(aa_ref[0].num_chains, std::vector<int>(8,-1));
 
@@ -453,7 +461,8 @@ int main(int argc, char *argv[]) {
     // std::vector<std::vector<Atom>>::iterator itchain;
     // std::vector<Atom>::iterator ita;
 
-    std::vector<std::vector<int>> mt_matrix(dimers.size(), std::vector<int>(8,-1));
+    // Vector of Vector <int>
+    MtNeighbors mt_matrix(dimers.size(), std::vector<int>(8,-1));
     std::vector<std::vector<int>>::iterator itmap;
     std::vector<int>::iterator itmap_n;
 
@@ -815,76 +824,156 @@ int main(int argc, char *argv[]) {
     SetGlobalContacts global_contacts;
 
 
-    // iterate through the connectivity matrix.
-    // dimers only. all 8 neighbors.
-    for(itmap = mt_matrix.begin(); itmap != mt_matrix.end(); itmap++)
+    for(auto c: mt_matrix)
     {
-        int ibin = -1;
-
-        // std::cout << (*itmap)[0] << std::endl;
-        // get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap_n)],
-        //                        8.0,contacts_0[(*itmap)[0]].chain_set);
-
-        // std::cout << "contact_size: " << contacts_0[(*itmap)[0]].chain_set.size() << std::endl;
-
-
-        // INJECT Neighbors here. 8!
-
-        for(itmap_n = (*itmap).begin(); itmap_n != (*itmap).end(); itmap_n++)
-        {
-            ibin += 1;
-            // std::cout << "bin: " << ibin << std::endl; // 0-7
-            // std :: cout << (*itmap)[0] << " " << (*itmap_n) << std::endl;
-
-
-            // This loop prevents the need for the following Allocation failure...
-            if(((*itmap)[0] == -1) or ((*itmap_n) == -1))
-            {
-                // std::cout << "No interface here." << std::endl;
-                contact_set.clear();
-                // continue;
-            }
-            else
-            {
-                contact_set = get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap_n)],8.0);
-            }
-            neighbor_set.push_back(contact_set); // builds up to 8.
-            // std::cout << neighbor_set.size() << std::endl;
-            // neighbor_set[ibin] = contact_set;
-
-            // std::cout << "# of contacts: " << contact_set.size() << std::endl;
-            contact_set.clear();
-
-            // std::cout << "# of contacts: " << chain_set.size() << std::endl;
-            // try
-            // {
-            //     chain_set = get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap_n)],8.0);
-
-            // }
-            // catch (const std::bad_alloc &chain_set)
-            // {
-            //     std::cout << "Allocation failed: " << chain_set.what() << std::endl;
-            //     continue;
-            // }
-
-            // std::cout << "chain: " << (*itmap_n) << std::endl;
-            // std::cout << frame_contacts.size() << std::endl;
-            // std::cout << frame_contacts[ibin].size() << std::endl;
-            // frame_contacts[ibin]->push_back(chain_set);
-        }
-        chain_set.push_back(neighbor_set);
         neighbor_set.clear();
 
-        // std::cout << "-------------------------------------------" << std::endl;
-        // break;
+
+        // std::cout << " "
+        //           << c[0] << " "
+        //           << c[1] << " "
+        //           << c[2] << " "
+        //           << c[3] << " "
+        //           << c[4] << " "
+        //           << c[5] << " "
+        //           << c[6] << " "
+        //           << c[7] << " "
+        //           << std::endl;
+
+        // Alpha, Beta, Alpha-Beta
+        contact_set = get_contacts_for_chain(chain_ref[c[0]],chain_ref[c[0]],8.0);
+        neighbor_set.push_back(contact_set);
+        contact_set.clear();
+        contact_set = get_contacts_for_chain(chain_ref[c[1]],chain_ref[c[1]],8.0);
+        neighbor_set.push_back(contact_set);
+        contact_set.clear();
+        contact_set = get_contacts_for_chain(chain_ref[c[0]],chain_ref[c[1]],8.0);
+        neighbor_set.push_back(contact_set);
+        contact_set.clear();
+
+        for(int m=2; m<=4; m++)
+        {
+            if(c[m] < 0)
+            {
+                contact_set.clear();
+                neighbor_set.push_back(contact_set);
+                continue;
+            }
+            contact_set = get_contacts_for_chain(chain_ref[c[0]],chain_ref[c[m]],8.0);
+            neighbor_set.push_back(contact_set);
+            contact_set.clear();
+        }
+
+        for(int m=5; m<=7; m++)
+        {
+            if(c[m] < 0)
+            {
+                contact_set.clear();
+                neighbor_set.push_back(contact_set);
+                continue;
+            }
+            contact_set = get_contacts_for_chain(chain_ref[c[1]],chain_ref[c[m]],8.0);
+            neighbor_set.push_back(contact_set);
+            contact_set.clear();
+        }
+
+        // for(auto n: c)
+        // {
+        //     std::cout << n << std::endl;
+        // }
+        // std::d::cout << std::endl;
+
+        chain_set.push_back(neighbor_set);
+
+
+        //     // std::cout << "-------------------------------------------" << std::endl;
+        //     // break;
+        // }
     }
     global_contacts.push_back(chain_set);
+    chain_set.clear();
+    // exit(0);
+
+
+
+
+    // iterate through the connectivity matrix.
+    // dimers only. all 8 neighbors.
+    // for(itmap = mt_matrix.begin(); itmap != mt_matrix.end(); itmap++)
+    // {
+    //     int ibin = -1;
+    //     // std::cout << (*itmap)[0] << std::endl;
+    //     // get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap_n)],
+    //     //                        8.0,contacts_0[(*itmap)[0]].chain_set);
+    //     // std::cout << "contact_size: " << contacts_0[(*itmap)[0]].chain_set.size() << std::endl;
+
+
+    //     // INJECT Neighbors here. 8!
+    //     for(itmap_n = (*itmap).begin(); itmap_n != (*itmap).end(); itmap_n++)
+    //     {
+    //         ibin += 1;
+    //         // std::cout << "bin: " << ibin << std::endl; // 0-7
+    //         // std :: cout << (*itmap)[0] << " " << (*itmap_n) << std::endl;
+
+    //         // This loop prevents the need for the following Allocation failure...
+    //         if(((*itmap)[0] == -1) or ((*itmap_n) == -1))
+    //         {
+    //             // std::cout << "No interface here." << std::endl;
+    //             contact_set.clear();
+    //             // continue;
+    //         }
+    //         else
+    //         {
+    //             std::cout << ibin << " " << (*itmap)[0] << " " << (*itmap)[1] << std::endl;
+    //             if((ibin >= 0) and (ibin <=3))
+    //             {
+
+    //                 contact_set = get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap_n)],8.0);
+    //             }
+    //             else
+    //             {
+
+    //                 contact_set = get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap_n)],8.0);
+    //             }
+    //         neighbor_set.push_back(contact_set); // builds up to 8.
+    //         // std::cout << neighbor_set.size() << std::endl;
+    //         // neighbor_set[ibin] = contact_set;
+
+    //         // std::cout << "# of contacts: " << contact_set.size() << std::endl;
+    //         contact_set.clear();
+
+    //         // std::cout << "# of contacts: " << chain_set.size() << std::endl;
+    //         // try
+    //         // {
+    //         //     chain_set = get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap_n)],8.0);
+
+    //         // }
+    //         // catch (const std::bad_alloc &chain_set)
+    //         // {
+    //         //     std::cout << "Allocation failed: " << chain_set.what() << std::endl;
+    //         //     continue;
+    //         // }
+
+    //         // std::cout << "chain: " << (*itmap_n) << std::endl;
+    //         // std::cout << frame_contacts.size() << std::endl;
+    //         // std::cout << frame_contacts[ibin].size() << std::endl;
+    //         // frame_contacts[ibin]->push_back(chain_set);
+    //     }
+    //     chain_set.push_back(neighbor_set);
+    //     neighbor_set.clear();
+
+    //     // std::cout << "-------------------------------------------" << std::endl;
+    //     // break;
+    // }
+    // global_contacts.push_back(chain_set);
+
 
     std::cout << "Original Contacts obtained!" << std::endl;
     std::cout << global_contacts.size() << std::endl;
 
-    int cmax = 0;
 
+    // Print some of the original contacts.
+    int cmax = 0;
     for(auto f: global_contacts)
     {
         std::cout << f.size() << std::endl;
@@ -1166,7 +1255,7 @@ int main(int argc, char *argv[]) {
 #ifdef CONTACTS_DURING
 
 
-#ifdef MTMAP2asdf
+#ifdef MTMAP2
         std::cout << "MTMAP2: Evaluating contacts by sector." << std::endl;
 
         std::vector<Atom> amov;
@@ -1214,48 +1303,244 @@ int main(int argc, char *argv[]) {
         // SetNeighbors neighbor_set;
         // SetChains chain_set;
         // SetGlobalContacts global_contacts;
+
+        // Precaution I guess.
         contact_set.clear();
         neighbor_set.clear();
         chain_set.clear();
 
-        for(itmap = mt_matrix.begin(); itmap != mt_matrix.end(); itmap++)
+
+        std::cout << "Global Contacts: " << std::endl;
+        std::cout << global_contacts[0].size() << std::endl;
+
+
+        int it_c, it_n;
+        it_c = it_n = 0;
+
+        for(auto c: global_contacts[0])
         {
-            int ibin = -1;
+            it_n = 0;
+            // std::cout << "c: " << c.size() << std::endl; // ~ 9
 
-            contact_set.clear();
-            for(itmap_n = (*itmap).begin(); itmap_n != (*itmap).end(); itmap_n++)
+            for(auto n: c)
             {
-                ibin += 1;
-                // std::cout << "bin: " << ibin << std::endl;
-                // std :: cout << (*itmap)[0] << " " << (*itmap_n) << std::endl;
 
+                contact_set = get_contacts_for_chain_later(aa_later,
+                                                           8.0,2.0,
+                                                           global_contacts[0][it_c][it_n]);
+                // std::cout << contact_set.size() << std::endl;
 
-                if(((*itmap)[0] == -1) or ((*itmap_n) == -1))
-                {
-                    // std::cout << "No interface here." << std::endl;
-                    // continue;
-                    contact_set.clear();
-                }
-                else
-                {
-                    // contact_set = get_contacts_for_chain_later(aa_later,
-                    //                                            8.0,2.0,
-                    //                                            global_contacts[0][(*itmap)][ibin]);
-
-                }
-                neighbor_set.push_back(contact_set); // builds up to 8.
-                // neighbor_set.clear();
+                neighbor_set.push_back(contact_set);
+                contact_set.clear();
+                it_n += 1;
             }
             chain_set.push_back(neighbor_set);
             neighbor_set.clear();
-            // neighbor_set.push_back(contact_set); // builds up to 8.
-            // neighbor_set.clear();
-            // std::cout << "-------------------------------------------" << std::endl;
-            // break;
+
+            it_c += 1;
         }
         global_contacts.push_back(chain_set);
 
+        // exit(0);
 
+        // for(auto c: mt_matrix)
+        // {
+        //     // neighbor_set.clear();
+        //     std::cout << " "
+        //               << c[0] << " "
+        //               << c[1] << " "
+        //               << c[2] << " "
+        //               << c[3] << " "
+        //               << c[4] << " "
+        //               << c[5] << " "
+        //               << c[6] << " "
+        //               << c[7] << " "
+        //               << std::endl;
+
+        //     for(int it_n=0; it_n < c.size(); it_n++)
+        //     {
+        //         if(c[it_n] >= 0)
+        //         {
+        //             contact_set = get_contacts_for_chain_later(aa_later,
+        //                                                        8.0,2.0,
+        //                                                        global_contacts[0][c[it_n]][it_n]);
+        //             neighbor_set.push_back(contact_set);
+        //             contact_set.clear();
+        //         }
+        //         else
+        //         {
+        //             contact_set.clear();
+        //             neighbor_set.push_back(contact_set);
+        //         }
+
+        //     }
+
+
+            // Alpha, Beta, Alpha-Beta
+            // contact_set = get_contacts_for_chain(chain_ref[c[0]],chain_ref[c[0]],8.0);
+            // neighbor_set.push_back(contact_set);
+            // contact_set.clear();
+            // contact_set = get_contacts_for_chain(chain_ref[c[1]],chain_ref[c[1]],8.0);
+            // neighbor_set.push_back(contact_set);
+            // contact_set.clear();
+            // contact_set = get_contacts_for_chain(chain_ref[c[0]],chain_ref[c[1]],8.0);
+            // neighbor_set.push_back(contact_set);
+            // contact_set.clear();
+
+            // for(int m=2; m<=4; m++)
+            // {
+            //     if(c[m] < 0)
+            //     {
+            //         contact_set.clear();
+            //         neighbor_set.push_back(contact_set);
+            //         continue;
+            //     }
+            //     contact_set = get_contacts_for_chain(chain_ref[c[0]],chain_ref[c[m]],8.0);
+            //     neighbor_set.push_back(contact_set);
+            //     contact_set.clear();
+            // }
+
+            // for(int m=5; m<=7; m++)
+            // {
+            //     if(c[m] < 0)
+            //     {
+            //         contact_set.clear();
+            //         neighbor_set.push_back(contact_set);
+            //         continue;
+            //     }
+            //     contact_set = get_contacts_for_chain(chain_ref[c[1]],chain_ref[c[m]],8.0);
+            //     neighbor_set.push_back(contact_set);
+            //     contact_set.clear();
+            // }
+
+            // // for(auto n: c)
+            // // {
+            // //     std::cout << n << std::endl;
+            // // }
+            // // std::d::cout << std::endl;
+
+            // chain_set.push_back(neighbor_set);
+
+
+            //     // std::cout << "-------------------------------------------" << std::endl;
+            //     // break;
+            // }
+        // }
+
+
+        // global_contacts.push_back(chain_set);
+        // chain_set.clear();
+
+
+        // for(auto m: mt_matrix)
+        // {
+        //     std::cout << "m: " << m << std::endl;
+        // }
+        // exit(0);
+
+
+        // int it_c, it_n, it_sc;
+        // it_n = it_sc = it_c = 0;
+
+        // // for(auto c: global_contacts)
+        // for(int ic=0; ic<global_contacts[0].size(); ic++)
+        // {
+        //     for(auto n: global_contacts[0])
+        //     // std::cout << "c: " << c.size() << std::endl;
+        //     // for(auto n: c)
+        //     {
+        //         // std::cout << "n: " << n.size() << std::endl;
+        //         for(auto sc: n)
+        //         {
+        //             // std::cout << "sc: " << sc.size() << std::endl;
+        //             std::cout << "c: " << ic
+        //                       << "n: " << n.size()
+        //                       << "sc: " << sc.size() << std::endl;
+
+        //             // contact_set = get_contacts_for_chain_later(aa_later,
+        //             //                                            8.0,2.0,
+        //             //                                            global_contacts[0][ichain][ibin]);
+
+        //             it_sc += 1;
+        //         }
+        //         contact_set.clear();
+
+        //         it_n += 1;
+        //     }
+        //     it_c += 1;
+        // }
+        // exit(0);
+
+
+        // std::cout << global_contacts[0] // frame(0) --> 156 --> 8
+        // std::cout << global_contacts[0][0][4].size() << std::endl; // frame-156-8-sc
+        // std::cout << global_contacts[0][1][4].size() << std::endl; // frame-156-8-sc
+        // std::cout << global_contacts[0][2][1].size() << std::endl; // frame-156-8-sc
+        // exit(0);
+
+
+        // int ichain = 0;
+        // int ibin = 0;
+
+        // for(itmap = mt_matrix.begin(); itmap != mt_matrix.end(); itmap++)
+        // {
+        //     ibin = 0;
+        //     contact_set.clear();
+
+        //     for(itmap_n = (*itmap).begin(); itmap_n != (*itmap).end(); itmap_n++)
+        //     {
+        //         // ibin += 1;
+        //         ichain = (*itmap)[0] / 2;
+        //         // std::cout << "bin: " << ibin << std::endl;
+        //         // std :: cout << (*itmap)[0] << " " << (*itmap_n) << std::endl;
+        //         // 306 305
+        //         // 306 309
+        //         // 308 308
+        //         // 308 309
+        //         // 308 283
+        //         // 308 306
+        //         // 308 310
+        //         // 308 -1
+        //         // 308 307
+        //         // 308 311
+        //         // 310 310
+        //         // 310 311
+        //         // 310 285
+        //         // 310 308
+        //         // 310 235
+        //         // 310 -1
+        //         // 310 309
+        //         // 310 260
+
+        //         if(((*itmap)[0] == -1) or ((*itmap_n) == -1))
+        //         {
+        //             // std::cout << "No interface here." << std::endl;
+        //             // continue;
+        //             contact_set.clear();
+        //         }
+        //         else
+        //         {
+        //             // contact_set.clear();
+        //             contact_set = get_contacts_for_chain_later(aa_later,
+        //                                                        8.0,2.0,
+        //                                                        global_contacts[0][ichain][ibin]);
+        //             // global_contacts[0][(*itmap)][ibin]);
+        //         }
+        //         neighbor_set.push_back(contact_set); // builds up to 8.
+        //         // neighbor_set.clear();
+
+        //         ibin += 1;
+        //     }
+        //     chain_set.push_back(neighbor_set);
+        //     neighbor_set.clear();
+
+        //     // neighbor_set.push_back(contact_set); // builds up to 8.
+        //     // neighbor_set.clear();
+        //     // std::cout << "-------------------------------------------" << std::endl;
+        //     // break;
+        // }
+        // global_contacts.push_back(chain_set);
+        // exit(0);
 #endif // MTMAP2
 
 #ifdef MTMAP
@@ -1502,6 +1787,44 @@ int main(int argc, char *argv[]) {
 
 #ifdef MTMAP2
     std::cout << "MTMAP2: Contacts by sector complete." << std::endl;
+
+
+    // Print some of the original contacts.
+    // int cmax = 0;
+    int fmax;
+    fmax = cmax = 0;
+
+    for(auto f: global_contacts)
+    {
+        fmax += 1;
+        cmax = 0;
+        std::cout << f.size() << std::endl;
+
+        for(auto c: f)
+        {
+            cmax += 1;
+            if (cmax > 5)
+            {
+                break;
+            }
+            std::cout << "\t" << c.size() << std::endl;
+
+            for(auto n: c)
+            {
+                std::cout << "\t\t" << n.size() << std::endl;
+            }
+        }
+
+        if(fmax > 3)
+        {
+            break;
+        }
+    }
+    // exit(0);
+
+
+    // Print Analysis of Contacts File.
+    output_global_contacts(global_contacts);
 
 
 #endif // MTMAP2
