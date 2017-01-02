@@ -66,7 +66,7 @@ data_name = args['dataname']
 #  Import Data! (3/4)                                         #
 #  ---------------------------------------------------------  #
 
-data = np.loadtxt('emol_contacts.dat')
+data = np.loadtxt('emol_contacts_EX1.dat')
 print data.shape
 
 

@@ -19,6 +19,8 @@
 
 // Definitions:
 /* #define BUFFERSIZE 900 */
+// typedef std::vector<Atom> vAtoms;
+
 
 // using namespace std;
 
