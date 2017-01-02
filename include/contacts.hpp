@@ -169,6 +169,8 @@ std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <At
 SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
                                    std::vector <Atom> chain2,
                                    double cutoff);
+SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
+                                   double cutoff);
 
 
 
@@ -197,6 +199,7 @@ SetContacts get_contacts_for_chain_later(Atom *alater,
 std::vector<boost::tuple<int,int,int,double>> output_contacts(std::vector<std::vector<boost::tuple
                                                               <int,int,int,double>>> contacts);
 void output_global_contacts(SetGlobalContacts gc);
+void explore_global_contacts(SetGlobalContacts gc);
 
 
 // chain_contact = get_contacts_for_chain_later(aa_later,8.0,2.0,chain_contacts_0[0]);

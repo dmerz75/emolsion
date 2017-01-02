@@ -757,7 +757,7 @@ int main(int argc, char *argv[]) {
 
 
 #ifdef MTMAP2
-    std::cout << "MTMAP2: Beginnning contacts by sector." << std::endl;
+    std::cout << "MTMAP2: Beginning contacts by sector." << std::endl;
 
     //   time        chain       contacts      contact
     // std::vector<std::vector<std::vector<boost::tuple<int,int,double>>>> all_contacts;
@@ -841,12 +841,19 @@ int main(int argc, char *argv[]) {
         //           << std::endl;
 
         // Alpha, Beta, Alpha-Beta
-        contact_set = get_contacts_for_chain(chain_ref[c[0]],chain_ref[c[0]],8.0);
+        // contact_set = get_contacts_for_chain(chain_ref[c[0]],chain_ref[c[0]],8.0);
+        // neighbor_set.push_back(contact_set);
+        // contact_set.clear();
+        // contact_set = get_contacts_for_chain(chain_ref[c[1]],chain_ref[c[1]],8.0);
+        // neighbor_set.push_back(contact_set);
+        // contact_set.clear();
+        contact_set = get_contacts_for_chain(chain_ref[c[0]],8.0);
         neighbor_set.push_back(contact_set);
         contact_set.clear();
-        contact_set = get_contacts_for_chain(chain_ref[c[1]],chain_ref[c[1]],8.0);
+        contact_set = get_contacts_for_chain(chain_ref[c[1]],8.0);
         neighbor_set.push_back(contact_set);
         contact_set.clear();
+
         contact_set = get_contacts_for_chain(chain_ref[c[0]],chain_ref[c[1]],8.0);
         neighbor_set.push_back(contact_set);
         contact_set.clear();
@@ -1812,6 +1819,7 @@ int main(int argc, char *argv[]) {
             for(auto n: c)
             {
                 std::cout << "\t\t" << n.size() << std::endl;
+                // std::cout << n.get<0> << std::endl;
             }
         }
 
@@ -1825,6 +1833,8 @@ int main(int argc, char *argv[]) {
 
     // Print Analysis of Contacts File.
     output_global_contacts(global_contacts);
+
+    explore_global_contacts(global_contacts);
 
 
 #endif // MTMAP2

@@ -245,6 +245,106 @@ SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
 
 }
 
+SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
+                                   double cutoff)
+{
+    // std::cout << "Welcome to get_contacts_for_chain!" << std::endl;
+    // std::cout << "Cutoff: " << cutoff << std::endl;
+    // std::vector<boost::tuple<int,int,double>> contacts;
+    SetContacts contacts;
+    // std::cout << "chain1: " << chain1.size() << std::endl;
+    // std::cout << "chain2: " << chain2.size() << std::endl;
+
+
+    // int i1, i2;
+    // i1 = i2 = 0;
+    // int i = 0;
+
+    Vector a1v,a2v;
+    double dist = 0.0;
+    // int total_contacts = 0;
+
+    for(auto a1: chain1)
+    {
+        // std::cout << i1 << " " << a1.index << std::endl;
+        // std::cout << a1.index << std::endl;
+        a1v.x = a1.x;
+        a1v.y = a1.y;
+        a1v.z = a1.z;
+
+        for(auto a2: chain1)
+        {
+            // Directive: Exclude an index being in contact with itself,
+            // or its +/- 2 neighbor.
+            // if((a2.index - 2 >= a1.index) and (a2.index + 2 <= a1.index))
+            // {
+            //     continue;
+            // }
+            if (a2.index - 2 <= a1.index)
+            {
+                continue;
+            }
+
+
+                // std::cout << "\t" << i2 << "\t" << a2.index << std::endl;
+                // std::cout << "\t" << a2.index << std::endl;
+
+                a2v.x = a2.x;
+                a2v.y = a2.y;
+                a2v.z = a2.z;
+
+                dist = distance(a1v,a2v);
+
+
+                // a1.print_coords();
+                // a2.print_coords();
+
+
+                if(dist <= cutoff)
+                {
+                    // contacts.push_back(boost::tuple<int,int,int,double>(a1.index,a2.index,1,dist));
+                    // total_contacts += 1;
+
+                    contacts.push_back(boost::tuple<int,int,double>(a1.index,a2.index,dist));
+                    // try
+                    // {
+                    //     contacts.push_back(boost::tuple<int,int,double>(a1.index,a2.index,dist));
+
+                    // }
+                    // catch (const std::bad_alloc &contacts)
+                    // {
+                    //     std::cout << "Allocation failed for single contact: " << contacts.what() << std::endl;
+                    // }
+                }
+                // i2 += 1;
+
+            // }
+        }
+        // i1 += 1;
+        // i2 = 0;
+        // i += 1;
+    }
+
+    // std::cout << "contacts_size: " << contacts.size() << std::endl;
+    // std::cout << "contacts_counted: " << total_contacts << std::endl;
+    return contacts;
+
+    // if (total_contacts > 0)
+    // {
+    //     return contacts;
+    // }
+    // else
+    // {
+    //     // contacts.push_back(boost::tuple<int,int,double>(-1,-1,0));
+    //     return std::vector<boost::tuple<int,int,double>>(1,(-1,-1,0));
+    // }
+
+
+
+}
+
+
+
 // void load_dcd_to_atoms(dcdhandle *dcd,Atom *aa);
 
 // std::vector<boost::tuple<int,int,int,double>> get_contacts_for_chain_later(Atom *alater,
@@ -389,11 +489,11 @@ void output_global_contacts(SetGlobalContacts gc)
     fp_contacts = fopen("emol_contacts.dat", "w+");
     // fprintf(fp_contacts,"\n");
 
-    for(auto f: gc)
+    for(auto f: gc) // frame in global contact array
     {
-        for(auto c: f)
+        for(auto c: f) // chain (but actually dimer) in frame, 156
         {
-            for(auto n: c)
+            for(auto n: c) // 9 situations of 6 neighbors, 0,1,0-1; 0-2,3,4; 1-5,6,7
             {
                 fprintf(fp_contacts,"%d ",n.size());
             }
@@ -403,6 +503,33 @@ void output_global_contacts(SetGlobalContacts gc)
 
     fclose(fp_contacts);
 }
+
+void explore_global_contacts(SetGlobalContacts gc)
+{
+    std::cout << "Exploring Global Contacts .." << std::endl;
+
+
+    for(auto f: gc) // frame in global contact array
+    {
+        for(auto c: f) // chain (but actually dimer) in frame, 156
+        {
+            for(auto n: c) // 9 situations of 6 neighbors, 0,1,0-1; 0-2,3,4; 1-5,6,7
+            {
+                // std::cout << n.get<0> << std::endl;
+                // std::cout << std::get<0>(n) << std::endl;
+                for(auto t: n)
+                {
+                    // std::cout << std::get<0>(t) << std::endl;
+                    std::cout << t.get<0>() << " "
+                              << t.get<1>() << " "
+                              << t.get<2>() << " "
+                              << std::endl;
+                }
+            }
+        }
+    }
+}
+
 
 
 // void get_map_of_mtneighbors(std::vector<std::vectorAtom> chain_ref,std::vector<std::vector<int>> matrix,
