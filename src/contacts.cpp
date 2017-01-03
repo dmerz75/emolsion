@@ -26,6 +26,7 @@
 #include "contacts.hpp"
 #include "md.h"
 #include "system.hpp"
+#include "microtubule.hpp"
 // #include "dcd.h"
 // #include "dcdio.h"
 
@@ -504,10 +505,28 @@ void output_global_contacts(SetGlobalContacts gc)
     fclose(fp_contacts);
 }
 
-void explore_global_contacts(SetGlobalContacts gc)
+SetGlobalContacts explore_global_contacts(SetGlobalContacts gc,MtIndexMap map)
 {
     std::cout << "Exploring Global Contacts .." << std::endl;
 
+    SetGlobalContacts gc3;
+    SetChains chain_set3;
+    SetNeighbors neighbor_set;
+
+    SetContacts contact_set_NN;
+    SetContacts contact_set_MM;
+    SetContacts contact_set_CC;
+
+    SetContacts contact_set_NM;
+    SetContacts contact_set_NC;
+
+    SetContacts contact_set_MN;
+    SetContacts contact_set_MC;
+
+    SetContacts contact_set_CN;
+    SetContacts contact_set_CM;
+
+    int count_t = 0;
 
     for(auto f: gc) // frame in global contact array
     {
@@ -517,17 +536,27 @@ void explore_global_contacts(SetGlobalContacts gc)
             {
                 // std::cout << n.get<0> << std::endl;
                 // std::cout << std::get<0>(n) << std::endl;
+
+                count_t = 0;
                 for(auto t: n)
                 {
+                    count_t += 1;
                     // std::cout << std::get<0>(t) << std::endl;
                     std::cout << t.get<0>() << " "
                               << t.get<1>() << " "
                               << t.get<2>() << " "
                               << std::endl;
+
+                    if(count_t >= 10)
+                    {
+                        break;
+                    }
                 }
             }
         }
     }
+
+    return gc3;
 }
 
 

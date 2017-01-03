@@ -422,18 +422,107 @@ int main(int argc, char *argv[]) {
 #ifdef MTMAP_PRE
     // Pairs: A(~439) and B(427-8).
     DimerList dimers;
+    // MtDomainIndexBoundaries mtdemarcations;
+    // MtIndexMap mtmap(chain_ref.size());
+    // MtIndexMap mtmap[chain_ref.size()];
+    // std::vector<std::map<std::string,int>>
+    MtIndexMap mtmap;
+    MtIndexMapEntry mtentry;
 
     // ACCESS chain_ref
     int imonomer = 0;
+    int betabool = -1;
+    int i_count = -1;
+    // int high_index, low_index, Nterm1, Nterm2, Mterm1, Mterm2, Cterm1, Cterm2;
+    // high_index = low_index = Nterm1 = Nterm2 = Mterm1 = Mterm2 = Cterm1 = Cterm2 = -1;
+    int high_index, low_index, Nterm2, Mterm1, Mterm2, Cterm1;
+    // high_index = low_index = Nterm2 = Mterm1 = Mterm2 = Cterm1 = -1;
+
+
+    // std::cout << "mtmap-size: " << mtmap[0].size() << std::endl;
+    //                                                   exit(0);
 
     for(auto c: chain_ref)
     {
+        high_index = low_index = Nterm2 = Mterm1 = Mterm2 = Cterm1 = -1;
+        i_count += 1;
+        betabool = -1;
         imonomer += 1;
+
         if(c.size() >= 433)
         {
             dimers.push_back(std::make_pair(imonomer-1,imonomer));
+            betabool = 0;
         }
+        else if ((c.size() > 420) and (c.size() < 433))
+        {
+            betabool = 1;
+        }
+
+
+        high_index = -1;
+        for(auto a: c)
+        {
+            if (a.index > high_index)
+            {
+                high_index = a.index;
+            }
+        }
+
+        low_index = high_index - c.size() + 1;
+
+        if((c.size() > 400) and (c.size() < 445))
+        {
+            Nterm2 = low_index + 214;
+            Mterm1 = Nterm2 + 1;
+            Mterm2 = Mterm1 + 168;
+            Cterm1 = Mterm2 + 1;
+        }
+
+        // std::cout << "chainid: " << imonomer - 1 << " \n"
+        //           << "chainsize: " << c.size() << " \n"
+        //           << "low|high: " << low_index << " "
+        //           << high_index << " "
+        //           << "  " << betabool << "  (0-alpha,1-beta)\n"
+        //           << "N-M-C: \n"
+        //           << "\t" << low_index << " " << Nterm2 << " \n"
+        //           << "\t" << Mterm1 << " " << Mterm2 << " \n"
+        //           << "\t" << Cterm1 << " " << high_index << " \n"
+        //           // << "chainid: " << c[0].chainid << " \n " // -1
+        //           // <<
+        //           << " "
+        //           << std::endl;
+
+        mtentry["chaintype"] = betabool;
+        mtentry["index"] = low_index;
+        mtentry["findex"] = high_index;
+        mtentry["Nterm2"] = Nterm2;
+        mtentry["Mterm1"] = Mterm1;
+        mtentry["Mterm2"] = Mterm2;
+        mtentry["Cterm1"] = Cterm1;
+
+        mtmap.push_back(mtentry);
+        mtentry.clear();
+
+        // mtdemarcations.push_back()
     }
+
+    // PRINT mtmap
+    // for(auto m:mtmap)
+    // {
+    //     std::cout << "chaintype: " << m["chaintype"] << " \n"
+    //               << "index: " << m["index"] << " \n"
+    //               << "Nterm2: " << m["Nterm2"] << " \n"
+    //               << "Mterm1: " << m["Mterm1"] << " \n"
+    //               << "Mterm2: " << m["Mterm2"] << " \n"
+    //               << "Cterm1: " << m["Cterm1"] << " \n"
+    //               << "findex: " << m["findex"] << " \n"
+    //               << std::endl;
+
+    // }
+    // exit(0);
+
+
 
     // Print DimerList dimers.
     // imonomer = 0;
@@ -1331,7 +1420,6 @@ int main(int argc, char *argv[]) {
 
             for(auto n: c)
             {
-
                 contact_set = get_contacts_for_chain_later(aa_later,
                                                            8.0,2.0,
                                                            global_contacts[0][it_c][it_n]);
@@ -1834,7 +1922,10 @@ int main(int argc, char *argv[]) {
     // Print Analysis of Contacts File.
     output_global_contacts(global_contacts);
 
-    explore_global_contacts(global_contacts);
+
+    // Sort into 3s.
+    SetGlobalContacts global_contacts_by3;
+    global_contacts_by3 = explore_global_contacts(global_contacts,mtmap);
 
 
 #endif // MTMAP2
