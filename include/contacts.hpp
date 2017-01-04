@@ -45,7 +45,7 @@
    Classes:
    --------------------------------------------------------- */
 // header_class
-typedef boost::tuple<int,int,double> Contact;
+typedef boost::tuple<int,int,double,int,int> Contact;
 typedef std::vector<Contact> SetContacts;
 typedef std::vector<SetContacts> SetNeighbors;
 typedef std::vector<SetNeighbors> SetChains;
@@ -173,6 +173,26 @@ SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
 SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
                                    double cutoff);
 
+// SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
+//                                    double cutoff,
+//                                    MtNeighbors mt_matrix);
+SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
+                                   double cutoff,
+                                   MtIndexMap map,
+                                   int cid);
+
+// SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
+//                                    std::vector <Atom> chain2,
+//                                    double cutoff,
+//                                    MtNeighbors mt_matrix);
+SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
+                                   std::vector <Atom> chain2,
+                                   double cutoff,
+                                   MtIndexMap map,
+                                   int cid1,
+                                   int cid2);
+
+
 
 
 // std::vector<boost::tuple<int,int,int,double>> get_contacts_for_chain_later(Atom *aalater,
@@ -201,7 +221,12 @@ std::vector<boost::tuple<int,int,int,double>> output_contacts(std::vector<std::v
                                                               <int,int,int,double>>> contacts);
 void output_global_contacts(SetGlobalContacts gc);
 // void explore_global_contacts(SetGlobalContacts gc);
-SetGlobalContacts explore_global_contacts(SetGlobalContacts gc,MtIndexMap map);
+// SetGlobalContacts explore_global_contacts(SetGlobalContacts gc,MtIndexMap map);
+void output_global_contacts_by_subdomain(SetGlobalContacts gc);
+
+SetGlobalContacts explore_global_contacts(SetGlobalContacts gc,
+                                          MtIndexMap map,
+                                          MtNeighbors mt_matrix);
 
 
 // chain_contact = get_contacts_for_chain_later(aa_later,8.0,2.0,chain_contacts_0[0]);

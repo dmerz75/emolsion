@@ -423,10 +423,10 @@ int main(int argc, char *argv[]) {
     // Pairs: A(~439) and B(427-8).
     DimerList dimers;
     // MtDomainIndexBoundaries mtdemarcations;
-    // MtIndexMap mtmap(chain_ref.size());
-    // MtIndexMap mtmap[chain_ref.size()];
+    // MtIndexMap mtmap_subdomain(chain_ref.size());
+    // MtIndexMap mtmap_subdomain[chain_ref.size()];
     // std::vector<std::map<std::string,int>>
-    MtIndexMap mtmap;
+    MtIndexMap mtmap_subdomain;
     MtIndexMapEntry mtentry;
 
     // ACCESS chain_ref
@@ -501,25 +501,25 @@ int main(int argc, char *argv[]) {
         mtentry["Mterm2"] = Mterm2;
         mtentry["Cterm1"] = Cterm1;
 
-        mtmap.push_back(mtentry);
+        mtmap_subdomain.push_back(mtentry);
         mtentry.clear();
 
         // mtdemarcations.push_back()
     }
 
     // PRINT mtmap
-    // for(auto m:mtmap)
-    // {
-    //     std::cout << "chaintype: " << m["chaintype"] << " \n"
-    //               << "index: " << m["index"] << " \n"
-    //               << "Nterm2: " << m["Nterm2"] << " \n"
-    //               << "Mterm1: " << m["Mterm1"] << " \n"
-    //               << "Mterm2: " << m["Mterm2"] << " \n"
-    //               << "Cterm1: " << m["Cterm1"] << " \n"
-    //               << "findex: " << m["findex"] << " \n"
-    //               << std::endl;
+    for(auto m:mtmap_subdomain)
+    {
+        std::cout << "chaintype: " << m["chaintype"] << " \n"
+                  << "index: " << m["index"] << " \n"
+                  << "Nterm2: " << m["Nterm2"] << " \n"
+                  << "Mterm1: " << m["Mterm1"] << " \n"
+                  << "Mterm2: " << m["Mterm2"] << " \n"
+                  << "Cterm1: " << m["Cterm1"] << " \n"
+                  << "findex: " << m["findex"] << " \n"
+                  << std::endl;
 
-    // }
+    }
     // exit(0);
 
 
@@ -913,8 +913,16 @@ int main(int argc, char *argv[]) {
     SetGlobalContacts global_contacts;
 
 
+    // int ch_alpha = -1;
+    // int ch_beta = -1;
+    // int ch_count = -1;
+
     for(auto c: mt_matrix)
     {
+        // ch_count += 1;
+        // ch_alpha = 2 * ch_count;
+        // ch_beta = 2 * ch_count + 1;
+
         neighbor_set.clear();
 
 
@@ -936,14 +944,18 @@ int main(int argc, char *argv[]) {
         // contact_set = get_contacts_for_chain(chain_ref[c[1]],chain_ref[c[1]],8.0);
         // neighbor_set.push_back(contact_set);
         // contact_set.clear();
-        contact_set = get_contacts_for_chain(chain_ref[c[0]],8.0);
+        contact_set = get_contacts_for_chain(chain_ref[c[0]],8.0,mtmap_subdomain,c[0]);
         neighbor_set.push_back(contact_set);
         contact_set.clear();
-        contact_set = get_contacts_for_chain(chain_ref[c[1]],8.0);
+        contact_set = get_contacts_for_chain(chain_ref[c[1]],8.0,mtmap_subdomain,c[1]);
         neighbor_set.push_back(contact_set);
         contact_set.clear();
 
-        contact_set = get_contacts_for_chain(chain_ref[c[0]],chain_ref[c[1]],8.0);
+        contact_set = get_contacts_for_chain(chain_ref[c[0]],chain_ref[c[1]],8.0,
+                                             mtmap_subdomain,
+                                             c[0],
+                                             c[1]);
+
         neighbor_set.push_back(contact_set);
         contact_set.clear();
 
@@ -955,7 +967,12 @@ int main(int argc, char *argv[]) {
                 neighbor_set.push_back(contact_set);
                 continue;
             }
-            contact_set = get_contacts_for_chain(chain_ref[c[0]],chain_ref[c[m]],8.0);
+            contact_set = get_contacts_for_chain(chain_ref[c[0]],
+                                                 chain_ref[c[m]],
+                                                 8.0,
+                                                 mtmap_subdomain,
+                                                 c[0],
+                                                 c[m]);
             neighbor_set.push_back(contact_set);
             contact_set.clear();
         }
@@ -968,7 +985,13 @@ int main(int argc, char *argv[]) {
                 neighbor_set.push_back(contact_set);
                 continue;
             }
-            contact_set = get_contacts_for_chain(chain_ref[c[1]],chain_ref[c[m]],8.0);
+            contact_set = get_contacts_for_chain(chain_ref[c[1]],
+                                                 chain_ref[c[m]],
+                                                 8.0,
+                                                 mtmap_subdomain,
+                                                 c[1],
+                                                 c[m]);
+
             neighbor_set.push_back(contact_set);
             contact_set.clear();
         }
@@ -1922,10 +1945,12 @@ int main(int argc, char *argv[]) {
     // Print Analysis of Contacts File.
     output_global_contacts(global_contacts);
 
+    // Print Analysis of Contacts by Subdomain.
+    output_global_contacts_by_subdomain(global_contacts);
 
     // Sort into 3s.
-    SetGlobalContacts global_contacts_by3;
-    global_contacts_by3 = explore_global_contacts(global_contacts,mtmap);
+    // SetGlobalContacts global_contacts_by3;
+    // global_contacts_by3 = explore_global_contacts(global_contacts,mtmap_subdomain,mt_matrix);
 
 
 #endif // MTMAP2
