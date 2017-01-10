@@ -1139,7 +1139,9 @@ std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <At
                 // vdist.print_Vector();
                 vdist_mag = magnitude(vdist);
                 // std::cout << "Magnitude: " << vdist_mag << std::endl;
-                if (vdist_mag < 83.0)
+
+                // 90: 44 * 1.414 = ~62 + ...
+                if (vdist_mag < 75.0)
                 {
                     candidates.push_back(m2);
                 }
@@ -1164,11 +1166,20 @@ std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <At
     double dsin;
     double dcos;
 
+    //     West
+    //     4  7
+    //  2  0  1  5
+    //     3  6
+    //     East
+
 
     for(auto cc: chain_candidates)
     {
         // std::cout << "monomer: " << ican << std::endl;
 
+        // ican == corresponding ALPHA from either an
+        // actual ALPHA or BETA candidate
+        // i.e. 72, 73 ==> 36 chain.
         if(ican % 2 == 0)
         {
             pdim = ican / 2;
@@ -1178,11 +1189,16 @@ std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <At
             pdim = (ican - 1) / 2;
         }
 
+
         for(auto can: cc)
         {
+            // Axis Vector between Alpha and Beta monomers.
+            // normalized.
+            // magnitude.
             avec = get_vector(centroids[dimers[pdim].second],centroids[dimers[pdim].first]);
             avec_n = normalize(avec);
             avec_mag = magnitude(avec);
+
 
             // std::cout << dimers[pdim].first
             //           << "-"
@@ -1191,33 +1207,37 @@ std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <At
             //           << avec_mag
             //           << " "
             //           << std::endl;
+            std::cout << dimers[pdim].first
+                      << "-"
+                      << dimers[pdim].second
+                      << "   can: "
+                      << can
+                      << std::endl;
 
 
-
-
+            // Vector between the candidate (can) and ..
+            // the alpha monomer (ican)
             vdist = get_vector(centroids[ican],centroids[can]);
+            // vdist = get_vector(centroids[can],centroids[ican]);
             vdist_n = normalize(vdist);
             vdist_mag = magnitude(vdist);
             // std::cout << can << " " << vdist_mag << " " << std::endl;
 
 
+
             dsin = get_sintheta(avec_n,vdist_n);
             dcos = get_costheta(avec_n,vdist_n);
 
-            // std::cout << "sin: " << dsin << std::endl;
-            // std::cout << "cos: " << dcos << std::endl;
-
+            std::cout << "sin: " << dsin << std::endl;
+            std::cout << "cos: " << dcos << std::endl;
             // std::cout << std::endl;
 
-
-            //     West
-            //     4  7
-            //  2  0  1  5
-            //     3  6
-            //     East
-
-            // find intra-dimer.
-            if((dsin < 0.1) && (std::abs(dcos) > 0.95))
+            // Find .. within protofilament. (longitudinal)
+            // 54-55   can: 29  (8.8 deg)
+            // sin: 0.153011
+            // cos: 0.988224
+            // if((dsin < 0.12) && (std::abs(dcos) > 0.88))
+            if(std::abs(dcos) > 0.92)
             {
                 if((can != dimers[pdim].first) && (can != dimers[pdim].second))
                 {
@@ -1239,21 +1259,16 @@ std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <At
                 //     std::cout << "intra-dimer: "<< can << std::endl;
                 // }
             }
-            // else if ((std::abs(dcos) > 0.3) && (std::abs(dcos) < 0.6))
-            // {
-            //     if(dsin > 0.0)
-            //     {
-            //         std::cout << "45-east-west^ " << std::endl;
-            //     }
-            //     else // dsin < 0.0
-            //     {
-            //         std::cout << "45-east-west^ " << std::endl;
-            //     }
-            // }
-            else if ((dsin > 0.95) && (std::abs(dcos) < 0.28))
+            // End of protofilament (longitudinal).
+
+            // find West/East Neighbors.
+            // cos(69.94) = 0.343, if less than 0.343 => angle >= 70 deg. want greater
+            // sin(65.5) = 0.91, if greater than 0.91 => angle >= 65.5 deg. want less
+            else if ((dsin > 0.91) && (std::abs(dcos) < 0.343))
             {
-                if(dcos > 0)
+                if(dcos < 0)
                 {
+                    // WEST:
                     // std::cout << "WEST " << std::endl;
                     if(ican % 2 == 0)
                     {
@@ -1266,6 +1281,7 @@ std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <At
                 }
                 else
                 {
+                    // EAST:
                     // std::cout << "EAST " << std::endl;
                     if(ican % 2 == 0)
                     {

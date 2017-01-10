@@ -1,13 +1,16 @@
 
 ./src/dcd.cpp
+./src/contacts.cpp
 ./src/main.cpp
 ./src/md.cpp
 ./src/ReadPDBfile.cpp
 ./src/system.cpp
 ./include/dcd.h
+./include/microtubule.hpp
 ./include/debug.h
 ./include/md.h
 ./include/molfile_plugin.h
+./include/contacts.hpp
 ./include/dcdio.h
 ./include/endianswap.h
 ./include/ReadPDBfile.hpp
@@ -15,14 +18,17 @@
 ./include/largefiles.h
 ./include/system.hpp
 ./src/dcd.cpp
+./src/contacts.cpp
 ./src/main.cpp
 ./src/md.cpp
 ./src/ReadPDBfile.cpp
 ./src/system.cpp
 ./include/dcd.h
+./include/microtubule.hpp
 ./include/debug.h
 ./include/md.h
 ./include/molfile_plugin.h
+./include/contacts.hpp
 ./include/dcdio.h
 ./include/endianswap.h
 ./include/ReadPDBfile.hpp
