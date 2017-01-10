@@ -559,16 +559,30 @@ int main(int argc, char *argv[]) {
     mt_matrix = get_map_of_mtneighbors(chain_ref,dimers);
 
     // Print Map of MT neighbors.
-    for(itmap = mt_matrix.begin(); itmap != mt_matrix.end(); itmap++)
+    for(auto mt_ch: mt_matrix)
     {
-        // std::cout << (*itmap).size() << std::endl;
-
-        for(itmap_n = (*itmap).begin(); itmap_n != (*itmap).end(); itmap_n++)
+        for(auto mt_n: mt_ch)
         {
-            std::cout << std::setw(4) << (*itmap_n) << " ";
+            std::cout << std::setw(4) << mt_n << " ";
         }
-                std::cout << std::endl;
+        std::cout << std::endl;
     }
+
+
+
+    // Print Map of MT neighbors. (old way..?)
+    // for(itmap = mt_matrix.begin(); itmap != mt_matrix.end(); itmap++)
+    // {
+    //     // std::cout << (*itmap).size() << std::endl;
+
+    //     for(itmap_n = (*itmap).begin(); itmap_n != (*itmap).end(); itmap_n++)
+    //     {
+    //         std::cout << std::setw(4) << (*itmap_n) << " ";
+    //     }
+    //             std::cout << std::endl;
+    // }
+
+    exit(0);
 
 
 #endif // MTMAP

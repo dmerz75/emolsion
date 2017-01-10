@@ -1050,8 +1050,8 @@ std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <At
     // std::cout << matrix.size() << std::endl;
     std::vector<std::vector<int>> matrix(dimers.size(), std::vector<int>(8,-1));
 
-    int ic;
-    ic = 0;
+    // int ic;
+    // ic = 0;
 
     Vector centroid;
     // centroid.print_Vector();
@@ -1075,7 +1075,7 @@ std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <At
         //           << std::endl;
 
 
-        ic += 1;
+        // ic += 1;
     }
     // std::cout << "# of centroids: " << centroids.size() << std::endl;
 
