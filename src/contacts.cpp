@@ -362,31 +362,36 @@ SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
 
                 if((subd1 == -1) or (subd2 == -1))
                 {
-                    std::cout << cid1 << " " << cid2 << " " << std::endl;
-                    std::cout << a1.index << " " << a2.index << " " << std::endl;
+                    // std::cout << cid1 << " " << cid2 << " " << std::endl;
+                    // std::cout << a1.index << " " << a2.index << " " << std::endl;
+
 
                     // std::cout << map[cid1] << " " << map[cid2] << " " << std::endl;
 
-                    std::cout << "chaintype: " << map[cid1]["chaintype"] << " \n"
-                              << "index: " << map[cid1]["index"] << " \n"
-                              << "Nterm2: " << map[cid1]["Nterm2"] << " \n"
-                              << "Mterm1: " << map[cid1]["Mterm1"] << " \n"
-                              << "Mterm2: " << map[cid1]["Mterm2"] << " \n"
-                              << "Cterm1: " << map[cid1]["Cterm1"] << " \n"
-                              << "findex: " << map[cid1]["findex"] << " \n"
-                              << std::endl;
 
 
-                    std::cout << "chaintype: " << map[cid2]["chaintype"] << " \n"
-                              << "index: " << map[cid2]["index"] << " \n"
-                              << "Nterm2: " << map[cid2]["Nterm2"] << " \n"
-                              << "Mterm1: " << map[cid2]["Mterm1"] << " \n"
-                              << "Mterm2: " << map[cid2]["Mterm2"] << " \n"
-                              << "Cterm1: " << map[cid2]["Cterm1"] << " \n"
-                              << "findex: " << map[cid2]["findex"] << " \n"
-                              << std::endl;
+                    // std::cout << "chaintype: " << map[cid1]["chaintype"] << " \n"
+                    //           << "index: " << map[cid1]["index"] << " \n"
+                    //           << "Nterm2: " << map[cid1]["Nterm2"] << " \n"
+                    //           << "Mterm1: " << map[cid1]["Mterm1"] << " \n"
+                    //           << "Mterm2: " << map[cid1]["Mterm2"] << " \n"
+                    //           << "Cterm1: " << map[cid1]["Cterm1"] << " \n"
+                    //           << "findex: " << map[cid1]["findex"] << " \n"
+                    //           << std::endl;
 
-                    std::cout << subd1 << " " << subd2 << " " << std::endl;
+
+                    // std::cout << "chaintype: " << map[cid2]["chaintype"] << " \n"
+                    //           << "index: " << map[cid2]["index"] << " \n"
+                    //           << "Nterm2: " << map[cid2]["Nterm2"] << " \n"
+                    //           << "Mterm1: " << map[cid2]["Mterm1"] << " \n"
+                    //           << "Mterm2: " << map[cid2]["Mterm2"] << " \n"
+                    //           << "Cterm1: " << map[cid2]["Cterm1"] << " \n"
+                    //           << "findex: " << map[cid2]["findex"] << " \n"
+                    //           << std::endl;
+
+
+
+                    // std::cout << subd1 << " " << subd2 << " " << std::endl;
 
                     exit(0);
                 }
@@ -694,8 +699,6 @@ SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
     //     // contacts.push_back(boost::tuple<int,int,double>(-1,-1,0));
     //     return std::vector<boost::tuple<int,int,double>>(1,(-1,-1,0));
     // }
-
-
 
 }
 
@@ -1038,17 +1041,13 @@ SetGlobalContacts explore_global_contacts(SetGlobalContacts gc,
 }
 
 
-
-// void get_map_of_mtneighbors(std::vector<std::vectorAtom> chain_ref,std::vector<std::vector<int>> matrix,
-//                             std::)
-// std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <Atom>> chain_ref,std::vector<std::vector<int>> matrix,
-//                             std::vector<std::pair<int,int>> dimers)
-std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <Atom>> chain_ref,
-                                                     std::vector<std::pair<int,int>> dimers)
+MtNeighbors get_map_of_mtneighbors(std::vector<std::vector <Atom>> chain_ref,
+                                   DimerList dimers)
 {
     // printf("Welcome to get_map_of_mtneighbors!\n");
     // std::cout << matrix.size() << std::endl;
-    std::vector<std::vector<int>> matrix(dimers.size(), std::vector<int>(8,-1));
+    // std::vector<std::vector<int>> matrix(dimers.size(), std::vector<int>(8,-1));
+    MtNeighbors matrix(dimers.size(), std::vector<int>(8,-1));
 
     // int ic;
     // ic = 0;
@@ -1065,7 +1064,6 @@ std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <At
         // centroid.print_Vector();
         centroids.push_back(centroid);
 
-
         // std::cout << "Return_Centroid: "
         //           << centroid[0]
         //           << " "
@@ -1074,11 +1072,9 @@ std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <At
         //           << centroid[2]
         //           << std::endl;
 
-
         // ic += 1;
     }
     // std::cout << "# of centroids: " << centroids.size() << std::endl;
-
 
     int id;
     id = 0;
@@ -1207,12 +1203,13 @@ std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <At
             //           << avec_mag
             //           << " "
             //           << std::endl;
-            std::cout << dimers[pdim].first
-                      << "-"
-                      << dimers[pdim].second
-                      << "   can: "
-                      << can
-                      << std::endl;
+
+            // std::cout << dimers[pdim].first
+            //           << "-"
+            //           << dimers[pdim].second
+            //           << "   can: "
+            //           << can
+            //           << std::endl;
 
 
             // Vector between the candidate (can) and ..
@@ -1228,8 +1225,8 @@ std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <At
             dsin = get_sintheta(avec_n,vdist_n);
             dcos = get_costheta(avec_n,vdist_n);
 
-            std::cout << "sin: " << dsin << std::endl;
-            std::cout << "cos: " << dcos << std::endl;
+            // std::cout << "sin: " << dsin << std::endl;
+            // std::cout << "cos: " << dcos << std::endl;
             // std::cout << std::endl;
 
             // Find .. within protofilament. (longitudinal)

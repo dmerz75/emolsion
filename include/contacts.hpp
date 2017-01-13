@@ -45,11 +45,17 @@
    Classes:
    --------------------------------------------------------- */
 // header_class
+
+// for the contact arrarys, in time, by chain, by neighbor.
+// Contacts, Set of Contacts, 9 Neighbors, Set of Chains/dimers ~ 156,
+// Lastly, by frame
 typedef boost::tuple<int,int,double,int,int> Contact;
 typedef std::vector<Contact> SetContacts;
 typedef std::vector<SetContacts> SetNeighbors;
 typedef std::vector<SetNeighbors> SetChains;
 typedef std::vector<SetChains> SetGlobalContacts;
+
+// mt_matrix
 
 
 /* ---------------------------------------------------------
@@ -148,8 +154,11 @@ void get_contacts(Atom *a1,Atom *a2,char dcdfilename[40],int num_atoms);
 // void get_map_of_mtneighbors(std::vector<Atom*> chain_ref,std::vector<std::vector<int>> matrix);
 // void get_map_of_mtneighbors(std::vector<std::vector <Atom>> chain_ref,std::vector<std::vector<int>> matrix,
 //                             std::vector<std::pair<int,int>> dimers);
-std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <Atom>> chain_ref,
-                                                     std::vector<std::pair<int,int>> dimers);
+
+// std::vector<std::vector<int>> get_map_of_mtneighbors(std::vector<std::vector <Atom>> chain_ref,
+//                                                      std::vector<std::pair<int,int>> dimers);
+MtNeighbors get_map_of_mtneighbors(std::vector<std::vector <Atom>> chain_ref,
+                                   DimerList dimers);
 
 // void get_contacts_for_chain();
 // std::vector<boost::tuple<int,int,int>> get_contacts_for_chain(std::vector<std::vector <Atom>> chain_ref);

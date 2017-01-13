@@ -397,19 +397,19 @@ int main(int argc, char *argv[]) {
     // exit(0);
 
 
+    // KEEP THIS.
     // // EXAMPLE Iteration: chain_ref
-    for(itchain = chain_ref.begin(); itchain != chain_ref.end(); itchain++)
-    {
-        std::cout << "Atoms in chain: " << (*itchain).size() << std::endl;
-
-        for(ita = (*itchain).begin(); ita != (*itchain).end(); ita++)
-        {
-            (*ita).print_coords();
-        }
-
-        break;
-    }
+    // for(itchain = chain_ref.begin(); itchain != chain_ref.end(); itchain++)
+    // {
+    //     std::cout << "Atoms in chain: " << (*itchain).size() << std::endl;
+    //     for(ita = (*itchain).begin(); ita != (*itchain).end(); ita++)
+    //     {
+    //         (*ita).print_coords();
+    //     }
+    //     break;
+    // }
     // exit(0);
+
 
     /* ---------------------------------------------------------
        Vector of chain-vectors of Atoms. END.
@@ -508,18 +508,18 @@ int main(int argc, char *argv[]) {
     }
 
     // PRINT mtmap
-    for(auto m:mtmap_subdomain)
-    {
-        std::cout << "chaintype: " << m["chaintype"] << " \n"
-                  << "index: " << m["index"] << " \n"
-                  << "Nterm2: " << m["Nterm2"] << " \n"
-                  << "Mterm1: " << m["Mterm1"] << " \n"
-                  << "Mterm2: " << m["Mterm2"] << " \n"
-                  << "Cterm1: " << m["Cterm1"] << " \n"
-                  << "findex: " << m["findex"] << " \n"
-                  << std::endl;
+    // for(auto m:mtmap_subdomain)
+    // {
+    //     std::cout << "chaintype: " << m["chaintype"] << " \n"
+    //               << "index: " << m["index"] << " \n"
+    //               << "Nterm2: " << m["Nterm2"] << " \n"
+    //               << "Mterm1: " << m["Mterm1"] << " \n"
+    //               << "Mterm2: " << m["Mterm2"] << " \n"
+    //               << "Cterm1: " << m["Cterm1"] << " \n"
+    //               << "findex: " << m["findex"] << " \n"
+    //               << std::endl;
 
-    }
+    // }
     // exit(0);
 
 
@@ -551,26 +551,28 @@ int main(int argc, char *argv[]) {
     // std::vector<Atom>::iterator ita;
 
     // Vector of Vector <int>
+    // typedef std::vector<std::vector<int>> MtNeighbors;
     MtNeighbors mt_matrix(dimers.size(), std::vector<int>(8,-1));
-    std::vector<std::vector<int>>::iterator itmap;
-    std::vector<int>::iterator itmap_n;
 
-    // Get Map of MT neighbors.
+    // Get Map of MtNeighbors.
     mt_matrix = get_map_of_mtneighbors(chain_ref,dimers);
 
+    // KEEP THIS.
     // Print Map of MT neighbors.
-    for(auto mt_ch: mt_matrix)
-    {
-        for(auto mt_n: mt_ch)
-        {
-            std::cout << std::setw(4) << mt_n << " ";
-        }
-        std::cout << std::endl;
-    }
+    // for(auto mt_ch: mt_matrix)
+    // {
+    //     for(auto mt_n: mt_ch)
+    //     {
+    //         std::cout << std::setw(4) << mt_n << " ";
+    //     }
+    //     std::cout << std::endl;
+    // }
 
 
-
+    // KEEP (still the old way.)
     // Print Map of MT neighbors. (old way..?)
+    // std::vector<std::vector<int>>::iterator itmap;
+    // std::vector<int>::iterator itmap_n;
     // for(itmap = mt_matrix.begin(); itmap != mt_matrix.end(); itmap++)
     // {
     //     // std::cout << (*itmap).size() << std::endl;
@@ -581,8 +583,7 @@ int main(int argc, char *argv[]) {
     //     }
     //             std::cout << std::endl;
     // }
-
-    exit(0);
+    // exit(0);
 
 
 #endif // MTMAP
@@ -1105,27 +1106,28 @@ int main(int argc, char *argv[]) {
     std::cout << global_contacts.size() << std::endl;
 
 
+    // KEEP THIS.
     // Print some of the original contacts.
-    int cmax = 0;
-    for(auto f: global_contacts)
-    {
-        std::cout << f.size() << std::endl;
+    // int cmax = 0;
+    // for(auto f: global_contacts)
+    // {
+    //     std::cout << f.size() << std::endl;
 
-        for(auto c: f)
-        {
-            cmax += 1;
-            if (cmax > 5)
-            {
-                break;
-            }
-            std::cout << "\t" << c.size() << std::endl;
+    //     for(auto c: f)
+    //     {
+    //         cmax += 1;
+    //         if (cmax > 5)
+    //         {
+    //             break;
+    //         }
+    //         std::cout << "\t" << c.size() << std::endl;
 
-            for(auto n: c)
-            {
-                std::cout << "\t\t" << n.size() << std::endl;
-            }
-        }
-    }
+    //         for(auto n: c)
+    //         {
+    //             std::cout << "\t\t" << n.size() << std::endl;
+    //         }
+    //     }
+    // }
     // exit(0);
 
 
@@ -1921,38 +1923,38 @@ int main(int argc, char *argv[]) {
     std::cout << "MTMAP2: Contacts by sector complete." << std::endl;
 
 
+    // KEEP THIS.
     // Print some of the original contacts.
     // int cmax = 0;
-    int fmax;
-    fmax = cmax = 0;
+    // int fmax;
+    // fmax = cmax = 0;
 
-    for(auto f: global_contacts)
-    {
-        fmax += 1;
-        cmax = 0;
-        std::cout << f.size() << std::endl;
+    // for(auto f: global_contacts)
+    // {
+    //     fmax += 1;
+    //     cmax = 0;
+    //     std::cout << f.size() << std::endl;
 
-        for(auto c: f)
-        {
-            cmax += 1;
-            if (cmax > 5)
-            {
-                break;
-            }
-            std::cout << "\t" << c.size() << std::endl;
+    //     for(auto c: f)
+    //     {
+    //         cmax += 1;
+    //         if (cmax > 5)
+    //         {
+    //             break;
+    //         }
+    //         std::cout << "\t" << c.size() << std::endl;
 
-            for(auto n: c)
-            {
-                std::cout << "\t\t" << n.size() << std::endl;
-                // std::cout << n.get<0> << std::endl;
-            }
-        }
-
-        if(fmax > 3)
-        {
-            break;
-        }
-    }
+    //         for(auto n: c)
+    //         {
+    //             std::cout << "\t\t" << n.size() << std::endl;
+    //             // std::cout << n.get<0> << std::endl;
+    //         }
+    //     }
+    //     if(fmax > 3)
+    //     {
+    //         break;
+    //     }
+    // }
     // exit(0);
 
 
