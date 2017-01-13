@@ -449,7 +449,8 @@ int main(int argc, char *argv[]) {
         betabool = -1;
         imonomer += 1;
 
-        if(c.size() >= 433)
+        // if(c.size() >= 433)
+        if((c.size() >= 433) and (c.size() <= 442))
         {
             dimers.push_back(std::make_pair(imonomer-1,imonomer));
             betabool = 0;
@@ -471,7 +472,7 @@ int main(int argc, char *argv[]) {
 
         low_index = high_index - c.size() + 1;
 
-        if((c.size() > 400) and (c.size() < 445))
+        if((c.size() > 420) and (c.size() < 442))
         {
             Nterm2 = low_index + 214;
             Mterm1 = Nterm2 + 1;

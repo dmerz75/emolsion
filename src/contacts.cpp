@@ -266,7 +266,7 @@ SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
 {
     // INTERCHAIN, w/MT
 
-    // std::cout << "Welcome to get_contacts_for_chain!" << std::endl;
+    // std::cout << "Welcome to get_contacts_for_chain! MT, inter-chain." << std::endl;
     // std::cout << "Cutoff: " << cutoff << std::endl;
     // std::vector<boost::tuple<int,int,double>> contacts;
     SetContacts contacts;
@@ -445,7 +445,7 @@ SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
 {
     // SINGLE, INTRACHAIN, Not MT
 
-    // std::cout << "Welcome to get_contacts_for_chain!" << std::endl;
+    // std::cout << "Welcome to get_contacts_for_chain! MT, intra." << std::endl;
     // std::cout << "Cutoff: " << cutoff << std::endl;
     // std::vector<boost::tuple<int,int,double>> contacts;
     SetContacts contacts;
@@ -847,7 +847,7 @@ void output_global_contacts(SetGlobalContacts gc)
 
     // FILE
     FILE * fp_contacts;
-    fp_contacts = fopen("emol_contacts.dat", "w+");
+    fp_contacts = fopen("emol_mtcontacts.dat", "w+");
     // fprintf(fp_contacts,"\n");
 
     for(auto f: gc) // frame in global contact array
@@ -875,11 +875,16 @@ void output_global_contacts_by_subdomain(SetGlobalContacts gc)
 
     // FILE
     FILE * fp_contacts;
-    fp_contacts = fopen("emol_contacts_by_subdomain.dat", "w+");
+    fp_contacts = fopen("emol_mtcontacts_by_subdomain.dat", "w+");
     // fprintf(fp_contacts,"\n");
+
+    int count_f;
+    count_f = 0;
 
     for(auto f: gc) // frame in global contact array
     {
+        count_f += 1;
+
         for(auto c: f) // chain (but actually dimer) in frame, 156
         {
             for(auto n: c) // 9 situations of 6 neighbors, 0,1,0-1; 0-2,3,4; 1-5,6,7
@@ -938,9 +943,8 @@ void output_global_contacts_by_subdomain(SetGlobalContacts gc)
             }
             // fprintf(fp_contacts,"\n");
         }
-        fprintf(fp_contacts,"#\n");
+        fprintf(fp_contacts,"# %d\n",count_f);
     }
-
     fclose(fp_contacts);
 }
 

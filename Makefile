@@ -10,6 +10,7 @@ CL       := clang --analyze
 # Compiler Flags: Use $(CF) for generic/old architectures
 CF       := -g -std=c++11
 CC_FLAGS := -g -O3
+CF0      := -g -std=c++11 -O3
 CFLAGS   := -O2 -g -Wall
 CFLAGS_1 := -ansi -std=gnu99
 CFLAGS_2 := -ansi -pedantic -std=gnu99 -Wall -W
@@ -133,9 +134,21 @@ contacts3:
 # $(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(MT2) $(DCD) $(CON_BDA) -DNDEBUG -o test/$(EXEC)_mtcontacts2
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(MT2) $(DCD) $(CON_BDA) -o test/$(EXEC)_mtcontacts2
 	cd test && ./$(EXEC)_mtcontacts2 mt.ref.pdb mt_partial.dcd 6 30 6 # 6-9 .. 21-24-27.
+mtcontactstest:
+# $(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(MT2) $(DCD) $(CON_BDA) -DNDEBUG -o test/$(EXEC)_mtcontacts2
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(MT2) $(DCD) $(CON_BDA) -o test/$(EXEC)_mtcontacts2
+	cd test && ./$(EXEC)_mtcontacts2 mt_test1.pdb mt_test1.dcd 4 220 5
+
+# ---------------------------------------------------------------------
+# Deployment:
+# ---------------------------------------------------------------------
+mtcontacts:
+	$(CXX) $(CPPFILES) $(CF0) $(INC) $(LIB) $(MT2) $(DCD) $(CON_BDA) -DNDEBUG -o bin/$(EXEC)_mtcontacts
+# cd test && ./$(EXEC)_mtcontacts2 mt.ref.pdb mt_partial.dcd 6 30 6 # 6-9 .. 21-24-27.
 
 
 # -----------------------------------------------------------------------------
 # Make all.
+# -----------------------------------------------------------------------------
 all: \
 	main
