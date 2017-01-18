@@ -1166,12 +1166,12 @@ MtNeighbors get_map_of_mtneighbors(std::vector<std::vector <Atom>> chain_ref,
     double dsin;
     double dcos;
 
+    // MTMAP: the diagram
     //     West
     //     4  7
     //  2  0  1  5
     //     3  6
     //     East
-
 
     for(auto cc: chain_candidates)
     {

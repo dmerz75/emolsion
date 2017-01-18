@@ -20,9 +20,30 @@ Other softwares I often use with this project include:
 * cscope - developer's tool for browsing program code. Run `./scope.sh`, creates cscope.files and cscope.out.
 * [Boost] (http://www.boost.org/) - provides free peer-reviewed portable C++ source libraries.
 
+## Microtubules' Contacts:
+# The microtubule map: the diagram
+            West
+            4  7
+         2  0  1  5
+            3  6
+            East
+
+0: alpha
+1: beta
+Then, 9 situations of 6 neighbors arise:
+0    intra-alpha
+1    intra-beta
+0-1  intra-dimer
+0-2  alpha-south
+0-3  alpha-east
+0-4  alpha-west
+1-5  beta-north
+1-6  beta-east
+1-7  beta-west
 
 
-## Disclaimer:
+
+## Notes/ Disclaimer/ Acknowledgements:
 Six header files are not mine. They are currently used because I believe permission was given
 provided the copyrights were retained and credit/notice given. They are:
 
