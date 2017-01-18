@@ -37,7 +37,7 @@ If 0 is alpha, 1 is beta, then, 9 situations from the 2 monomers in the dimer an
 * 0-4  alpha-west
 * 1-5  beta-north
 * 1-6  beta-east
-* 1-7  beta-west
+* 1-7  beta-west2
 
 
 

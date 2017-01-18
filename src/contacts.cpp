@@ -934,7 +934,7 @@ void output_global_contacts_by_subdomain(SetGlobalContacts gc)
                     }
 
                 }
-                fprintf(fp_contacts,"%5d %5d %5d %5d %5d %5d %5d %5d %5d\n",
+                fprintf(fp_contacts,"%5d %5d %5d %5d %5d %5d %5d %5d %5d %d\n",
                         n.size(),
                         nn,nm,nc,
                         mn,mm,mc,
