@@ -28,17 +28,26 @@ Other softwares I often use with this project include:
             3  6
             East
 
-0: alpha
-1: beta
-Then, 9 situations of 6 neighbors arise:
+If 0 is alpha, 1 is beta,
+
+then, 9 situations of 6 neighbors arise:
+
 0    intra-alpha
+
 1    intra-beta
+
 0-1  intra-dimer
+
 0-2  alpha-south
+
 0-3  alpha-east
+
 0-4  alpha-west
+
 1-5  beta-north
+
 1-6  beta-east
+
 1-7  beta-west
 
 
