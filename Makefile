@@ -65,7 +65,6 @@ DCD     = -DDCDREAD
 DCDW    = -DDCDREAD -DDCD_WRITE_B -DDCD_WRITE -DDCD_WRITE_E
 CONS    = -DGET_CONTACTS
 CON_BDA = -DCONTACTS_BEFORE -DCONTACTS_DURING -DCONTACTS_AFTER
-MT      = -DMTMAP
 MT2     = -DMTMAP_PRE -DMTMAP2
 # Macros: Analysis Before. During. After.
 
@@ -126,25 +125,19 @@ contacts0:
 contacts1:
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) $(CON_BDA) -o test/$(EXEC)_contactsbda
 	cd test && ./$(EXEC)_contactsbda mt.ref.pdb mt_partial.dcd 6 27 3 # 6-9 .. 21-24-27.
-contacts2:
-# $(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(MT) $(DCD) $(CON_BDA) -DNDEBUG -o test/$(EXEC)_mtcontacts
-	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(MT) $(DCD) $(CON_BDA) -o test/$(EXEC)_mtcontacts
-	cd test && ./$(EXEC)_mtcontacts mt.ref.pdb mt_partial.dcd 6 30 6 # 6-9 .. 21-24-27.
 contacts3:
-# $(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(MT2) $(DCD) $(CON_BDA) -DNDEBUG -o test/$(EXEC)_mtcontacts2
-	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(MT2) $(DCD) $(CON_BDA) -o test/$(EXEC)_mtcontacts2
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) $(CON_BDA) $(MT2) -o test/$(EXEC)_mtcontacts2
 	cd test && ./$(EXEC)_mtcontacts2 mt.ref.pdb mt_partial.dcd 6 30 6 # 6-9 .. 21-24-27.
 mtcontactstest:
-# $(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(MT2) $(DCD) $(CON_BDA) -DNDEBUG -o test/$(EXEC)_mtcontacts2
-	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(MT2) $(DCD) $(CON_BDA) -o test/$(EXEC)_mtcontacts2
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) $(CON_BDA) $(MT2) -o test/$(EXEC)_mtcontacts2
 	cd test && ./$(EXEC)_mtcontacts2 mt_test1.pdb mt_test1.dcd 4 220 5
 
 # ---------------------------------------------------------------------
 # Deployment:
 # ---------------------------------------------------------------------
 mtcontacts:
-	$(CXX) $(CPPFILES) $(CF0) $(INC) $(LIB) $(MT2) $(DCD) $(CON_BDA) -DNDEBUG -o bin/$(EXEC)_mtcontacts
-# cd test && ./$(EXEC)_mtcontacts2 mt.ref.pdb mt_partial.dcd 6 30 6 # 6-9 .. 21-24-27.
+	$(CXX) $(CPPFILES) $(CF0) $(INC) $(LIB) $(DCD) $(CON_BDA) $(MT2) -DNDEBUG -o bin/$(EXEC)_mtcontacts
+
 
 
 # -----------------------------------------------------------------------------
