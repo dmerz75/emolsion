@@ -2,31 +2,17 @@
 #ifndef _MD_H_
 #define _MD_H_
 
+/* ---------------------------------------------------------
+   Libraries and Headers:
+   --------------------------------------------------------- */
 #include <stdio.h>
 #include <math.h>
 #include "debug.h"
 
 
-/* !!!!!!!!!!! */
-/* struct Vector { */
-/*     double x; */
-/*     double y; */
-/*     double z; */
-/* }; */
-
-/* class dvalue { */
-/* public: */
-/*     double d[32]; */
-/*     dvalue (); // Constructor declared. */
-/* }; */
-
-/* inline dvalue::dvalue() { */
-/*     for (int i=0; i<32; i++) { */
-/*         d[i] = 0.0; */
-/*     } */
-/* } */
-
-
+/* ---------------------------------------------------------
+   Classes:
+   --------------------------------------------------------- */
 class Vector
 {
 public:
@@ -131,25 +117,31 @@ inline void Matrix::transpose() {
 }
 
 
-// declarations
+
+/* ---------------------------------------------------------
+   Declarations of functions:
+   --------------------------------------------------------- */
 double distance ( Vector v1, Vector v2 );
-Vector difference ( Vector v1, Vector v2 );
 double magnitude ( Vector v1 );
 double get_costheta ( Vector v1, Vector v2 );
 double dot_product ( Vector v1, Vector v2 );
 double get_sintheta ( Vector v1, Vector v2 );
-/* Vector midpoint ( Vector v1 ); */
+
+Vector difference ( Vector v1, Vector v2 );
 Vector midpoint2(Vector v1,Vector v2);
 Vector cross_product ( Vector v1, Vector v2 );
 Vector scalar_mult ( Vector v1, double a );
 Vector vec_add ( Vector v1, Vector v2 );
 Vector prod_matrix_vector(Matrix M, Vector V);
+
 /* void print_vector(Vector V); */
-
 /* double curvature(Vector p1, Vector p2, Vector p3); */
-
 /* can't do it by return type, Yes for variable input */
-// overloaded declarations
+/* Vector midpoint ( Vector v1 ); */
+
+/* ---------------------------------------------------------
+   Declarations of overloaded functions:
+   --------------------------------------------------------- */
 Vector get_vector (Vector v1,Vector v2,Vector *v3 );
 Vector get_vector (Vector v1,Vector v2);
 Vector normalize (Vector v1,Vector *v2);

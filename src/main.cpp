@@ -1154,20 +1154,12 @@ int main(int argc, char *argv[]) {
         debug("coords(37)[%d]: %f %f %f\n",frame_position,aa_later[37].x,aa_later[37].y,aa_later[37].z);
 
 
-
-#ifdef CONTACTS_DURING
-
-
-#ifdef MTMAP2
-        std::cout << "MTMAP2: Evaluating contacts by sector." << std::endl;
-
-        std::vector<Atom> amov;
-        std::vector<std::vector<Atom>> chain_later;
-
-
         /* ---------------------------------------------------------
            Step 3.5 DCD Load during evaluation.
            --------------------------------------------------------- */
+        std::vector<Atom> amov;
+        std::vector<std::vector<Atom>> chain_later;
+
         // EXAMPLE Iteration: chain_ref
         for(itchain = chain_ref.begin(); itchain != chain_ref.end(); itchain++)
         {
@@ -1177,36 +1169,26 @@ int main(int argc, char *argv[]) {
             chain_later.push_back(amov);
         }
 
-        // Iteration Later.
-        // for(itchain = chain_later.begin(); itchain != chain_later.end(); itchain++)
-        // {
-        //     std::cout << "Atoms in chain: " << (*itchain).size() << std::endl;
 
-        //     for(ita = (*itchain).begin(); ita != (*itchain).end(); ita++)
-        //     {
-        //         (*ita).print_coords();
-        //     }
+#ifdef CONTACTS_DURING
 
-        //     // break;
-        // }
-        // exit(0);
-
+#ifdef MTMAP2
+        std::cout << "MTMAP2: Evaluating contacts by sector." << std::endl;
+        std::cout << "Global Contacts: " << std::endl;
+        std::cout << global_contacts[0].size() << std::endl;
 
         // SetContacts contact_set;
         // SetNeighbors neighbor_set;
         // SetChains chain_set;
         // SetGlobalContacts global_contacts;
 
-        // Precaution I guess.
+        // Clear as precaution:
         contact_set.clear();
         neighbor_set.clear();
         chain_set.clear();
 
-
-        std::cout << "Global Contacts: " << std::endl;
-        std::cout << global_contacts[0].size() << std::endl;
-
-
+        // c: chain (but actually 156 dimers in 312 chains for the MT)
+        // n: 9 neighboring interaction types
         int it_c, it_n;
         it_c = it_n = 0;
 
@@ -1221,19 +1203,17 @@ int main(int argc, char *argv[]) {
                                                            8.0,2.0,
                                                            global_contacts[0][it_c][it_n]);
                 // std::cout << contact_set.size() << std::endl;
-
                 neighbor_set.push_back(contact_set);
                 contact_set.clear();
                 it_n += 1;
             }
             chain_set.push_back(neighbor_set);
             neighbor_set.clear();
-
             it_c += 1;
         }
         global_contacts.push_back(chain_set);
-
         // exit(0);
+
 
         // for(auto c: mt_matrix)
         // {
@@ -1267,8 +1247,6 @@ int main(int argc, char *argv[]) {
 
         //     }
 
-
-
         // Checkpoint.
         // std::cout << global_contacts[0] // frame(0) --> 156 --> 8
         // std::cout << global_contacts[0][0][4].size() << std::endl; // frame-156-8-sc
@@ -1278,23 +1256,19 @@ int main(int argc, char *argv[]) {
 
 #endif // MTMAP2
 
-
 #endif // CONTACTS_DURING
 
-
-
-
-
-
-
         /* ---------------------------------------------------------
-           Analysis During. Finish.
+           Step 4. Analysis During. Finish.
            --------------------------------------------------------- */
 #endif // multi-dcd
 
 
 
 #ifdef DCD_WRITE
+        /* ---------------------------------------------------------
+           Step 3. DCD Write. Finish.
+           --------------------------------------------------------- */
         // READ
         // static void *open_dcd_read(const char *path, const char *filetype,
         //                            int *natoms) {
@@ -1319,13 +1293,9 @@ int main(int argc, char *argv[]) {
         // load_chain_coords_to_timestep(dcdw,chain_later,chains_to_use,vw,&timestep_w,natoms_w);
         // load_chain_coords_to_timestep(chain_later,num_chains,&timestep_w);
 
-
-
         // THIS ONE
         // load_chain_to_timestep(chain_later,num_chains,&timestep_w);
         load_atom_to_timestep(&timestep_w,aa_later);
-
-
 
 #ifdef DCD_WRITE_UNMOD
     // Write the DCD read in.
@@ -1339,10 +1309,10 @@ int main(int argc, char *argv[]) {
 #endif
 
 
-
 #ifdef DCDREAD
-    // } // DCD PRIMARY LOOP
-
+        /* ---------------------------------------------------------
+           Step 3.6 DCD READ
+           --------------------------------------------------------- */
         debug("current: %d\n",nset2);
         printf("frame: --> %d <-- was evaluated.\n",frame_position);
 
@@ -1443,218 +1413,8 @@ int main(int argc, char *argv[]) {
 
 #endif // MTMAP2
 
-#ifdef MTMAP
-    std::cout << "The evaluation of MTMAP is now complete." << std::endl;
-    std::cout << "Tallying the results: " << std::endl;
-
-    std::cout << "0: " << chain_contacts_0.size() << std::endl;
-    std::cout << "1: " << chain_contacts_1.size() << std::endl;
-    std::cout << "2: " << chain_contacts_2.size() << std::endl;
-    std::cout << "3: " << chain_contacts_3.size() << std::endl;
-    std::cout << "4: " << chain_contacts_4.size() << std::endl;
-    std::cout << "5: " << chain_contacts_5.size() << std::endl;
-    std::cout << "6: " << chain_contacts_6.size() << std::endl;
-    std::cout << "7: " << chain_contacts_7.size() << std::endl;
-
-
-    output_contacts(chain_contacts_0); // 936 = 156 * 6
-    // output_contacts(chain_contacts_1);
-    // output_contacts(chain_contacts_0);
-    // output_contacts(chain_contacts_0);
-    // output_contacts(chain_contacts_0);
-    // output_contacts(chain_contacts_0);
-
-
-    // // int count,count1;
-    // for(itmap = mt_matrix.begin(); itmap != mt_matrix.end(); itmap++)
-    // {
-    //     int ibin = -1;
-
-    //     for(itmap_n = (*itmap).begin(); itmap_n != (*itmap).end(); itmap_n++)
-    //     {
-    //         ibin += 1;
-    //         // std::cout << "bin: " << ibin << std::endl;
-    //         // std :: cout << (*itmap)[0] << " " << (*itmap_n) << std::endl;
-
-
-    //         if(((*itmap)[0] == -1) or ((*itmap_n) == -1))
-    //         {
-    //             // std::cout << "No interface here." << std::endl;
-    //             std::cout << " -- ";
-    //             // continue;
-    //         }
-    //         std::cout << "ibin-" << ibin << ": "
-    //                   << std::endl;
-
-    //         // 0
-
-    //         // count = 0;
-    //         if(ibin == 0)
-    //         {
-    //             for(auto cl: chain_contacts_0)
-    //             {
-    //                 output_contacts(chain_contacts_0);
-    //                 // count += 1;
-    //                 // std::cout << cl.size() << " ";
-    //                 // std::cout << boost::get<0>(cl) << " "
-    //                 //           << boost::get<1>(cl) << " "
-    //                 //           << boost::get<2>(cl) << " "
-    //                 //           << boost::get<3>(cl) << std::endl;
-
-    //                 // if(count > 10)
-    //                 // {
-    //                 //     break;
-    //                 // }
-    //                 // std::endl;
-    //                 // for(auto c: cl)
-    //                 // {
-    //                 //     std::cout << boost::get<0>(c) << " ";
-    //                 //     std::cout << boost::get<1>(c) << " ";
-    //                 //     std::cout << boost::get<2>(c) << " ";
-    //                 //     std::cout << boost::get<3>(c) << " ";
-    //                 // }
-    //                 // std::cout << std::endl;
-    //             }
-    //             // std::cout << std::endl;
-    //             // std::cout << "in time, complete." << std::endl;
-    //             // std::cout << chain_contacts_0[0].size() << " <-> " << chain_contacts_0[-1].size() << std::endl;
-    //         }
-    //         // else if(ibin == 1)
-    //         // {
-    //         //     for(auto cl: chain_contacts_1)
-    //         //     {
-    //         //         std::cout << cl.size() << " ";
-    //         //         // std::endl;
-    //         //         // for(auto c: cl)
-    //         //         // {
-    //         //         //     std::cout << boost::get<0>(c) << " ";
-    //         //         //     std::cout << boost::get<1>(c) << " ";
-    //         //         // }
-    //         //         // std::cout << std::endl;
-    //         //     }
-    //         //     // std::cout << std::endl;
-    //         //     // std::cout << "in time, complete." << std::endl;
-    //         //     // std::cout << chain_contacts_0[0].size() << " <-> " << chain_contacts_0[-1].size() << std::endl;
-    //         // }
-    //         // else if(ibin == 2)
-    //         // {
-    //         //     for(auto cl: chain_contacts_2)
-    //         //     {
-    //         //         std::cout << cl.size() << " ";
-    //         //         // std::endl;
-    //         //         // for(auto c: cl)
-    //         //         // {
-    //         //         //     std::cout << boost::get<0>(c) << " ";
-    //         //         //     std::cout << boost::get<1>(c) << " ";
-    //         //         // }
-    //         //         // std::cout << std::endl;
-    //         //     }
-    //         //     // std::cout << std::endl;
-    //         //     // std::cout << "in time, complete." << std::endl;
-    //         //     // std::cout << chain_contacts_0[0].size() << " <-> " << chain_contacts_0[-1].size() << std::endl;
-    //         // }
-    //         // else if(ibin == 3)
-    //         // {
-    //         //     for(auto cl: chain_contacts_3)
-    //         //     {
-    //         //         std::cout << cl.size() << " ";
-    //         //         // std::endl;
-    //         //         // for(auto c: cl)
-    //         //         // {
-    //         //         //     std::cout << boost::get<0>(c) << " ";
-    //         //         //     std::cout << boost::get<1>(c) << " ";
-    //         //         // }
-    //         //         // std::cout << std::endl;
-    //         //     }
-    //         //     // std::cout << std::endl;
-    //         //     // std::cout << "in time, complete." << std::endl;
-    //         //     // std::cout << chain_contacts_0[0].size() << " <-> " << chain_contacts_0[-1].size() << std::endl;
-    //         // }
-    //         // else if(ibin == 4)
-    //         // {
-    //         //     for(auto cl: chain_contacts_4)
-    //         //     {
-    //         //         std::cout << cl.size() << " ";
-    //         //         // std::endl;
-    //         //         // for(auto c: cl)
-    //         //         // {
-    //         //         //     std::cout << boost::get<0>(c) << " ";
-    //         //         //     std::cout << boost::get<1>(c) << " ";
-    //         //         // }
-    //         //         // std::cout << std::endl;
-    //         //     }
-    //         //     // std::cout << std::endl;
-    //         //     // std::cout << "in time, complete." << std::endl;
-    //         //     // std::cout << chain_contacts_0[0].size() << " <-> " << chain_contacts_0[-1].size() << std::endl;
-    //         // }
-    //         // else if(ibin == 5)
-    //         // {
-    //         //     for(auto cl: chain_contacts_5)
-    //         //     {
-    //         //         std::cout << cl.size() << " ";
-    //         //         // std::endl;
-    //         //         // for(auto c: cl)
-    //         //         // {
-    //         //         //     std::cout << boost::get<0>(c) << " ";
-    //         //         //     std::cout << boost::get<1>(c) << " ";
-    //         //         // }
-    //         //         // std::cout << std::endl;
-    //         //     }
-    //         //     // std::cout << std::endl;
-    //         //     // std::cout << "in time, complete." << std::endl;
-    //         //     // std::cout << chain_contacts_0[0].size() << " <-> " << chain_contacts_0[-1].size() << std::endl;
-    //         // }
-    //         // else if(ibin == 6)
-    //         // {
-    //         //     for(auto cl: chain_contacts_6)
-    //         //     {
-    //         //         std::cout << cl.size() << " ";
-    //         //         // std::endl;
-    //         //         // for(auto c: cl)
-    //         //         // {
-    //         //         //     std::cout << boost::get<0>(c) << " ";
-    //         //         //     std::cout << boost::get<1>(c) << " ";
-    //         //         // }
-    //         //         // std::cout << std::endl;
-    //         //     }
-    //         //     // std::cout << std::endl;
-    //         //     // std::cout << "in time, complete." << std::endl;
-    //         //     // std::cout << chain_contacts_0[0].size() << " <-> " << chain_contacts_0[-1].size() << std::endl;
-    //         // }
-    //         // else if(ibin == 7)
-    //         // {
-    //         //     for(auto cl: chain_contacts_7)
-    //         //     {
-    //         //         std::cout << cl.size() << " ";
-    //         //         // std::endl;
-    //         //         // for(auto c: cl)
-    //         //         // {
-    //         //         //     std::cout << boost::get<0>(c) << " ";
-    //         //         //     std::cout << boost::get<1>(c) << " ";
-    //         //         // }
-    //         //         // std::cout << std::endl;
-    //         //     }
-    //         //     // std::cout << std::endl;
-    //         //     // std::cout << "in time, complete." << std::endl;
-    //         //     // std::cout << chain_contacts_0[0].size() << " <-> " << chain_contacts_0[-1].size() << std::endl;
-    //         // }
-    //     }
-
-    //     // Only cycle once for 8 interfaces..
-    //     break;
-
-    // }
-
-
-
-#endif // MTMAP
 #endif // CONTACTS_AFTER
 
-
-
-    /* ---------------------------------------------------------
-       Analysis After. Finish.
-       --------------------------------------------------------- */
 #endif // multi-dcd
 
 
@@ -1668,14 +1428,12 @@ int main(int argc, char *argv[]) {
 
 
     /* ---------------------------------------------------------
-       Delete Malloc Systems.
+       Step 6. Delete Malloc Systems.
        --------------------------------------------------------- */
     delete [] aa_ref;
     delete [] aa_zero;
     delete [] aa_later;
     delete [] aa_sel;
-
-
 
     /* ---------------------------------------------------------
        The End.

@@ -21,16 +21,12 @@
 // #include <iterator> // istream_iterator
 #include <map>
 
-
-
 /* ---------------------------------------------------------
    headers:
    --------------------------------------------------------- */
 // #include "debug.h"
 /* #include "system.hpp" */
 // #include "atom.hpp"
-
-
 
 /* ---------------------------------------------------------
    Definitions:
@@ -41,25 +37,14 @@ typedef std::vector<std::vector<int>> MtNeighbors;
 // indices:0  alpha/beta/not (0,1,-1)
 //         1  0-chain,
 //         2  (1,2)N,(3,4)M,(5,6)C
-// typedef std::vector<boost::tuple<int,int,int,int,int,int,int,int>> MtDomainIndexBoundaries;
-// typedef std::vector<boost::tuple<int,int,int,int,int,int,int,int>> MtIndexMap;
-// typedef std::vector<std::map<
+
 typedef std::map<std::string,int> MtIndexMapEntry;
 typedef std::vector<MtIndexMapEntry> MtIndexMap;
-
-// typedef boost::tuple<int,int,double> Contact;
-// typedef std::vector<Contact> SetContacts;
-
-// mt_matrix(dimers.size(), std::vector<int>(8,-1));
-// std::vector<std::vector<int>>::iterator itmap;
-// std::vector<int>::iterator itmap_n;
-
 
 /* ---------------------------------------------------------
    Classes:
    --------------------------------------------------------- */
 // header_class
-
 
 
 /* ---------------------------------------------------------

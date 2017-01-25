@@ -813,33 +813,6 @@ SetContacts get_contacts_for_chain_later(Atom *alater,
     // }
 }
 
-std::vector<boost::tuple<int,int,int,double>> output_contacts(std::vector<std::vector<boost::tuple
-                                                              <int,int,int,double>>> contacts)
-{
-    std::cout << "Now printing contact file." << std::endl;
-    std::cout << "1st-dimension: " << contacts.size() << std::endl;
-
-
-    // FILE
-    FILE * fp_contacts;
-    fp_contacts = fopen("emol_contacts.dat","a+");
-
-    for(auto cl: contacts)
-    {
-        // std::cout << cl.size() << std::endl;
-
-        for(auto c: cl)
-        {
-
-
-        }
-        fprintf(fp_contacts,"%d ",cl.size());
-        // fprintf(fp_contacts,"%d ");
-    }
-
-    fclose(fp_contacts);
-}
-
 void output_global_contacts(SetGlobalContacts gc)
 {
     std::cout << "Writing Global Contacts to file now." << std::endl;
@@ -947,103 +920,6 @@ void output_global_contacts_by_subdomain(SetGlobalContacts gc)
     }
     fclose(fp_contacts);
 }
-
-
-SetGlobalContacts explore_global_contacts(SetGlobalContacts gc,
-                                          MtIndexMap map,
-                                          MtNeighbors mt_matrix)
-{
-    std::cout << "Exploring Global Contacts .." << std::endl;
-
-    SetGlobalContacts gc3;
-    SetChains chain_set3;
-    SetNeighbors neighbor_set;
-
-    // Contact Sets.
-    SetContacts set_NN;
-    SetContacts set_MM;
-    SetContacts set_CC;
-
-    SetContacts set_NM;
-    SetContacts set_NC;
-
-    SetContacts set_MN;
-    SetContacts set_MC;
-
-    SetContacts set_CN;
-    SetContacts set_CM;
-
-
-    int count_d = 0; // dimer
-    int count_t = 0; // type: 0, 1, 0-1, 0-2, 0-3, 0-4, .. 9 tot.
-    int count_n = 0;
-
-    for(auto f: gc) // frame in global contact array
-    {
-
-        count_d = 0;
-        for(auto d: f) // chain (but actually dimer) in frame, 156
-        {
-
-
-            count_n = 0;
-            for(auto n: d) // 9 situations of 6 neighbors, 0,1,0-1; 0-2,3,4; 1-5,6,7
-            {
-                // std::cout << n.get<0> << std::endl;
-                // std::cout << std::get<0>(n) << std::endl;
-
-                std::cout << "the_alpha: " << count_d * 2 << std::endl;
-                std::cout << "the_beta: " << count_d * 2 + 1 << std::endl;
-                std::cout << "count_n: " << count_n << std::endl;
-                std::cout << "neighbor .. " << mt_matrix[count_d][count_n] << std::endl;
-
-                count_t = 0;
-                for(auto t: n)
-                {
-                    // std::cout << std::get<0>(t) << std::endl;
-                    std::cout << t.get<0>() << "  "
-                              << t.get<1>() << "  "
-                              << t.get<2>() << "  "
-                              << t.get<3>() << "  "
-                              << t.get<4>() << "  "
-                              << std::endl;
-
-                    // Assign N, M, C.
-                    // 9 ifs?
-                    // 0 .. 8
-
-                    // 0: alpha-alpha
-                    // 1: beta-beta
-                    // 2: alpha-beta
-                    // 345: alpha-234
-                    // 678: beta-567
-
-
-
-
-
-                    if(count_t >= 24)
-                    {
-                        break;
-                    }
-                    count_t += 1;
-                }
-
-                count_n += 1;
-            }
-
-            if (count_d > 12)
-            {
-                break;
-            }
-
-            count_d += 1;
-        }
-    }
-
-    return gc3;
-}
-
 
 MtNeighbors get_map_of_mtneighbors(std::vector<std::vector <Atom>> chain_ref,
                                    DimerList dimers)

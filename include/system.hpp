@@ -3,7 +3,10 @@
 #define _system_hpp_
 
 
-// libraries:
+
+/* ---------------------------------------------------------
+   libraries:
+   --------------------------------------------------------- */
 // #include <stdio.h>
 /* #include <stdlib.h> */
 #include <string>
@@ -11,26 +14,26 @@
 #include<vector>
 
 
-// headers:
+
+/* ---------------------------------------------------------
+   headers:
+   --------------------------------------------------------- */
 #include "debug.h"
 #include "md.h"
 // #include "radius.hpp"
 // #include "pdbfile.hpp"
 
-// Definitions:
-/* #define BUFFERSIZE 900 */
-// typedef std::vector<Atom> vAtoms;
 
+/* ---------------------------------------------------------
+   Definitions:
+   --------------------------------------------------------- */
 
-// using namespace std;
 
 /* ---------------------------------------------------------
    Class declarations
    --------------------------------------------------------- */
+   // System: (Chain,Residue,Atom)
 
-/* ---------------------------------------------------------
-   System: (Chain,Residue,Atom)
-   --------------------------------------------------------- */
 class System
 {
 public:
@@ -287,17 +290,9 @@ inline void Atom::print_coords()
 /* ---------------------------------------------------------
    function declarations
    --------------------------------------------------------- */
-// void ReadPDBfile(PDBfile *pdbfile,char filename[40]);
-// int select(Atom *aa,char criterion[40],int num);
 int system_select(Atom *aa,char const *criterion,int total);
 void system_select(Atom *aa,char const *criterion,int total,Atom *asel);
-// Atom system_select(Atom *aa,char const *criterion,int total);
-// std::vector<Atom> system_select(Atom *aa,char const *criterion);
-
-
-// int select(Atom aa,Atom asel,string param,string criterion,int num);
 void get_minmax(System sys);
 Vector get_centroid(std::vector<Atom> a);
-
 
 #endif
