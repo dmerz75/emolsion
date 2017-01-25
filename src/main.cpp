@@ -475,9 +475,9 @@ int main(int argc, char *argv[]) {
         if((c.size() > 420) and (c.size() < 442))
         {
             Nterm2 = low_index + 214;
-            Mterm1 = Nterm2 + 1;
-            Mterm2 = Mterm1 + 168;
-            Cterm1 = Mterm2 + 1;
+            Mterm1 = Nterm2 + 1;   // 215
+            Mterm2 = Mterm1 + 168; // 383
+            Cterm1 = Mterm2 + 1;   // 427/438
         }
 
         // std::cout << "chainid: " << imonomer - 1 << " \n"
