@@ -845,11 +845,57 @@ void output_global_contacts_by_subdomain(SetGlobalContacts gc)
     int nn, nm, nc, mn, mm, mc, cn, cm, cc;
     nn = nm = nc = mn = mm = mc = cn = cm = cc = 0;
 
+    // new sort by 3s, NMC (coming outward from Alpha or Beta)
+    int N, M, C;
+    N = M = C;
+
+    // float ext, aext, bext;
+    // float asn, aen, awn;
+    // float asm, aem, awm;
+    // float asc, aec, awc;
+    // float bsn, ben, bwn;
+    // float bsm, bem, bwm;
+    // float bsc, bec, bwc;
+    float fN, fM, fC;
+
+
 
     // FILE
     FILE * fp_contacts;
     fp_contacts = fopen("emol_mtcontacts_by_subdomain.dat", "w+");
     // fprintf(fp_contacts,"\n");
+
+
+    // FILE
+    FILE * fp_contacts3;
+    fp_contacts3 = fopen("emol_mtcontacts_by_subdomain3.dat", "w+");
+    fprintf(fp_contacts3,"#   0-NMC(3)");
+    fprintf(fp_contacts3,"                1-NMC(7)");
+    fprintf(fp_contacts3,"                0-1-NMC(11)");
+    fprintf(fp_contacts3,"              0-2-NMC(15)");
+    fprintf(fp_contacts3,"            0-3-NMC(19)");
+    fprintf(fp_contacts3,"             0-4-NMC(23)");
+    fprintf(fp_contacts3,"             1-5-NMC(27)");
+    fprintf(fp_contacts3,"             1-6-NMC(31)");
+    fprintf(fp_contacts3,"             1-7-NMC(35)\n");
+
+    // FILE
+    FILE * fp_contacts3n;
+    fp_contacts3n = fopen("emol_mtcontacts_by_subdomain3n.dat", "w+");
+    fprintf(fp_contacts3n,"#     0-NMC(3)");
+    fprintf(fp_contacts3n,"              1-NMC(7)");
+    fprintf(fp_contacts3n,"              0-1-NMC(11)");
+    fprintf(fp_contacts3n,"           0-2-NMC(15)");
+    fprintf(fp_contacts3n,"           0-3-NMC(19)");
+    fprintf(fp_contacts3n,"           0-4-NMC(23)");
+    fprintf(fp_contacts3n,"           1-5-NMC(27)");
+    fprintf(fp_contacts3n,"           1-6-NMC(31)");
+    fprintf(fp_contacts3n,"           1-7-NMC(35)\n");
+
+
+
+    // fprintf(fp_contacts,"\n");
+
 
     int count_f;
     count_f = 0;
@@ -865,6 +911,7 @@ void output_global_contacts_by_subdomain(SetGlobalContacts gc)
                 // fprintf(fp_contacts,"%d ",n.size());
 
                 nn = nm = nc = mn = mm = mc = cn = cm = cc = 0;
+                N = M = C = 0;
 
                 for(auto contact: n)
                 {
@@ -872,53 +919,112 @@ void output_global_contacts_by_subdomain(SetGlobalContacts gc)
                     if((contact.get<3>() == 0) and (contact.get<4>() == 0))
                     {
                         nn += 1;
+                        N += 1;
                     }
                     else if((contact.get<3>() == 0) and (contact.get<4>() == 1))
                     {
                         nm += 1;
+                        N += 1;
                     }
                     else if((contact.get<3>() == 0) and (contact.get<4>() == 2))
                     {
                         nc += 1;
+                        N += 1;
                     }
                     else if((contact.get<3>() == 1) and (contact.get<4>() == 0))
                     {
                         mn += 1;
+                        M += 1;
                     }
                     else if((contact.get<3>() == 1) and (contact.get<4>() == 1))
                     {
                         mm += 1;
+                        M += 1;
                     }
                     else if((contact.get<3>() == 1) and (contact.get<4>() == 2))
                     {
                         mc += 1;
+                        M += 1;
                     }
                     else if((contact.get<3>() == 2) and (contact.get<4>() == 0))
                     {
                         cn += 1;
+                        C += 1;
                     }
                     else if((contact.get<3>() == 2) and (contact.get<4>() == 1))
                     {
                         cm += 1;
+                        C += 1;
                     }
                     else if((contact.get<3>() == 2) and (contact.get<4>() == 2))
                     {
                         cc += 1;
+                        C += 1;
                     }
 
                 }
-                fprintf(fp_contacts,"%5d %5d %5d %5d %5d %5d %5d %5d %5d %d\n",
+                fprintf(fp_contacts,"%5d %5d %5d %5d %5d %5d %5d %5d %5d %5d\n",
                         n.size(),
                         nn,nm,nc,
                         mn,mm,mc,
                         cn,cm,cc);
 
+
+                // 21 + 1 (n.size()) = 22
+                // ext = aext = bext = 0;
+                // asn = aen = awn = 0;
+                // asm = aem = awm = 0;
+                // asc = aec = awc = 0;
+                // bsn = ben = bwn = 0;
+                // bsm = bem = bwm = 0;
+                // bsc = bec = bwc = 0;
+                // ext =
+
+
+                // 3n-file
+                fN = fM = fC = 0.0;
+
+                if (n.size() != 0)
+                {
+                    fN = float(N) / n.size();
+                    fM = float(M) / n.size();
+                    fC = float(C) / n.size();
+                }
+
+                fprintf(fp_contacts3n,"%5d %4.2f %4.2f %4.2f  ",
+                        n.size(),
+                        fN,
+                        fM,
+                        fC);
+
+
+                // 3-file
+                fprintf(fp_contacts3,"%5d %5d %5d %5d ",
+                        n.size(),
+                        N,
+                        M,
+                        C);
+
             }
             // fprintf(fp_contacts,"\n");
+
+            // 3n-file
+            fprintf(fp_contacts3n,"\n");
+            // 3-file
+            fprintf(fp_contacts3,"\n");
+
+            // fprintf(fp_contacts3,"%5d %4.2f %4.2f",
+            //         n.size(),
+            //         )
+
         }
+
         fprintf(fp_contacts,"# %d\n",count_f);
+        fprintf(fp_contacts3,"# %d\n",count_f);
+        fprintf(fp_contacts3n,"# %d\n",count_f);
     }
     fclose(fp_contacts);
+    fclose(fp_contacts3);
 }
 
 MtNeighbors get_map_of_mtneighbors(std::vector<std::vector <Atom>> chain_ref,

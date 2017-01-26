@@ -1406,10 +1406,6 @@ int main(int argc, char *argv[]) {
     // Print Analysis of Contacts by Subdomain.
     output_global_contacts_by_subdomain(global_contacts);
 
-    // Sort into 3s.
-    // SetGlobalContacts global_contacts_by3;
-    // global_contacts_by3 = explore_global_contacts(global_contacts,mtmap_subdomain,mt_matrix);
-
 
 #endif // MTMAP2
 

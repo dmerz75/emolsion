@@ -136,7 +136,7 @@ mtcontactstest:
 # Deployment:
 # ---------------------------------------------------------------------
 mtcontacts:
-	$(CXX) $(CPPFILES) $(CF0) $(INC) $(LIB) $(DCD) $(CON_BDA) $(MT2) -DNDEBUG -o bin/$(EXEC)_mtcontacts
+	$(CXX) $(CPPFILES) $(CF0) $(INC) $(LIB) $(DCD) $(CON_BDA) $(MT2) -DNDEBUG -o bin/$(EXEC)_mtcontacts3n
 
 
 
