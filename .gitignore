@@ -34,4 +34,7 @@ run_*
 test/run_*
 test/run_readpdb_def*
 test/emol_*
+test/mt_test1.dcd
+test/mt_test1.pdb
 test/fig
+bin/*
