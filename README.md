@@ -27,6 +27,8 @@ Other softwares I often use with this project include:
          2  0  1  5
             3  6
             East
+# Figure of microtubule:
+[[https://github.com/dmerz75/repository/blob/master/fig/microtubule.png|alt=octocat]]
 
 If 0 is alpha, 1 is beta, then, 9 situations from the 2 monomers in the dimer and their 6 neighbors arise:
 * 0    intra-alpha
