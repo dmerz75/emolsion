@@ -1,7 +1,7 @@
 # Emolsion
 A pdb and dcd reading/writing molecular mechanics evaluation program.
 
-## Quickstart:
+### Quickstart:
 1. DCD reading: To read a pdb with corresponding dcd (from frames 6 - 27, stepping by 3 frames) ..
 
         make dcdr
@@ -15,21 +15,24 @@ stepping by 2 frames)..
 
 
 
-## Dependencies:
+### Dependencies:
 Other softwares I often use with this project include:
 * cscope - developer's tool for browsing program code. Run `./scope.sh`, creates cscope.files and cscope.out.
 * [Boost] (http://www.boost.org/) - provides free peer-reviewed portable C++ source libraries.
 
 ## Microtubules' Contacts:
-# The microtubule map: the diagram
+### The microtubule map: the diagram
             West
             4  7
          2  0  1  5
             3  6
             East
-# Figure of microtubule:
+### Figure of microtubule:
 <!-- [[https://github.com/dmerz75/repository/blob/master/fig/microtubule.png|alt=octocat]] -->
-[[https://github.com/dmerz75/emolsion/blob/master/fig/microtubule.png]]
+![Figure of Microtubule]
+(https://github.com/dmerz75/emolsion/blob/master/fig/microtubule.png)
+<!-- (https://octodex.github.com/images/yaktocat.png) -->
+<!-- [[https://github.com/dmerz75/emolsion/blob/master/fig/microtubule.png]] -->
 
 If 0 is alpha, 1 is beta, then, 9 situations from the 2 monomers in the dimer and their 6 neighbors arise:
 * 0    intra-alpha
@@ -44,7 +47,7 @@ If 0 is alpha, 1 is beta, then, 9 situations from the 2 monomers in the dimer an
 
 
 
-## Notes/ Disclaimer/ Acknowledgements:
+### Notes/ Disclaimer/ Acknowledgements:
 Six header files are not mine. They are currently used because I believe permission was given
 provided the copyrights were retained and credit/notice given. They are:
 
