@@ -27,14 +27,9 @@ Other softwares I often use with this project include:
          2  0  1  5
             3  6
             East
-### Figure of microtubule:
-<!-- [[https://github.com/dmerz75/repository/blob/master/fig/microtubule.png|alt=octocat]] -->
-![Figure of Microtubule]
-(https://github.com/dmerz75/emolsion/blob/master/fig/microtubule.png)
-<!-- (https://octodex.github.com/images/yaktocat.png) -->
-<!-- [[https://github.com/dmerz75/emolsion/blob/master/fig/microtubule.png]] -->
 
-If 0 is alpha, 1 is beta, then, 9 situations from the 2 monomers in the dimer and their 6 neighbors arise:
+If 0 is alpha, 1 is beta, then, 9 situations from the 2 monomers in the dimer and their 6 neighbors arise.
+They are:
 * 0    intra-alpha
 * 1    intra-beta
 * 0-1  intra-dimer
@@ -44,6 +39,14 @@ If 0 is alpha, 1 is beta, then, 9 situations from the 2 monomers in the dimer an
 * 1-5  beta-north
 * 1-6  beta-east
 * 1-7  beta-west2
+
+
+### Figure of microtubule:
+<!-- [[https://github.com/dmerz75/repository/blob/master/fig/microtubule.png|alt=octocat]] -->
+![Figure of Microtubule]
+(https://github.com/dmerz75/emolsion/blob/master/fig/microtubule.png)
+<!-- (https://octodex.github.com/images/yaktocat.png) -->
+<!-- [[https://github.com/dmerz75/emolsion/blob/master/fig/microtubule.png]] -->
 
 
 
