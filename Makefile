@@ -58,15 +58,28 @@ EXEF     := $(wildcard /usr/local/bin/$(EXEC)*)
 
 
 
-# ---------------------------------------------------------------------
-# Macros
+#  ---------------------------------------------------------  #
+#  Macros                                                     #
+#  ---------------------------------------------------------  #
 MACRO   = -D
 DCD     = -DDCDREAD
 DCDW    = -DDCDREAD -DDCD_WRITE_B -DDCD_WRITE -DDCD_WRITE_E
 CONS    = -DGET_CONTACTS
 CON_BDA = -DCONTACTS_BEFORE -DCONTACTS_DURING -DCONTACTS_AFTER
 MT2     = -DMTMAP_PRE -DMTMAP2
+PHIPSI  = -DPHIPSI_B -DPHIPSI_M -DPHIPSI_E
 # Macros: Analysis Before. During. After.
+
+#  ---------------------------------------------------------  #
+#  Macros' Descriptions:                                      #
+#  ---------------------------------------------------------  #
+# MT2:
+# Print Analysis of Contacts by Subdomain.
+# output_global_contacts_by_subdomain(global_contacts);
+# fp_contacts = fopen("emol_mtcontacts_by_subdomain.dat", "w+");
+# fp_contacts3 = fopen("emol_mtcontacts_by_subdomain3.dat", "w+");
+# fp_contacts3n = fopen("emol_mtcontacts_by_subdomain3n.dat", "w+");
+
 
 
 
@@ -131,6 +144,10 @@ contacts3:
 mtcontactstest:
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) $(CON_BDA) $(MT2) -o test/$(EXEC)_mtcontacts2
 	cd test && ./$(EXEC)_mtcontacts2 mt_test1.pdb mt_test1.dcd 4 220 5
+angles-all-atoms:
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) $(PHIPSI) -o test/$(EXEC)_phipsi_angles
+	cd test && ./$(EXEC)_phipsi_angles 2kho_implicit.pdb 2kho_implicit.dcd 10 100 2
+
 
 # ---------------------------------------------------------------------
 # Deployment:

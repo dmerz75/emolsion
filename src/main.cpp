@@ -34,6 +34,7 @@ extern "C" {
 #include "dcd.h"
 #include "contacts.hpp"
 #include "microtubule.hpp"
+#include "phipsiangle.hpp"
 // #include "mt.hpp"
 // #include "config.hpp"
 // #include "ConfigFile.h"
@@ -137,8 +138,8 @@ int main(int argc, char *argv[]) {
     // SUCCESS! Copy constructor implemented!
     Atom *aa_ref2 = aa_ref;
     Atom aa_ref2_1 = aa_ref[0];
-    aa_ref2_1.print_coords();
     aa_ref[0].print_coords();
+    aa_ref2_1.print_coords();
     printf("Copy Constructor example here.\n");
     // exit(0);
 
@@ -661,6 +662,35 @@ int main(int argc, char *argv[]) {
 #endif // multi-dcd
 
 
+#ifdef PHIPSI_B // PHIPSI Beginning section.
+    std::cout << "Getting PHI / PSI Angles!" << std::endl;
+    // aa_ref: crystal structure.
+    // aa_zero: dcd-0
+    // aa_later: dcd-time-later.
+
+    Atom *aa_backbone;
+    try
+    {
+        aa_backbone = new Atom[num_atoms];
+    }
+    catch (std::bad_alloc xa)
+    {
+        std::cout << "Allocation Failure\n";
+        exit(1);
+    }
+
+
+    system_select_atomtype(aa_ref,"CA",num_atoms,aa_backbone);
+    system_select_atomtype(aa_ref,"C",num_atoms,aa_backbone);
+    system_select_atomtype(aa_ref,"O",num_atoms,aa_backbone);
+    system_select_atomtype(aa_ref,"N",num_atoms,aa_backbone);
+    aa_backbone[0].print_coords();
+
+    compute_phipsi(aa_ref);
+
+
+#endif // PHIPSI_B End.
+
 
 #ifdef GET_CONTACTS
     // void get_contacts(Atom *a1,Atom *a2,char dcdfilename[40],int num_atoms);
@@ -1067,8 +1097,6 @@ int main(int argc, char *argv[]) {
 
 
 #endif // MTMAP2
-
-
 #endif // CONTACTS_BEFORE
 
 
@@ -1172,11 +1200,13 @@ int main(int argc, char *argv[]) {
 
 #ifdef CONTACTS_DURING
 
+
+
+
 #ifdef MTMAP2
         std::cout << "MTMAP2: Evaluating contacts by sector." << std::endl;
         std::cout << "Global Contacts: " << std::endl;
         std::cout << global_contacts[0].size() << std::endl;
-
         // SetContacts contact_set;
         // SetNeighbors neighbor_set;
         // SetChains chain_set;
@@ -1194,7 +1224,8 @@ int main(int argc, char *argv[]) {
 
         for(auto c: global_contacts[0])
         {
-            it_n = 0;
+            it_n = 0; // 0-8, the 9 interaction types: alpha, beta, alpha-beta,
+            // alpha-s,w,e..
             // std::cout << "c: " << c.size() << std::endl; // ~ 9
 
             for(auto n: c)
@@ -1212,7 +1243,7 @@ int main(int argc, char *argv[]) {
             it_c += 1;
         }
         global_contacts.push_back(chain_set);
-        // exit(0);
+
 
 
         // for(auto c: mt_matrix)
@@ -1258,11 +1289,20 @@ int main(int argc, char *argv[]) {
 
 #endif // CONTACTS_DURING
 
+
+#ifdef PHIPSI_M // Begin.
+        std::cout << "Getting the phi / psi angles." << std::endl;
+
+
+
+
+#endif // PHIPSI End.
+
+
         /* ---------------------------------------------------------
            Step 4. Analysis During. Finish.
            --------------------------------------------------------- */
 #endif // multi-dcd
-
 
 
 #ifdef DCD_WRITE
@@ -1337,7 +1377,7 @@ int main(int argc, char *argv[]) {
     printf("\n----->  READING DCD completed!  <-----\n");
     printf("\t\tThe maximum possible frame_position was: %d\n",stop);
     printf("\t\tThe last frame evaluated was: %d\n",frame_position);
-#endif //DCDREAD
+#endif //DCDREAD END
 
 
 
@@ -1363,7 +1403,6 @@ int main(int argc, char *argv[]) {
 
 #ifdef MTMAP2
     std::cout << "MTMAP2: Contacts by sector complete." << std::endl;
-
 
     // KEEP THIS.
     // Print some of the original contacts.
@@ -1405,11 +1444,21 @@ int main(int argc, char *argv[]) {
 
     // Print Analysis of Contacts by Subdomain.
     output_global_contacts_by_subdomain(global_contacts);
-
+    // fp_contacts = fopen("emol_mtcontacts_by_subdomain.dat", "w+");
+    // fp_contacts3 = fopen("emol_mtcontacts_by_subdomain3.dat", "w+");
+    // fp_contacts3n = fopen("emol_mtcontacts_by_subdomain3n.dat", "w+");
 
 #endif // MTMAP2
 
+
+
 #endif // CONTACTS_AFTER
+
+#ifdef PHIPSI_E // PHIPSI Final section.
+    std::cout << "Getting phi/psi angles completed." << std::endl;
+
+
+#endif // PHIPSI_E End.
 
 #endif // multi-dcd
 

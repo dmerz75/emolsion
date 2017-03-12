@@ -66,10 +66,8 @@ int ReadPDBfile(char filename[40],int total_atoms,Atom *aa)
             {
                 if (boost::algorithm::starts_with(line,"ATOM") == 1)
                 {
-
                     num_atoms += 1;
                     // Atom a;
-
                 }
             }
             pdbfile.close();

@@ -290,6 +290,10 @@ inline void Atom::print_coords()
 /* ---------------------------------------------------------
    function declarations
    --------------------------------------------------------- */
+// int system_select_atomtype(Atom *aa,char const *criterion,int total);
+void system_select_atomtype(Atom *aa,char const *criterion,int total,Atom *asel);
+
+
 int system_select(Atom *aa,char const *criterion,int total);
 void system_select(Atom *aa,char const *criterion,int total,Atom *asel);
 void get_minmax(System sys);

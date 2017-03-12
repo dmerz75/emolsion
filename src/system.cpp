@@ -520,6 +520,36 @@ void system_select(Atom *aa,char const *criterion,int total,Atom *asel)
     // return total;
 }
 
+void system_select_atomtype(Atom *aa,char const *criterion,int total,Atom *asel)
+{
+    // Get the selection.
+    // criterion: N, C, CA, O
+
+    std::cout << "the criterion is .." << criterion << std::endl;
+    std::string selection(criterion);
+    int num_all = aa[0].num_atoms;
+    int num;
+    num = 0;
+
+    // std::string str1("chain "); // with space, or it will need development...
+    // std::size_t found1 = selection.find(str1);
+    // std::size_t found1 = selection.find();
+
+
+    // for(int i=0; i < num_all; i++)
+    // {
+    //     if(aa[i].atomtype.compare(selection) == 0)
+    //     {
+    //         asel[num] = aa[i];
+    //         num += 1;
+    //     }
+    // }
+    // total = num;
+
+    std::cout << "the number of atoms by atomtype was: " << total << std::endl;
+
+}
+
 void get_minmax(System sys)
 {
     debug("you made it!\n");
