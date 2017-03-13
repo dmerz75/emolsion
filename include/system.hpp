@@ -300,7 +300,9 @@ void get_minmax(System sys);
 Vector get_centroid(std::vector<Atom> a);
 
 
+typedef std::vector<std::vector<Atom>> Dihedral;
 typedef std::vector<Atom> Atoms;
+// typedef std::vector<Atom> Dihedral(4);
 // Atoms aa_backbone;
 
 #endif

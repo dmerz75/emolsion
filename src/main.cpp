@@ -666,8 +666,8 @@ int main(int argc, char *argv[]) {
     // aa_zero: dcd-0
     // aa_later: dcd-time-later.
 
-    // typedef std::vector<Atom> Atoms;
-    Atoms aa_backbone;
+    Dihedral vec_dihedrals; // vector<vector<Atom>>
+    Atoms backbone(3); // vector<Atom>
 
     Atom *aa_temp_backbone;
     try
@@ -682,10 +682,34 @@ int main(int argc, char *argv[]) {
 
     // Select backbone
     num_select = system_select_atomtype(aa_ref,"backbone",num_atoms,aa_temp_backbone);
-    for(int j=0; j<num_select; j++)
+    int jk;
+    // for(int j=0; j<num_select; j+=4)
+        for(int j=0; j<num_select; j+=3)
     {
-        Atom a1 = aa_temp_backbone[j]; // Copy Constructor
-        aa_backbone.push_back(a1);
+        for(int k=0; k<3; k++)
+        {
+            jk = j + k;
+            Atom a1 = aa_temp_backbone[jk];
+
+            // std::cout << "atomtype: " << a1.atomtype << std::endl;
+            if(a1.atomtype == "N")
+            {
+                backbone[0] = a1;
+            }
+            else if(a1.atomtype == "CA")
+            {
+                backbone[1] = a1;
+            }
+            else if(a1.atomtype == "C")
+            {
+                backbone[2] = a1;
+            }
+            // else if(a1.atomtype == "O")
+            // {
+            //     backbone[3] = a1;
+            // }
+        }
+        vec_dihedrals.push_back(backbone);
     }
 
     // // Select CA
@@ -714,9 +738,9 @@ int main(int argc, char *argv[]) {
     //     Atom a1 = aa_temp_backbone[j]; // Copy Constructor
     //     aa_backbone.push_back(a1);
     // }
-    std::cout << "backbone_size: " << aa_backbone.size() << std::endl;
+    std::cout << "backbone_size: " << backbone.size() << std::endl;
 
-    compute_phipsi(aa_backbone);
+    compute_phipsi(vec_dihedrals);
 
 
 #endif // PHIPSI_B End.
@@ -1486,7 +1510,7 @@ int main(int argc, char *argv[]) {
 
 #ifdef PHIPSI_E // PHIPSI Final section.
     std::cout << "Getting phi/psi angles completed." << std::endl;
-
+    delete [] aa_temp_backbone;
 
 #endif // PHIPSI_E End.
 
@@ -1509,6 +1533,8 @@ int main(int argc, char *argv[]) {
     delete [] aa_zero;
     delete [] aa_later;
     delete [] aa_sel;
+
+
 
     /* ---------------------------------------------------------
        The End.

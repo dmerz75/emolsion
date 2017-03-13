@@ -50,7 +50,7 @@
    function declarations:
    --------------------------------------------------------- */
 // void ReadPDBfile(PDBfile *pdbfile,char filename[40]);
-void compute_phipsi(Atoms bb);
+void compute_phipsi(Dihedral dh);
 
 
 

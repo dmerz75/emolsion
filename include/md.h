@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "debug.h"
-
+/* #include "system.hpp" */
 
 /* ---------------------------------------------------------
    Classes:
@@ -21,6 +21,7 @@ public:
     double z;
     Vector (); // Constructor declared.
     void print_Vector();
+    void create_Vector(float a1, float a2, float a3);
 };
 inline Vector::Vector()
 {
@@ -31,6 +32,12 @@ inline Vector::Vector()
 inline void Vector::print_Vector()
 {
     printf("xyz: %f %f %f\n",x,y,z);
+}
+inline void Vector::create_Vector(float a1, float a2, float a3)
+{
+    x = a1;
+    y = a2;
+    z = a3;
 }
 
 class Matrix {
@@ -116,22 +123,31 @@ inline void Matrix::transpose() {
     z2 = tempy3;
 }
 
+/* ---------------------------------------------------------
+   Templates:
+   --------------------------------------------------------- */
+template <typename T>
+inline T const& Max (T const& a, T const& b)
+{
+    return a < b ? b:a;
+}
+
 
 
 /* ---------------------------------------------------------
    Declarations of functions:
    --------------------------------------------------------- */
-double distance ( Vector v1, Vector v2 );
-double magnitude ( Vector v1 );
-double get_costheta ( Vector v1, Vector v2 );
-double dot_product ( Vector v1, Vector v2 );
-double get_sintheta ( Vector v1, Vector v2 );
+double distance(Vector v1, Vector v2);
+double magnitude(Vector v1);
+double get_costheta(Vector v1, Vector v2);
+double dot_product(Vector v1, Vector v2);
+double get_sintheta(Vector v1, Vector v2);
 
-Vector difference ( Vector v1, Vector v2 );
+Vector difference(Vector v1, Vector v2);
 Vector midpoint2(Vector v1,Vector v2);
-Vector cross_product ( Vector v1, Vector v2 );
-Vector scalar_mult ( Vector v1, double a );
-Vector vec_add ( Vector v1, Vector v2 );
+Vector cross_product(Vector v1, Vector v2);
+Vector scalar_mult(Vector v1, double a);
+Vector vec_add(Vector v1, Vector v2);
 Vector prod_matrix_vector(Matrix M, Vector V);
 
 /* void print_vector(Vector V); */
@@ -142,9 +158,11 @@ Vector prod_matrix_vector(Matrix M, Vector V);
 /* ---------------------------------------------------------
    Declarations of overloaded functions:
    --------------------------------------------------------- */
-Vector get_vector (Vector v1,Vector v2,Vector *v3 );
-Vector get_vector (Vector v1,Vector v2);
-Vector normalize (Vector v1,Vector *v2);
-Vector normalize (Vector v1);
+Vector get_vector(Vector v1,Vector v2,Vector *v3);
+Vector get_vector(Vector v1,Vector v2);
+/* Vector get_vector(Atom v1,Atom v2); */
+
+Vector normalize(Vector v1,Vector *v2);
+Vector normalize(Vector v1);
 
 #endif

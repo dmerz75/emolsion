@@ -11,7 +11,6 @@
 #include "md.h"
 
 
-
 /* ---------------------------------------------------------
    functions
    --------------------------------------------------------- */
@@ -150,7 +149,7 @@ Vector normalize (Vector v1) {
 
     return v2b;
 }
-Vector get_vector ( Vector v1, Vector v2, Vector *v3 ) {
+Vector get_vector( Vector v1, Vector v2, Vector *v3 ) {
     /* vector between 2 points! */
     Vector v;
     v.x = v3->x = v2.x - v1.x;
@@ -158,7 +157,8 @@ Vector get_vector ( Vector v1, Vector v2, Vector *v3 ) {
     v.z = v3->z = v2.z - v1.z;
     return v;
 }
-Vector get_vector ( Vector v1, Vector v2) {
+Vector get_vector( Vector v1, Vector v2)
+{
     /* vector between 2 points! */
     Vector v;
     v.x = v2.x - v1.x;
@@ -166,3 +166,12 @@ Vector get_vector ( Vector v1, Vector v2) {
     v.z = v2.z - v1.z;
     return v;
 }
+// Vector get_vector(Atom v1,Atom v2)
+// {
+//     /* vector between 2 points! */
+//     Vector v;
+//     v.x = v2.x - v1.x;
+//     v.y = v2.y - v1.y;
+//     v.z = v2.z - v1.z;
+//     return v;
+// }
