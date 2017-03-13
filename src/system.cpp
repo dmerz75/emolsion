@@ -520,34 +520,109 @@ void system_select(Atom *aa,char const *criterion,int total,Atom *asel)
     // return total;
 }
 
-void system_select_atomtype(Atom *aa,char const *criterion,int total,Atom *asel)
+int system_select_atomtype(Atom *aa,char const *criterion,int total,Atom *asel)
 {
     // Get the selection.
     // criterion: N, C, CA, O
+    // the length of the search, CA=2, HA1=3.
+    // std::cout << "the criterion is: " << criterion << std::endl;
+    int crit_length = 0;
+    crit_length = strlen(criterion);
+    // std::cout << "criterion_length: " << crit_length << std::endl;
 
-    std::cout << "the criterion is .." << criterion << std::endl;
     std::string selection(criterion);
     int num_all = aa[0].num_atoms;
     int num;
     num = 0;
 
+
     // std::string str1("chain "); // with space, or it will need development...
     // std::size_t found1 = selection.find(str1);
     // std::size_t found1 = selection.find();
+    std::string atomtype;
 
+    if(strcmp(criterion,"backbone") == 0)
+    {
+        // std::cout << "Found backbone." << std::endl;
+        for(int i=0; i < num_all; i++)
+        {
+            atomtype = "C";
+            if(atomtype.length() == aa[i].atomtype.length())
+            {
+                std::size_t found1 = aa[i].atomtype.find(atomtype);
+                if(found1 != std::string::npos)
+                {
+                    asel[num] = aa[i];
+                    num += 1;
+                }
+            }
+            atomtype = "CA";
+            if(atomtype.length() == aa[i].atomtype.length())
+            {
+                std::size_t found1 = aa[i].atomtype.find(atomtype);
+                if(found1 != std::string::npos)
+                {
+                    asel[num] = aa[i];
+                    num += 1;
+                }
+            }
+            atomtype = "O";
+            if(atomtype.length() == aa[i].atomtype.length())
+            {
+                std::size_t found1 = aa[i].atomtype.find(atomtype);
+                if(found1 != std::string::npos)
+                {
+                    asel[num] = aa[i];
+                    num += 1;
+                }
+            }
+            atomtype = "N";
+            if(atomtype.length() == aa[i].atomtype.length())
+            {
+                std::size_t found1 = aa[i].atomtype.find(atomtype);
+                if(found1 != std::string::npos)
+                {
+                    asel[num] = aa[i];
+                    num += 1;
+                }
+            }
+        }
+    }
+    else
+    {
+        for(int i=0; i < num_all; i++)
+        {
+            // if(i < 20)
+            // {
+            //     std::cout << "count: " << i << " ";
+            //     std::cout << "index: " << aa[i].index << " ";
+            //     std::cout << "atomtype: " << aa[i].atomtype << std::endl;
+            // }
+            // if(i >= 20)
+            // {
+            //     break;
+            // }
+            // std::cout << "atomtype_length: " << aa[i].atomtype.length() << std::endl;
 
-    // for(int i=0; i < num_all; i++)
-    // {
-    //     if(aa[i].atomtype.compare(selection) == 0)
-    //     {
-    //         asel[num] = aa[i];
-    //         num += 1;
-    //     }
-    // }
-    // total = num;
+            if(aa[i].atomtype.length() != crit_length)
+            {
+                continue;
+            }
+            else
+            {
+                std::size_t found1 = aa[i].atomtype.find(criterion);
+                if(found1 != std::string::npos)
+                {
+                    asel[num] = aa[i];
+                    num += 1;
+                }
+            }
+        }
+    }
 
-    std::cout << "the number of atoms by atomtype was: " << total << std::endl;
-
+    total = num;
+    return num;
+    // std::cout << "the number of atoms by atomtype was: " << total << std::endl;
 }
 
 void get_minmax(System sys)

@@ -26,6 +26,7 @@
    headers:
    --------------------------------------------------------- */
 #include "debug.h"
+#include "system.hpp"
 /* #include "system.hpp" */
 // #include "atom.hpp"
 
@@ -49,7 +50,7 @@
    function declarations:
    --------------------------------------------------------- */
 // void ReadPDBfile(PDBfile *pdbfile,char filename[40]);
-void compute_phipsi(Atom *a1);
+void compute_phipsi(Atoms bb);
 
 
 

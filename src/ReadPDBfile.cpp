@@ -9,7 +9,7 @@
 // #include <assert.h>
 #include <string.h> // string.
 // #include <cctype>
-// #include <algorithm> // remove_if, count
+#include <algorithm> // remove_if, count
 #include <iostream>
 #include <fstream> // ifstream
 #include <boost/algorithm/string.hpp>
@@ -46,6 +46,8 @@ int ReadPDBfile(char filename[40],int total_atoms,Atom *aa)
 
 
     string line;
+    string atomtype;
+    // int at_end;
     ifstream pdbfile(fn.c_str());
 
 
@@ -97,8 +99,22 @@ int ReadPDBfile(char filename[40],int total_atoms,Atom *aa)
 
                     // printf("index: %d\n",num_atoms);
                     aa[num_atoms].index = num_atoms;
-                    aa[num_atoms].atomtype = line.substr(13,3);// CA,CG1,OD1
                     aa[num_atoms].restype = line.substr(17,3); // GLY,ILE
+
+
+                    // Need to remove whitespace from atomtype.
+                    // aa[num_atoms].atomtype = line.substr(13,3);// CA,CG1,OD1
+                    atomtype = line.substr(13,3);// CA,CG1,OD1
+                    // remove_if(atomtype.begin(),atomtype.end(),isspace);
+                    // atomtype.erase(remove_if(atomtype.begin(),atomtype.end(),isspace),atomtype.end());
+                    // aa[num_atoms].atomtype = atomtype;
+                    atomtype.erase(remove_if(atomtype.begin(),
+                                             atomtype.end(),
+                                             [](char x){return isspace(x);}),
+                                   atomtype.end());
+                    aa[num_atoms].atomtype = atomtype;
+                    // std::cout << atomtype << " " << atomtype.length() << '\n';
+                    // std::cout
 
                     try
                     {

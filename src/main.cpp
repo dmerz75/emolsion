@@ -425,8 +425,6 @@ int main(int argc, char *argv[]) {
 
 
 
-
-
 #ifdef MTMAP_PRE
     // Pairs: A(~439) and B(427-8).
     DimerList dimers;
@@ -668,10 +666,13 @@ int main(int argc, char *argv[]) {
     // aa_zero: dcd-0
     // aa_later: dcd-time-later.
 
-    Atom *aa_backbone;
+    // typedef std::vector<Atom> Atoms;
+    Atoms aa_backbone;
+
+    Atom *aa_temp_backbone;
     try
     {
-        aa_backbone = new Atom[num_atoms];
+        aa_temp_backbone = new Atom[num_atoms];
     }
     catch (std::bad_alloc xa)
     {
@@ -679,14 +680,43 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
+    // Select backbone
+    num_select = system_select_atomtype(aa_ref,"backbone",num_atoms,aa_temp_backbone);
+    for(int j=0; j<num_select; j++)
+    {
+        Atom a1 = aa_temp_backbone[j]; // Copy Constructor
+        aa_backbone.push_back(a1);
+    }
 
-    system_select_atomtype(aa_ref,"CA",num_atoms,aa_backbone);
-    system_select_atomtype(aa_ref,"C",num_atoms,aa_backbone);
-    system_select_atomtype(aa_ref,"O",num_atoms,aa_backbone);
-    system_select_atomtype(aa_ref,"N",num_atoms,aa_backbone);
-    aa_backbone[0].print_coords();
+    // // Select CA
+    // num_select = system_select_atomtype(aa_ref,"CA",num_atoms,aa_temp_backbone);
+    // // aa_temp_backbone[0].print_coords();
+    // for(int j=0; j<num_select; j++)
+    // {
+    //     Atom a1 = aa_temp_backbone[j]; // Copy Constructor
+    //     aa_backbone.push_back(a1);
+    // }
+    // num_select = system_select_atomtype(aa_ref,"C",num_atoms,aa_temp_backbone);
+    // for(int j=0; j<num_select; j++)
+    // {
+    //     Atom a1 = aa_temp_backbone[j]; // Copy Constructor
+    //     aa_backbone.push_back(a1);
+    // }
+    // num_select = system_select_atomtype(aa_ref,"O",num_atoms,aa_temp_backbone);
+    // for(int j=0; j<num_select; j++)
+    // {
+    //     Atom a1 = aa_temp_backbone[j]; // Copy Constructor
+    //     aa_backbone.push_back(a1);
+    // }
+    // num_select = system_select_atomtype(aa_ref,"N",num_atoms,aa_temp_backbone);
+    // for(int j=0; j<num_select; j++)
+    // {
+    //     Atom a1 = aa_temp_backbone[j]; // Copy Constructor
+    //     aa_backbone.push_back(a1);
+    // }
+    std::cout << "backbone_size: " << aa_backbone.size() << std::endl;
 
-    compute_phipsi(aa_ref);
+    compute_phipsi(aa_backbone);
 
 
 #endif // PHIPSI_B End.
