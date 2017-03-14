@@ -38,6 +38,9 @@
 /* #define BUFFERSIZE 900 */
 
 
+typedef std::vector<std::pair<double,double>> PhiPsi;
+typedef std::vector<PhiPsi> Global_PhiPsi;
+
 
 /* ---------------------------------------------------------
    Classes:
@@ -50,8 +53,7 @@
    function declarations:
    --------------------------------------------------------- */
 // void ReadPDBfile(PDBfile *pdbfile,char filename[40]);
-void compute_phipsi(Dihedral dh);
-
+PhiPsi compute_phipsi(Dihedral dh);
 
 
 #endif

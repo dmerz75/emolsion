@@ -68,6 +68,7 @@ CONS    = -DGET_CONTACTS
 CON_BDA = -DCONTACTS_BEFORE -DCONTACTS_DURING -DCONTACTS_AFTER
 MT2     = -DMTMAP_PRE -DMTMAP2
 PHIPSI  = -DPHIPSI_B -DPHIPSI_M -DPHIPSI_E
+# PHIPSI  = -DPHIPSI_B
 # Macros: Analysis Before. During. After.
 
 #  ---------------------------------------------------------  #

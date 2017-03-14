@@ -14,7 +14,8 @@
 /* ---------------------------------------------------------
    functions
    --------------------------------------------------------- */
-double distance ( Vector v1, Vector v2 ) {
+double distance ( Vector v1, Vector v2 )
+{
     /* Distance between 2 points! */
     double distance;
     double xdist, ydist, zdist;
@@ -26,7 +27,8 @@ double distance ( Vector v1, Vector v2 ) {
     distance = sqrt( xdist * xdist + ydist * ydist + zdist * zdist);
     return distance;
 }
-Vector difference ( Vector v1, Vector v2 ) {
+Vector difference ( Vector v1, Vector v2 )
+{
     /* difference */
     Vector v;
 
@@ -36,22 +38,15 @@ Vector difference ( Vector v1, Vector v2 ) {
 
     return v;
 }
-double magnitude ( Vector v1 ) {
+double magnitude ( Vector v1 )
+{
     /* get magnitude */
     double magnitude;
     magnitude = sqrt( v1.x * v1.x + v1.y * v1.y + v1.z * v1.z );
     return magnitude;
 }
-// Vector midpoint ( Vector v1 ) {
-//     /* get midpoint */
-//     Vector v2;
-//     // magnitude = sqrt( v1.x * v1.x + v1.y * v1.y + v1.z * v1.z );
-//     v2.x = v1.x * 0.5;
-//     v2.y = v1.y * 0.5;
-//     v2.z = v1.z * 0.5;
-//     return v2;
-// }
-Vector midpoint2(Vector v1,Vector v2){
+Vector midpoint(Vector v1,Vector v2)
+{
     /* get midpoint */
     Vector v;
     v.x = (v1.x + v2.x) * 0.5;
@@ -59,19 +54,22 @@ Vector midpoint2(Vector v1,Vector v2){
     v.z = (v1.z + v2.z) * 0.5;
     return v;
 }
-double get_costheta ( Vector v1, Vector v2 ) {
+double get_costheta ( Vector v1, Vector v2 )
+{
     /* !!! v1 & v2 need to be normalized. */
     double costheta;
     costheta = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
     return costheta;
 }
-double dot_product ( Vector v1, Vector v2 ) {
+double dot_product ( Vector v1, Vector v2 )
+{
     /* !!! v1 & v2 not normalized, then it's a dot product. */
     double dotp;
     dotp = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
     return dotp;
 }
-double get_sintheta ( Vector v1, Vector v2 ) {
+double get_sintheta ( Vector v1, Vector v2 )
+{
     /* !!! v1 & v2 need to be normalized. */
     Vector v;
     double sintheta;
@@ -83,7 +81,8 @@ double get_sintheta ( Vector v1, Vector v2 ) {
     sintheta = magnitude(v);
     return sintheta;
 }
-Vector cross_product ( Vector v1, Vector v2 ) {
+Vector cross_product ( Vector v1, Vector v2 )
+{
     // cross product
     // row1: i j k
     // row2: v1

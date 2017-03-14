@@ -233,7 +233,6 @@ std::vector<Atom> load_dcd_to_atoms(dcdhandle *dcd,std::vector<Atom> chain)
 }
 
 
-
 // void load_dcd_to_atoms(dcdhandle *dcd,Atom aa)
 // {
 //     /* ---------------------------------------------------------
