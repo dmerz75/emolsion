@@ -43,6 +43,8 @@
    function declarations:
    --------------------------------------------------------- */
 int ReadPDBfile(char filename[40],int total_atoms,Atom *aa);
+Atoms ReadPDBfile(char filename[40]);
+// typedef std::vector<Atom> Atoms;
 
 
 #endif

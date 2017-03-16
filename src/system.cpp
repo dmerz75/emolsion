@@ -917,3 +917,75 @@ Vector get_centroid(std::vector<Atom> a)
 
     return v;
 }
+
+Atoms set_chainid(Atoms aa)
+{
+    std::cout << "Getting Segments/chains." << std::endl;
+    std::cout << "Num_atoms: " << aa.size() << std::endl;
+
+    int chainid = 0;
+
+    std::string chain;
+    chain = aa[0].chain; // Get "A"
+
+    Atoms a_ret; // return
+    a_ret.reserve(aa.size());
+
+    for(int i=0; i<aa.size(); i++)
+    {
+        // printf("chain: %s\n",aa[i].chain.c_str());
+        // printf("atom: %d  chain: %s  resid: %d  atoms-resid: %d\n",
+        //        aa[i].index,aa[i].chain.c_str(),aa[i].resid,
+        //        aa[i].num_atoms_res);
+
+        Atom a = aa[i];
+        if(aa[i].chain.compare(chain) != 0)
+        {
+            chainid += 1;
+        }
+
+        // Set chainid.
+        a.chainid = chainid;
+        // std::cout << "chainid: " << a.chainid << std::endl;
+
+        // Reset chain to next in line, "A" -> "B"
+        chain = aa[i].chain;
+        // Push it back:
+        a_ret.push_back(a);
+    }
+
+    return a_ret;
+    // return a_ret;
+    // exit(0);
+}
+
+SegChain sort_segment_chain(Atoms aa)
+{
+    std::cout << "Sorting segments & chains." << std::endl;
+
+    SegChain segment;
+    pAtoms pa;
+
+    int chainid = -1;
+    chainid = aa[0].chainid;
+    std::cout << "start segment: " << chainid << " found." << std::endl;
+
+    for(int i=0; i<aa.size(); i++)
+    {
+        if(aa[i].chainid == chainid)
+        {
+            pa.push_back(&aa[i]);
+        }
+        else
+        {
+
+            chainid = aa[i].chainid;
+            i--;
+            segment.push_back(pa);
+            pa.clear();
+            std::cout << "new segment: " << chainid << std::endl;
+        }
+    }
+    return segment;
+
+}

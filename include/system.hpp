@@ -210,6 +210,10 @@ public:
     std::string atomtype;  // N, CA, C, O, CB, ..
     std::string general_atomtype; // 77,1
 
+    std::string chain; // "A"
+    int chainid;
+    int resid;
+
 private:
     /* std::string str_index = line.substr(5,6);      // int */
     /* std::string str_atomtype = line.substr(13,3); */
@@ -228,6 +232,9 @@ inline Atom::Atom()
     x = 0.00000;
     y = 0.00000;
     z = 0.00000;
+    chain = "zz";
+    chainid = -1;
+    resid = -1;
     radius = 0.0000;
     index = -1;
 
@@ -248,6 +255,10 @@ inline Atom::Atom(const Atom &obj)
 
     atomtype = obj.atomtype;
     general_atomtype = obj.general_atomtype;
+
+    chain = obj.chain;
+    chainid = obj.chainid;
+    resid = obj.resid;
 }
 inline Atom::~Atom()
 {
@@ -259,8 +270,7 @@ inline Atom::~Atom()
 }
 inline void Atom::print_Atom()
 {
-    std::cout << " "
-              << "index: "
+    std::cout << "index: "
               << index << "   "
               << "x: "
               << x << "  "
@@ -268,6 +278,9 @@ inline void Atom::print_Atom()
               << y << "  "
               << "z: "
               << z << "  "
+              << std::endl;
+    std::cout << "chain: " << chain
+              << " resid: "  << resid
               << std::endl;
 }
 inline void Atom::print_coords()
@@ -278,8 +291,6 @@ inline void Atom::print_coords()
     printf("                       %s\n",general_atomtype.c_str());
 
 }
-
-
 // inline void Atom::print_info()
 // {
 //     // std::cout << restype << ": " << atomtype << " " << general_atomtype << std::endl;
@@ -301,7 +312,13 @@ Vector get_centroid(std::vector<Atom> a);
 
 
 typedef std::vector<std::vector<Atom>> Dihedral;
+typedef std::vector<Atom *> pAtoms;
+typedef std::vector<std::vector<Atom *>> SegChain;
 typedef std::vector<Atom> Atoms;
+
+Atoms set_chainid(Atoms aa);
+SegChain sort_segment_chain(Atoms aa);
+// typedef std::vector<
 // typedef std::vector<Atom> Dihedral(4);
 // Atoms aa_backbone;
 

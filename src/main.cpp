@@ -56,9 +56,7 @@ extern "C" {
 
 int main(int argc, char *argv[]) {
 
-    debug(">> Welcome to SOPCC! (debug)\n");
-    printf(">> Welcome to SOPCC!\n");
-
+    printf(">> Welcome to Emolsion!\n");
     if (argc < 3) {
         std::cout << "Usage: " << argv[0] \
                   << " <Filename-reference-PDB>" \
@@ -66,7 +64,6 @@ int main(int argc, char *argv[]) {
                   << std::endl;
         exit(1);
     }
-
 
     /* ---------------------------------------------------------
        Procedure: Steps.
@@ -91,35 +88,116 @@ int main(int argc, char *argv[]) {
     //    5.2 Write output files.
     // 6. Close, Free up memory.
 
-    int num_atoms;
-    num_atoms = -1;
-
-
-
-    // 0. Create the System.
-    // System sys;
-    // sys.print_prop();
-
 
     /* ---------------------------------------------------------
        Step 1. read the config file!
        --------------------------------------------------------- */
 
 
-
-
     /* ---------------------------------------------------------
        Step 2. Read the pdb.
        --------------------------------------------------------- */
+    int num_atoms;
+    num_atoms = -1;
     // () ReadPDBfile
     // () Count the total "num_atoms".
-    Atom a1[0];
-    std::cout << "1. Currently, there are " << num_atoms << " atoms." << std::endl;
-    num_atoms = ReadPDBfile(argv[1],num_atoms,a1);
-    // delete[] a1;
-    // delete a1;
-    // delete ?
-    std::cout << "2. Currently, there are " << num_atoms << " atoms." << std::endl;
+    Atom a_initial[0];
+    // std::cout << "1. Currently, there are " << num_atoms << " atoms." << std::endl;
+    num_atoms = ReadPDBfile(argv[1],num_atoms,a_initial);
+    std::cout << "Total_atoms: " << num_atoms << std::endl;
+    // delete a_initial ?
+
+
+    // 2.1.1 Copy for the Reference state. (PDB)
+    // 2.1.2 Copy for DCD-0.
+    // 2.1.3 Pointers for aa_later.
+
+    // 2.1.1 The PDB
+    // Besides allatoms_ref,_0, everything else should POINT to allatoms.
+    Atoms allatoms; // not a pointer, this is what will evolve in time.
+    Atoms allatoms_ref; // from PDB
+    Atoms allatoms_0; // from DCD-0
+
+
+    // Reserve space for my 3 standards. allatoms, _ref, _0.
+    allatoms.reserve(num_atoms);
+    allatoms_ref.reserve(num_atoms);
+    allatoms_0.reserve(num_atoms);
+
+
+    // Populate allatoms.
+    allatoms_ref = ReadPDBfile(argv[1]);
+    std::cout << "Number of atoms in allatoms_ref: " << allatoms_ref.size() << std::endl;
+    // for(auto a: allatoms_ref)
+    // {
+    //     std::cout << a.index << std::endl;
+    // }
+    // exit(0);
+
+
+    // Set the chainid based on switch from chain A to chain B .. etc.
+    allatoms_ref = set_chainid(allatoms_ref);
+
+    // // Check chainid:
+    // for(auto a: allatoms_ref)
+    // {
+    //     std::cout << "chainid: " << a.chainid
+    //               << " chain: " << a.chain
+    //               << std::endl;
+    // }
+    // exit(0);
+
+
+    // Duplication: Initial set of copies:
+    // 1. allatoms_ref (PDB)
+    // 1. allatoms (time-evolving)
+    // 2. allatoms_0 (from DCD-0).
+    for(int j=0; j<allatoms_ref.size(); j++)
+    {
+        Atom a = allatoms_ref[j];
+        // a.print_coords();
+        allatoms.push_back(a);
+        allatoms_0.push_back(a);
+    }
+
+    // // Check 3 standards:
+    // for(int j=0; j<allatoms_ref.size(); j++)
+    // {
+    //     // allatoms_ref[j].print_Atom();
+    //     allatoms_ref[j].print_coords();
+    //     allatoms[j].print_coords();
+    //     allatoms_0[j].print_coords();
+    // }
+    // // exit(0);
+
+    // // Check chainid.
+    // for(auto a: allatoms)
+    // {
+    //     std::cout << "chainid: " << a.chainid
+    //               << " chain: " << a.chain
+    //               << std::endl;
+    // }
+    // exit(0);
+
+
+    // Build allatoms_chain, as pointers to allatoms, but sorted by chain.
+    SegChain allatoms_chain;
+    allatoms_chain = sort_segment_chain(allatoms);
+
+    // Check Segments:
+    for(auto a: allatoms_chain)
+    {
+        std::cout << "Segment Size: " << a.size() << std::endl;
+        for(auto c: a)
+        {
+            std::cout << c->chainid
+                      << " " << c->chain
+                      << " " << std::endl;
+            break;
+        }
+        // std::cout << "New Segment." << std::endl;
+    }
+    // exit(0);
 
 
     // 2.1 Allocate for the Reference System.
@@ -134,14 +212,6 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
     num_atoms = ReadPDBfile(argv[1],num_atoms,aa_ref);
-
-    // SUCCESS! Copy constructor implemented!
-    Atom *aa_ref2 = aa_ref;
-    Atom aa_ref2_1 = aa_ref[0];
-    aa_ref[0].print_coords();
-    aa_ref2_1.print_coords();
-    printf("Copy Constructor example here.\n");
-    // exit(0);
 
 
     // 2.2 Populate System Parameters
@@ -1594,6 +1664,7 @@ int main(int argc, char *argv[]) {
     /* ---------------------------------------------------------
        Step 6. Delete Malloc Systems.
        --------------------------------------------------------- */
+    // delete [] a_initial;
     delete [] aa_ref;
     delete [] aa_zero;
     delete [] aa_later;
