@@ -303,12 +303,8 @@ inline void Atom::print_coords()
    --------------------------------------------------------- */
 // int system_select_atomtype(Atom *aa,char const *criterion,int total);
 int system_select_atomtype(Atom *aa,char const *criterion,int total,Atom *asel);
-
-
 int system_select(Atom *aa,char const *criterion,int total);
 void system_select(Atom *aa,char const *criterion,int total,Atom *asel);
-void get_minmax(System sys);
-Vector get_centroid(std::vector<Atom> a);
 
 
 typedef std::vector<std::vector<Atom>> Dihedral;
@@ -318,6 +314,11 @@ typedef std::vector<Atom> Atoms;
 
 Atoms set_chainid(Atoms aa);
 SegChain sort_segment_chain(Atoms aa);
+Vector get_centroid(Atoms aa);
+pAtoms select(Atoms aa,char const *criterion);
+
+void get_minmax(System sys);
+
 // typedef std::vector<
 // typedef std::vector<Atom> Dihedral(4);
 // Atoms aa_backbone;

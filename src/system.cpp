@@ -28,6 +28,217 @@
 /* ---------------------------------------------------------
    functions
    --------------------------------------------------------- */
+pAtoms select(Atoms aa,char const *criterion)
+{
+    // std::cout << "Selecting .." << std::endl;
+    std::string selection(criterion);
+    // std::cout << criterion << std::endl;
+
+    pAtoms asel;
+
+    int num;
+    num = 0;
+
+    // CHAIN
+    std::string str1("chain "); // with space, or it will need development...
+    std::size_t found1 = selection.find(str1);
+    if (found1 != std::string::npos)
+    {
+        std::string sel_chain = selection.replace(found1,str1.length(),"");
+        // std::cout << "chain: " << sel_chain << std::endl;
+
+        for(int i=0; i < aa.size(); i++)
+        {
+            if(aa[i].chain.compare(sel_chain) == 0)
+            {
+                // asel[num] = aa[i];
+                asel.push_back(&aa[i]);
+                num += 1;
+            }
+        }
+    }
+
+    // RESID
+    std::string str2("resid ");
+    std::size_t found2 = selection.find(str2);
+    if (found2 != std::string::npos) // found "resid"
+    {
+        // MUST HAVE "resid .."
+        std::string sel_resid0 = selection.replace(found2,str2.length(),"");
+        std::string strto("to");
+        std::size_t foundto = sel_resid0.find("to");
+        // std::cout << "sel_resid0:" << sel_resid0 << std::endl;
+
+        if(foundto != std::string::npos) // found "to"
+        {
+            // MUST HAVE "resid 0 to 5"
+            std::string sel_resid1 = sel_resid0.substr(0,foundto);
+            std::string sel_resid2 = sel_resid0.substr(foundto+strto.length(),sel_resid0.length());
+            int r1,r2;
+            r1 = r2 = -1;
+            r1 = stoi(sel_resid1);
+            r2 = stoi(sel_resid2);
+            // std::cout << "sel_resid1:" << sel_resid1 << '\t' << r1 << std::endl;
+            // std::cout << "sel_resid2:" << sel_resid2 << '\t' << r2 << std::endl;
+
+            for(int i=0; i < aa.size(); i++)
+            {
+                if((aa[i].resid >= r1) and (aa[i].resid <= r2))
+                {
+                    // asel[num] = aa[i];
+                    asel.push_back(&aa[i]);
+                    num += 1;
+                }
+            }
+        }
+        else
+        {
+            // THIS IS CASE: resid 14
+            int r1;
+            r1 = -1;
+            r1 = stoi(sel_resid0);
+            // std::cout << "sel_resid0:" << sel_resid0 << '\t' << r1 << std::endl;
+
+            for(int i=0; i < aa.size(); i++)
+            {
+
+                if(aa[i].resid == r1)
+                {
+                    // asel[num] = aa[i];
+                    asel.push_back(&aa[i]);
+                    num += 1;
+                }
+            }
+        }
+    }
+
+    // INDEX
+    std::string str3("index ");
+    std::size_t found3 = selection.find(str3);
+
+    if (found3 != std::string::npos) // found "index"
+    {
+        // MUST HAVE "index .."
+        std::string sel_index0 = selection.replace(found3,str3.length(),"");
+        std::string strto("to");
+        std::size_t foundto = sel_index0.find("to");
+        // std::cout << "sel_index0:" << sel_index0 << std::endl;
+
+        if(foundto != std::string::npos) // found "to"
+        {
+            // MUST HAVE "index 0 to 5"
+            std::string sel_index1 = sel_index0.substr(0,foundto);
+            std::string sel_index2 = sel_index0.substr(foundto+strto.length(),sel_index0.length());
+            int r1,r2;
+            r1 = r2 = -1;
+            r1 = stoi(sel_index1);
+            r2 = stoi(sel_index2);
+            // std::cout << "sel_index1:" << sel_index1 << '\t' << r1 << std::endl;
+            // std::cout << "sel_index2:" << sel_index2 << '\t' << r2 << std::endl;
+
+            for(int i=0; i < aa.size(); i++)
+            {
+                if((aa[i].index >= r1) and (aa[i].index <= r2))
+                {
+                    // asel[num] = aa[i];
+                    asel.push_back(&aa[i]);
+                    num += 1;
+                }
+            }
+        }
+        else
+        {
+            // THIS IS CASE: index 14
+            int r1;
+            r1 = -1;
+            r1 = stoi(sel_index0);
+            // std::cout << "sel_index0:" << sel_index0 << '\t' << r1 << std::endl;
+
+            for(int i=0; i < aa.size(); i++)
+            {
+                if(aa[i].index == r1)
+                {
+                    // asel[num] = aa[i];
+                    asel.push_back(&aa[i]);
+                    num += 1;
+                }
+            }
+        }
+    }
+
+    // ALL
+    std::string str4("all");
+    std::size_t found4 = selection.find(str4);
+    if (found4 != std::string::npos) // found "all"
+    {
+        for(int i=0; i < aa.size(); i++)
+        {
+            // asel[num] = aa[i];
+            asel.push_back(&aa[i]);
+            num += 1;
+        }
+    }
+
+
+    // CHAINID
+    std::string str5("chainid ");
+    std::size_t found5 = selection.find(str5);
+    if (found5 != std::string::npos) // found "chainid"
+    {
+        // MUST HAVE "chainid .."
+        std::string sel_chainid0 = selection.replace(found5,str5.length(),"");
+        std::string strto("to");
+        std::size_t foundto = sel_chainid0.find("to");
+        // std::cout << "sel_chainid0:" << sel_chainid0 << std::endl;
+
+        if(foundto != std::string::npos) // found "to"
+        {
+            // MUST HAVE "chainid 0 to 5"
+            std::string sel_chainid1 = sel_chainid0.substr(0,foundto);
+            std::string sel_chainid2 = sel_chainid0.substr(foundto+strto.length(),sel_chainid0.length());
+            int cid1,cid2;
+            cid1 = cid2 = -1;
+
+            cid1 = stoi(sel_chainid1);
+            cid2 = stoi(sel_chainid2);
+            // std::cout << "sel_chainid1:" << sel_chainid1 << '\t' << cid1 << std::endl;
+            // std::cout << "sel_chainid2:" << sel_chainid2 << '\t' << cid2 << std::endl;
+
+
+            for(int i=0; i < aa.size(); i++)
+            {
+                if((aa[i].chainid >= cid1) and (aa[i].chainid <= cid2))
+                {
+                    // asel[num] = aa[i];
+                    asel.push_back(&aa[i]);
+                    num += 1;
+                }
+            }
+        }
+        else
+        {
+            // THIS IS CASE: chainid 14
+            int cid1;
+            cid1 = -1;
+            cid1 = stoi(sel_chainid0);
+            // std::cout << "sel_chainid0:" << sel_chainid0 << '\t' << cid1 << std::endl;
+
+            for(int i=0; i < aa.size(); i++)
+            {
+
+                if(aa[i].chainid == cid1)
+                {
+                    // asel[num] = aa[i];
+                    asel.push_back(&aa[i]);
+                    num += 1;
+                }
+            }
+        }
+    }
+
+    return asel;
+}
+
 int system_select(Atom *aa,char const *criterion,int total)
 {
     // 1.
@@ -895,7 +1106,7 @@ void get_minmax(System sys)
 //     // return total;
 // }
 
-Vector get_centroid(std::vector<Atom> a)
+Vector get_centroid(Atoms aa)
 {
     // std::cout << "Welcome to get_centroid!" << std::endl;
     // std::cout << a.size() << std::endl;
@@ -904,16 +1115,16 @@ Vector get_centroid(std::vector<Atom> a)
     float x,y,z;
     x = y = z = 0.0;
 
-    for(auto atom: a)
+    for(auto a: aa)
     {
-        x += atom.x;
-        y += atom.y;
-        z += atom.z;
+        x += a.x;
+        y += a.y;
+        z += a.z;
     }
 
-    v.x = x / a.size();
-    v.y = y / a.size();
-    v.z = z / a.size();
+    v.x = x / aa.size();
+    v.y = y / aa.size();
+    v.z = z / aa.size();
 
     return v;
 }
@@ -966,26 +1177,29 @@ SegChain sort_segment_chain(Atoms aa)
     SegChain segment;
     pAtoms pa;
 
-    int chainid = -1;
-    chainid = aa[0].chainid;
-    std::cout << "start segment: " << chainid << " found." << std::endl;
+    int chainid = 0;
 
     for(int i=0; i<aa.size(); i++)
     {
-        if(aa[i].chainid == chainid)
+        if(chainid == aa[i].chainid)
         {
             pa.push_back(&aa[i]);
         }
         else
         {
-
-            chainid = aa[i].chainid;
-            i--;
             segment.push_back(pa);
             pa.clear();
-            std::cout << "new segment: " << chainid << std::endl;
+            chainid = aa[i].chainid;
+            std::cout << "add segment: " << chainid
+                      << " " << aa[i].chainid << std::endl;
+            // std::cout << "current_point_size: " << pa.size() << std::endl;
+            pa.push_back(&aa[i]);
+            // std::cout << "current_point_size: " << pa.size() << std::endl;
         }
     }
-    return segment;
+    segment.push_back(pa);
+    pa.clear();
+    // std::cout << "Atoms added: " << tally_atoms << std::endl;
 
+    return segment;
 }
