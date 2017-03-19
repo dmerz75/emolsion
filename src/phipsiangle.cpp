@@ -33,7 +33,7 @@
 /* ---------------------------------------------------------
    functions
    --------------------------------------------------------- */
-PhiPsi compute_phipsi(Dihedral dh)
+PhiPsi compute_phipsi(vvAtoms dihedral)
 {
     // std::cout << "Computing phi / psi." << std::endl;
     // for(auto d: dh)
@@ -83,33 +83,33 @@ PhiPsi compute_phipsi(Dihedral dh)
     std::pair<double,double> phi_psi;
 
 
-    for(int i=1; i<dh.size()-1; i++)
+    for(int i=1; i<dihedral.size()-1; i++)
     {
-        // phi1 = dh[i-1][2]; // resid 1, C
-        // phi2 = dh[i][0];   // resid 2, N
-        // phi3 = dh[i][1];   // resid 2, CA
-        h1.create_Vector(dh[i-1][2].x,
-                         dh[i-1][2].y,
-                         dh[i-1][2].z);
-        h2.create_Vector(dh[i][0].x,
-                         dh[i][0].y,
-                         dh[i][0].z);
-        h3.create_Vector(dh[i][1].x,
-                         dh[i][1].y,
-                         dh[i][1].z);
+        // phi1 = dihedral[i-1][2]; // resid 1, C
+        // phi2 = dihedral[i][0];   // resid 2, N
+        // phi3 = dihedral[i][1];   // resid 2, CA
+        h1.create_Vector(dihedral[i-1][2].x,
+                         dihedral[i-1][2].y,
+                         dihedral[i-1][2].z);
+        h2.create_Vector(dihedral[i][0].x,
+                         dihedral[i][0].y,
+                         dihedral[i][0].z);
+        h3.create_Vector(dihedral[i][1].x,
+                         dihedral[i][1].y,
+                         dihedral[i][1].z);
 
-        // psi1 = dh[i][1];   // resid 2, CA
-        // psi2 = dh[i][2];   // resid 2, C
-        // psi3 = dh[i+1][0]; // resid 3, N
-        // s1.create_Vector(dh[i][1].x,
-        //                  dh[i][1].y,
-        //                  dh[i][1].z);
-        h4.create_Vector(dh[i][2].x,
-                         dh[i][2].y,
-                         dh[i][2].z);
-        h5.create_Vector(dh[i+1][0].x,
-                         dh[i+1][0].y,
-                         dh[i+1][0].z);
+        // psi1 = dihedral[i][1];   // resid 2, CA
+        // psi2 = dihedral[i][2];   // resid 2, C
+        // psi3 = dihedral[i+1][0]; // resid 3, N
+        // s1.create_Vector(dihedral[i][1].x,
+        //                  dihedral[i][1].y,
+        //                  dihedral[i][1].z);
+        h4.create_Vector(dihedral[i][2].x,
+                         dihedral[i][2].y,
+                         dihedral[i][2].z);
+        h5.create_Vector(dihedral[i+1][0].x,
+                         dihedral[i+1][0].y,
+                         dihedral[i+1][0].z);
 
 
         // std::cout << "5points: " << std::endl;

@@ -1,11 +1,13 @@
 # Makefile
 
+
 # Declaration of variables
 CC       := gcc
 CXX      := g++
 CL       := clang --analyze
 # LINKER := gcc -fPIC
 # OBJDIR := obj
+
 
 # Compiler Flags: Use $(CF) for generic/old architectures
 CF       := -g -std=c++11
@@ -17,11 +19,13 @@ CFLAGS_2 := -ansi -pedantic -std=gnu99 -Wall -W
 CFLAGS_2 := -ansi -pedantic
 CFLAGS_3 := -Wconversion -Wshadow -Wcast-qual -Wwrite-strings -g -O2
 
+
 # Valgrind
 VAL      := valgrind --track-origins=yes -v
 VALFULL  := valgrind --track-origins=yes --leak-check=full -v
 VALMEM   := valgrind --track-origins=yes --tool=memcheck --leak-check=full --show-leak-kinds=all --show-reachable=yes --num-callers=20 --track-fds=yes -v
 VALMASS  := valgrind --tool=massif prog
+
 
 # c files
 # SOURCES  := $(CFILES) # $(CFILES2) all CFILES
@@ -32,10 +36,12 @@ CPPFILES   := $(wildcard src/*.cpp)
 OBJECTS  := $(SOURCES:.cpp=.o)
 OBJECTS_A:= $(SOURCES:.cpp=_a.o)
 
+
 # lib
 LIB      := -pthread
 # LIB    := -pthread -larmadillo
 # LIB    := -pthread -lmongoclient -L lib -lboost_thread-mt -lboost_filesystem-mt -lboost_system-mt
+
 
 # include
 INC      := -Iinclude
@@ -57,19 +63,17 @@ EXEC     := emol
 EXEF     := $(wildcard /usr/local/bin/$(EXEC)*)
 
 
-
 #  ---------------------------------------------------------  #
 #  Macros                                                     #
+#  Analysis Before. During. After.
 #  ---------------------------------------------------------  #
 MACRO   = -D
+DCDTEST = -DDCDTEST
 DCD     = -DDCDREAD
 DCDW    = -DDCDREAD -DDCD_WRITE_B -DDCD_WRITE -DDCD_WRITE_E
 CONS    = -DGET_CONTACTS
-CON_BDA = -DCONTACTS_BEFORE -DCONTACTS_DURING -DCONTACTS_AFTER
-MT2     = -DMTMAP_PRE -DMTMAP2
+MT2     = -DMTMAP_PREP -DMTMAP2_BEFORE -DMTMAP2_DURING -DMTMAP2_AFTER
 PHIPSI  = -DPHIPSI_B -DPHIPSI_M -DPHIPSI_E
-# PHIPSI  = -DPHIPSI_B
-# Macros: Analysis Before. During. After.
 
 #  ---------------------------------------------------------  #
 #  Macros' Descriptions:                                      #
@@ -83,8 +87,9 @@ PHIPSI  = -DPHIPSI_B -DPHIPSI_M -DPHIPSI_E
 
 
 
-
-# ---------------------------------------------------------------------
+#  ---------------------------------------------------------  #
+#  Targets:                                                   #
+#  ---------------------------------------------------------  #
 # Main target
 $(EXEC): $(OBJECTS)
 	$(CXX) $(OBJECTS) -lm -o $(EXEC)
@@ -118,6 +123,18 @@ main:
 main0:
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) -o test/$(EXEC)_def
 	cd test && ./$(EXEC)_def 2KHO.pdb 2KHO.dcd
+test-all-atom-dcd-0:
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) -o test/$(EXEC)_dcdread
+	cd test && ./$(EXEC)_dcdread 2kho_implicit.pdb 2kho_implicit.dcd 10 100 2
+test-all-atom-dcd-1: # passes: DCDTEST
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCDTEST) -o test/$(EXEC)_dcdread
+	cd test && ./$(EXEC)_dcdread 2kho_implicit.pdb 2kho_implicit.dcd 10 100 2
+test-all-atom-dcd-2: # causes the 1 chain into vvpAtoms failure.
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) -o test/$(EXEC)_dcdread
+	cd test && ./$(EXEC)_dcdread 2kho_implicit.pdb 2kho_implicit.dcd 10 100 2
+test-all-atom-dcd-3: # succeeds because > 1 chain into vvpAtoms.
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) -o test/$(EXEC)_dcdread
+	cd test && ./$(EXEC)_dcdread 4EZW.pdb nil.dcd 10 100 2
 main1:
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) -o test/$(EXEC)_def
 	cd test && ./$(EXEC)_def 4EZW.pdb nil.dcd
@@ -126,7 +143,7 @@ main2:
 	cd test && ./$(EXEC)_def mt.ref.pdb mt_partial.dcd
 dcd0:
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) -o test/$(EXEC)_dcdreader
-	cd test && ./$(EXEC)_def mt.ref.pdb mt_partial.dcd 0 100 1
+	cd test && ./$(EXEC)_dcdreader mt.ref.pdb mt_partial.dcd 0 100 1
 dcdr:
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) -o test/$(EXEC)_dcdreader
 	cd test && ./$(EXEC)_dcdreader mt.ref.pdb mt_partial.dcd 6 27 3 # 6-9 .. 21-24-27.
@@ -136,14 +153,11 @@ dcdw:
 contacts0:
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(CONS) -o test/$(EXEC)_contacts
 	cd test && ./$(EXEC)_contacts mt.ref.pdb mt_partial.dcd 6 27 3 # 6-9 .. 21-24-27.
-contacts1:
-	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) $(CON_BDA) -o test/$(EXEC)_contactsbda
-	cd test && ./$(EXEC)_contactsbda mt.ref.pdb mt_partial.dcd 6 27 3 # 6-9 .. 21-24-27.
 contacts3:
-	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) $(CON_BDA) $(MT2) -o test/$(EXEC)_mtcontacts2
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) $(MT2) -o test/$(EXEC)_mtcontacts2
 	cd test && ./$(EXEC)_mtcontacts2 mt.ref.pdb mt_partial.dcd 6 30 6 # 6-9 .. 21-24-27.
 mtcontactstest:
-	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) $(CON_BDA) $(MT2) -o test/$(EXEC)_mtcontacts2
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) $(MT2) -o test/$(EXEC)_mtcontacts2
 	cd test && ./$(EXEC)_mtcontacts2 mt_test1.pdb mt_test1.dcd 4 220 5
 angles-all-atoms:
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) $(PHIPSI) -o test/$(EXEC)_phipsi_angles
@@ -154,7 +168,7 @@ angles-all-atoms:
 # Deployment:
 # ---------------------------------------------------------------------
 mtcontacts:
-	$(CXX) $(CPPFILES) $(CF0) $(INC) $(LIB) $(DCD) $(CON_BDA) $(MT2) -DNDEBUG -o bin/$(EXEC)_mtcontacts3n
+	$(CXX) $(CPPFILES) $(CF0) $(INC) $(LIB) $(DCD) $(MT2) -DNDEBUG -o bin/$(EXEC)_mtcontacts3n
 
 
 

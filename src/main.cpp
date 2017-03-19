@@ -114,9 +114,10 @@ int main(int argc, char *argv[]) {
 
     // 2.1.1 The PDB
     // Besides allatoms_ref,_0, everything else should POINT to allatoms.
-    Atoms allatoms; // not a pointer, this is what will evolve in time.
-    Atoms allatoms_ref; // from PDB
-    Atoms allatoms_0; // from DCD-0
+    // allatoms_later -> allatoms;
+    vAtoms allatoms; // not a pointer, this is what will evolve in time.
+    vAtoms allatoms_ref; // from PDB
+    vAtoms allatoms_0; // from DCD-0
 
 
     // Reserve space for my 3 standards. allatoms, _ref, _0.
@@ -127,18 +128,18 @@ int main(int argc, char *argv[]) {
 
     // Populate allatoms.
     allatoms_ref = ReadPDBfile(argv[1]);
-    std::cout << "Number of atoms in allatoms_ref: " << allatoms_ref.size() << std::endl;
-    // for(auto a: allatoms_ref)
-    // {
-    //     std::cout << a.index << std::endl;
-    // }
-    // exit(0);
-
+    // std::cout << "Number of atoms in allatoms_ref: " << allatoms_ref.size() << std::endl;
 
     // Set the chainid based on switch from chain A to chain B .. etc.
     allatoms_ref = set_chainid(allatoms_ref);
 
-    // // Check chainid:
+    // Check index:
+    // for(auto a: allatoms_ref)
+    // {
+    //     std::cout << a.index << std::endl;
+    // }
+
+    // Check chainid:
     // for(auto a: allatoms_ref)
     // {
     //     std::cout << "chainid: " << a.chainid
@@ -180,133 +181,55 @@ int main(int argc, char *argv[]) {
     // exit(0);
 
 
-    // Build allatoms_chain, as pointers to allatoms, but sorted by chain.
-    SegChain allatoms_chain;
-    allatoms_chain = sort_segment_chain(allatoms);
-
-    // Check Segments:
-    for(auto a: allatoms_chain)
-    {
-        std::cout << "Segment Size: " << a.size() << " "
-                  << "Segment: " << a[0]->chain << " " << std::endl;
-        // for(auto c: a)
-        // {
-        //     std::cout << c->chainid
-        //               << " " << c->chain
-        //               << " " << std::endl;
-        // }
-        // std::cout << "New Segment." << std::endl;
-    }
-    // std::cout << "Total Atoms: " << allatoms_ref.size() << std::endl;
-    // exit(0);
-
-
-    // 2.1 Allocate for the Reference System.
-    // Atom *aa_ref;
-    // try
-    // {
-    //     aa_ref = new Atom[num_atoms];
-    // }
-    // catch (std::bad_alloc xa)
-    // {
-    //     std::cout << "Allocation Failure\n";
-    //     exit(1);
-    // }
-    // num_atoms = ReadPDBfile(argv[1],num_atoms,aa_ref);
-
-
-    // // 2.2 Populate System Parameters
-    // int chainid, atoms_resid, cur_resid;
-    // std::string chain;
-
-    // chainid = 0;
-    // chain = aa_ref[0].chain.c_str(); // Get "A"
-    // // std::cout << "chain: " << chain << std::endl;
-    // // exit(0);
-
-    // // integer list of chains.
-    // std::vector <int> lst_chainid;
-    // std::vector <int>::iterator it;
-
-    // for(int i=0; i<num_atoms; i++)
-    // {
-    //     // printf("atom: %d  chain: %d  resid: %d  atoms-resid: %d\n",
-    //     //        aa_ref[i].index,aa_ref[i].chainid,aa_ref[i].resid,
-    //     //        aa_ref[i].num_atoms_res);
-    //     // printf("chain: %s\n",aa_ref[i].chain.c_str());
-
-    //     if(aa_ref[i].chain.c_str() != chain)
-    //     {
-    //         chainid += 1;
-    //         lst_chainid.push_back(chainid);
-    //     }
-
-    //     aa_ref[i].chainid = chainid;
-    //     chain = aa_ref[i].chain.c_str();
-
-
-    //     // printf("atom: %d  chain: %d  resid: %d  atoms-resid: %d\n",
-    //     //        aa_ref[i].index,aa_ref[i].chainid,aa_ref[i].resid,
-    //     //        aa_ref[i].num_atoms_res);
-    //     // printf("chain: %s\n",aa_ref[i].chain.c_str());
-    // }
-
-    // chainid += 1;
-    // for(int i=0; i<num_atoms; i++)
-    // {
-    //     // aa_ref[i].print_coords();
-    //     // printf("%s  ",aa_ref[i].chain.c_str());
-    //     // printf("%d\n",aa_ref[i].resid);
-    //     aa_ref[i].num_atoms = num_atoms;
-    //     aa_ref[i].num_chains = chainid;
-    // }
-    // // printf("frames: %d\n",dcd->nsets);
-
-
-
-
     /* ---------------------------------------------------------
        Select: vector of pointers at an Atom
        --------------------------------------------------------- */
     // select()
-    pAtoms chainH;
+    vpAtoms chainH;
     chainH = select(allatoms,"chain H");
     std::cout << "chain H: " << chainH.size() << std::endl;
 
-    pAtoms chainD;
+    vpAtoms chainD;
     chainD = select(allatoms,"chain D");
     std::cout << "chain D: " << chainD.size() << std::endl;
 
-    pAtoms chainA;
+    vpAtoms chainA;
     chainA = select(allatoms,"chain A");
     std::cout << "chain A: " << chainA.size() << std::endl;
 
-    pAtoms resid5;
+    vpAtoms resid5;
     resid5 = select(allatoms,"resid 539 to 541");
     std::cout << "resid 539 to 541: " << resid5.size() << std::endl;
 
-    pAtoms resid3;
+    vpAtoms resid3;
     resid3 = select(allatoms,"resid 37");
     std::cout << "resid 37: " << resid3.size() << std::endl;
 
-    pAtoms sel150;
+    vpAtoms sel150;
     sel150 = select(allatoms,"index 150 to 350");
     std::cout << "Selection: index 150 to 350: " << sel150.size() << std::endl;
 
-    pAtoms sel597;
+    vpAtoms sel597;
     sel597 = select(allatoms,"index 597");
     std::cout << "Selection: index 597: " << sel597.size() << std::endl;
 
-    pAtoms sel0;
+    vpAtoms sel0;
     sel0 = select(allatoms,"chainid 0");
     std::cout << "Selection: chainid 0: " << sel0.size() << std::endl;
 
-    pAtoms sel1;
+    vpAtoms sel1;
     sel1 = select(allatoms,"chainid 1");
     std::cout << "Selection: chainid 1: " << sel1.size() << std::endl;
 
-
+    vpAtoms sel_all;
+    sel_all = select(allatoms,"all");
+    std::cout << "Selection: (all)  " << sel_all.size() << std::endl;
     // exit(0);
+
+    vpAtoms sel_calpha;
+    sel_calpha = select(allatoms,"atomtype CA");
+    std::cout << "Selection: (CALPHA) " << sel_calpha.size() << std::endl;
+
     /* ---------------------------------------------------------
        End of Selection.
        --------------------------------------------------------- */
@@ -315,6 +238,55 @@ int main(int argc, char *argv[]) {
     /* ---------------------------------------------------------
        Vector of chain-vectors of Atoms.
        --------------------------------------------------------- */
+    // Build allatoms_chain, as pointers to allatoms, but sorted by chain.
+
+    // Example: ALL
+    // for(auto a: sel_all)
+    // {
+    //     // std::cout << a->x << std::endl;
+    //     a->print_Coords();
+    // }
+
+    // Example: CALPHA
+    // for(auto ca: sel_calpha)
+    // {
+    //     ca->print_Coords();
+    // }
+    // exit(0);
+
+
+    vvpAtoms allatoms_chain;
+    allatoms_chain = sort_segment_chain(allatoms); // returns the point_vec_Atoms
+    std::cout << "Chains acquired. " << allatoms_chain.size() << std::endl;
+    // Check Segments:
+    // Failure ...
+    // if(allatoms_chain.size() > 1)
+    // {
+    //     for(auto va: allatoms_chain)
+    //     {
+    //         std::cout << "Segment Size: " << va.size() << " "
+    //                   << "Segment: " << va[0]->chain << " "
+    //                   << std::endl;
+
+    //         // for(auto c: a)
+    //         // {
+    //         //     std::cout << c->chainid
+    //         //               << " " << c->chain
+    //         //               << " " << std::endl;
+    //         // << "x: " << a.x << " "
+    //         // << std::endl;
+
+    //         // }
+    //         // std::cout << "New Segment." << std::endl;
+    //     }
+
+    // }
+
+    // std::cout << "Total Atoms: " << allatoms_ref.size() << std::endl;
+    // exit(0);
+
+
+
 // #ifdef NDEBUG
     // Atom *aa_sel;
     // int num_select = 0;
@@ -410,7 +382,10 @@ int main(int argc, char *argv[]) {
 
 
 
-#ifdef MTMAP_PRE
+    /* ---------------------------------------------------------
+       BEFORE DCD
+       --------------------------------------------------------- */
+#ifdef MTMAP_PREP
     // Pairs: A(~439) and B(427-8).
     DimerList dimers;
     MtIndexMap mtmap_subdomain;
@@ -421,15 +396,17 @@ int main(int argc, char *argv[]) {
     int betabool = -1;
     int i_count = -1;
     int high_index, low_index, Nterm2, Mterm1, Mterm2, Cterm1;
-    // std::cout << "mtmap-size: " << mtmap[0].size() << std::endl;
+    // std::cout << "mtmap-size: " << mtmap_subdomain[0].size() << std::endl;
 
-    for(auto c: chain_ref)
+    // for(auto c: chain_ref)
+    for(auto c: allatoms_chain)
     {
         high_index = low_index = Nterm2 = Mterm1 = Mterm2 = Cterm1 = -1;
         i_count += 1;
         betabool = -1;
         imonomer += 1;
 
+        std::cout << "ChainSize: " << c.size() << std::endl;
         if((c.size() >= 433) and (c.size() <= 442))
         {
             dimers.push_back(std::make_pair(imonomer-1,imonomer));
@@ -439,14 +416,20 @@ int main(int argc, char *argv[]) {
         {
             betabool = 1;
         }
+        else
+        {
+            continue;
+        }
 
 
         high_index = -1;
         for(auto a: c)
         {
-            if (a.index > high_index)
+            std::cout << "Index: " << a->index << " HighIndex: " << high_index
+                      << std::endl;
+            if (a->index > high_index)
             {
-                high_index = a.index;
+                high_index = a->index;
             }
         }
 
@@ -535,7 +518,10 @@ int main(int argc, char *argv[]) {
     // Vector of Vector <int>
     MtNeighbors mt_matrix(dimers.size(), std::vector<int>(8,-1));
     // Get Map of MtNeighbors.
-    mt_matrix = get_map_of_mtneighbors(chain_ref,dimers);
+    // mt_matrix = get_map_of_mtneighbors(chain_ref,dimers);
+    // mt_matrix = get_map_of_mtneighbors(&allatoms_chain,dimers);
+    exit(0);
+    mt_matrix = get_map_of_mtneighbors(allatoms_chain,dimers);
 
     // KEEP THIS.
     // Print Map of MT neighbors.
@@ -564,85 +550,115 @@ int main(int argc, char *argv[]) {
     //             std::cout << std::endl;
     // }
     // exit(0);
-#endif // MTMAP
-    /* ---------------------------------------------------------
-       End Selection.
-       --------------------------------------------------------- */
+#endif // MTMAP_PREP
+
+#ifdef MTMAP2_BEFORE
+    std::cout << "MTMAP2: Beginning contacts by sector." << std::endl;
+
+    SetContacts contact_set;
+    SetNeighbors neighbor_set;
+    SetChains chain_set;
+    SetGlobalContacts global_contacts;
+
+    for(auto c: mt_matrix)
+    {
+        neighbor_set.clear();
+
+        // Alpha, Beta, Alpha-Beta
+        // contact_set = get_contacts_for_chain(chain_ref[c[0]],chain_ref[c[0]],8.0);
+        // neighbor_set.push_back(contact_set);
+        // contact_set.clear();
+        // contact_set = get_contacts_for_chain(chain_ref[c[1]],chain_ref[c[1]],8.0);
+        // neighbor_set.push_back(contact_set);
+        // contact_set.clear();
+        contact_set = get_contacts_for_chain(allatoms_chain[c[0]],8.0,mtmap_subdomain,c[0]);
+        neighbor_set.push_back(contact_set);
+        contact_set.clear();
+        contact_set = get_contacts_for_chain(allatoms_chain[c[1]],8.0,mtmap_subdomain,c[1]);
+        neighbor_set.push_back(contact_set);
+        contact_set.clear();
+
+        contact_set = get_contacts_for_chain(allatoms_chain[c[0]],allatoms_chain[c[1]],8.0,
+                                             mtmap_subdomain,
+                                             c[0],
+                                             c[1]);
+
+        neighbor_set.push_back(contact_set);
+        contact_set.clear();
+
+        for(int m=2; m<=4; m++)
+        {
+            if(c[m] < 0)
+            {
+                contact_set.clear();
+                neighbor_set.push_back(contact_set);
+                continue;
+            }
+            contact_set = get_contacts_for_chain(allatoms_chain[c[0]],
+                                                 allatoms_chain[c[m]],
+                                                 8.0,
+                                                 mtmap_subdomain,
+                                                 c[0],
+                                                 c[m]);
+            neighbor_set.push_back(contact_set);
+            contact_set.clear();
+        }
+
+        for(int m=5; m<=7; m++)
+        {
+            if(c[m] < 0)
+            {
+                contact_set.clear();
+                neighbor_set.push_back(contact_set);
+                continue;
+            }
+            contact_set = get_contacts_for_chain(allatoms_chain[c[1]],
+                                                 allatoms_chain[c[m]],
+                                                 8.0,
+                                                 mtmap_subdomain,
+                                                 c[1],
+                                                 c[m]);
+
+            neighbor_set.push_back(contact_set);
+            contact_set.clear();
+        }
+
+        chain_set.push_back(neighbor_set);
+
+    }
+    global_contacts.push_back(chain_set);
+    chain_set.clear();
+    // exit(0);
+
+    std::cout << "Original Contacts obtained!" << std::endl;
+    std::cout << global_contacts.size() << std::endl;
 
 
-    /* ---------------------------------------------------------
-       Create aa_zero, aa_later reference states.
-       --------------------------------------------------------- */
-    // Atom *aa_zero;
-    // try
+    // KEEP THIS.
+    // Print some of the original contacts.
+    // int cmax = 0;
+    // for(auto f: global_contacts)
     // {
-    //     aa_zero = new Atom[num_atoms];
+    //     std::cout << f.size() << std::endl;
+
+    //     for(auto c: f)
+    //     {
+    //         cmax += 1;
+    //         if (cmax > 5)
+    //         {
+    //             break;
+    //         }
+    //         std::cout << "\t" << c.size() << std::endl;
+
+    //         for(auto n: c)
+    //         {
+    //             std::cout << "\t\t" << n.size() << std::endl;
+    //         }
+    //     }
     // }
-    // catch (std::bad_alloc xa)
-    // {
-    //     std::cout << "Allocation Failure\n";
-    //     exit(1);
-    // }
+    // exit(0);
 
-    // Atom *aa_later;
-    // try
-    // {
-    //     aa_later = new Atom[num_atoms];
-    // }
-    // catch (std::bad_alloc xa)
-    // {
-    //     std::cout << "Allocation Failure\n";
-    //     exit(1);
-    // }
-
-    // //
-    // system_select(aa_ref,"all",num_atoms,aa_zero);
-    // system_select(aa_ref,"all",num_atoms,aa_later);
-
-
-    // // Verify aa_zero and aa_later.
-    // for(int i=0; i<num_atoms; i++)
-    // {
-    //     aa_zero[i].num_atoms = num_atoms;
-    //     aa_later[i].num_atoms = num_atoms;
-
-    //     // aa_ref[i].print_coords();
-    //     // printf("%s  ",aa_ref[i].chain.c_str());
-    //     // printf("%d\n",aa_ref[i].resid);
-    //     // std::cout << "select_i: " << ' '
-    //     //           << aa_sel[i].num_atoms << ' '
-    //     //           << aa_sel[i].index << ' '
-    //     //           << aa_sel[i].resid << ' '
-    //     //           << aa_sel[i].chain << ' '
-    //     //           << aa_sel[i].restype << ' '
-    //     //           << std::endl;
-    // }
-    /* ---------------------------------------------------------
-       Create aa_zero, aa_later reference states. End.
-       --------------------------------------------------------- */
-
-
-#if defined (DCDREAD) || defined (DCD_WRITE_B) || defined (DCD_WRITE) || defined (DCD_WRITE_E)
-    /* ---------------------------------------------------------
-       Analysis Before. Start.
-       --------------------------------------------------------- */
-    int someindex = 0;
-    someindex = aa_ref[0].num_atoms / 2;
-    debug("middle-index: %d\n",someindex);
-    debug("coords: %f %f %f\n",aa_ref[someindex].x,aa_ref[someindex].y,aa_ref[someindex].z);
-    debug("coords: %f %f %f\n",aa_zero[someindex].x,aa_zero[someindex].y,aa_zero[someindex].z);
-    debug("coords: %f %f %f\n",aa_later[someindex].x,aa_later[someindex].y,aa_later[someindex].z);
-
-    debug("\n");
-    debug("coords(8)[0]: %f %f %f\n",aa_zero[8].x,aa_zero[8].y,aa_zero[8].z);
-    debug("coords(8)[later]: %f %f %f\n",aa_later[8].x,aa_later[8].y,aa_later[8].z);
-    debug("coords(37)[0]: %f %f %f\n",aa_zero[37].x,aa_zero[37].y,aa_zero[37].z);
-    debug("coords(37)[later]: %f %f %f\n",aa_later[37].x,aa_later[37].y,aa_later[37].z);
-    /* ---------------------------------------------------------
-       Analysis Before. Finish.
-       --------------------------------------------------------- */
-#endif // multi-dcd
-
+#endif // MTMAP2_BEFORE
 
 #ifdef PHIPSI_B // PHIPSI Beginning section.
     std::cout << "Getting PHI / PSI Angles!" << std::endl;
@@ -650,7 +666,7 @@ int main(int argc, char *argv[]) {
     // aa_zero: dcd-0
     // aa_later: dcd-time-later.
 
-    Dihedral vec_dihedrals; // vector<vector<Atom>>
+    vvAtoms vec_dihedrals; // vector<vector<Atom>>
 
 
     Atom *aa_temp_backbone;
@@ -670,7 +686,7 @@ int main(int argc, char *argv[]) {
     // for(int j=0; j<num_select; j+=4)
     for(int j=0; j<num_select; j+=3)
     {
-        Atoms backbone(3); // vector<Atom>
+        vAtoms backbone(3); // vector<Atom>
         for(int k=0; k<3; k++)
         {
             jk = j + k;
@@ -745,7 +761,6 @@ int main(int argc, char *argv[]) {
 
 #endif // PHIPSI_B End.
 
-
 #ifdef GET_CONTACTS
     // void get_contacts(Atom *a1,Atom *a2,char dcdfilename[40],int num_atoms);
     // get_contacts(aa_sel,aa_sel,argv[2],num_atoms);
@@ -754,10 +769,112 @@ int main(int argc, char *argv[]) {
 
 
 
+#if defined (DCDREAD) || defined (DCD_WRITE_B) || defined (DCD_WRITE) || defined (DCD_WRITE_E)
+    /* ---------------------------------------------------------
+       Analysis Before. Start.
+       --------------------------------------------------------- */
+    // Before DCD Read is open. Just checking coordinates at this point.
+    int atomcheck = 0;
+    atomcheck = allatoms_ref.size();
+    if(atomcheck > 3)
+    {
+        atomcheck = 3;
+    }
+
+    std::cout << "Reference-Object:(0) " << std::endl;
+    for(int i=0; i<atomcheck; i++)
+    {
+        allatoms_ref[i].print_Coords();
+    }
+    // Failure
+    // std::cout << "Reference-Pointer:(0) " << std::endl;
+    // for(int i=0; i<atomcheck; i++)
+    // {
+    //     // sel_all[i]->print_Coords();
+    //     std::cout << sel_all[i]->x << " "
+    //               << sel_all[i]->y << " "
+    //               << sel_all[i]->z << " "
+    //               << std::endl;
+    // }
+
+    // int someindex = 0;
+    // someindex = allatoms_ref.size() * 0.5;
+    // debug("middle-index: %d\n",someindex);
+    // debug("coords: %f %f %f\n",
+    //       allatoms_ref[someindex].x,
+    //       allatoms_ref[someindex].y,
+    //       allatoms_ref[someindex].z);
+    // exit(0);
+    // debug("coords: %f %f %f\n",aa_zero[someindex].x,aa_zero[someindex].y,aa_zero[someindex].z);
+    // debug("coords: %f %f %f\n",aa_later[someindex].x,aa_later[someindex].y,aa_later[someindex].z);
+    // debug("\n");
+    // debug("coords(8)[0]: %f %f %f\n",aa_zero[8].x,aa_zero[8].y,aa_zero[8].z);
+    // debug("coords(8)[later]: %f %f %f\n",aa_later[8].x,aa_later[8].y,aa_later[8].z);
+    // debug("coords(37)[0]: %f %f %f\n",aa_zero[37].x,aa_zero[37].y,aa_zero[37].z);
+    // debug("coords(37)[later]: %f %f %f\n",aa_later[37].x,aa_later[37].y,aa_later[37].z);
+    /* ---------------------------------------------------------
+       Analysis Before. Finish.
+       --------------------------------------------------------- */
+#endif // multi-dcd
+
+
+    /* ---------------------------------------------------------
+       Create aa_zero, aa_later reference states.
+       --------------------------------------------------------- */
+    // Atom *aa_zero;
+    // try
+    // {
+    //     aa_zero = new Atom[num_atoms];
+    // }
+    // catch (std::bad_alloc xa)
+    // {
+    //     std::cout << "Allocation Failure\n";
+    //     exit(1);
+    // }
+
+    // Atom *aa_later;
+    // try
+    // {
+    //     aa_later = new Atom[num_atoms];
+    // }
+    // catch (std::bad_alloc xa)
+    // {
+    //     std::cout << "Allocation Failure\n";
+    //     exit(1);
+    // }
+
+    // //
+    // system_select(aa_ref,"all",num_atoms,aa_zero);
+    // system_select(aa_ref,"all",num_atoms,aa_later);
+
+
+    // // Verify aa_zero and aa_later.
+    // for(int i=0; i<num_atoms; i++)
+    // {
+    //     aa_zero[i].num_atoms = num_atoms;
+    //     aa_later[i].num_atoms = num_atoms;
+
+    //     // aa_ref[i].print_coords();
+    //     // printf("%s  ",aa_ref[i].chain.c_str());
+    //     // printf("%d\n",aa_ref[i].resid);
+    //     // std::cout << "select_i: " << ' '
+    //     //           << aa_sel[i].num_atoms << ' '
+    //     //           << aa_sel[i].index << ' '
+    //     //           << aa_sel[i].resid << ' '
+    //     //           << aa_sel[i].chain << ' '
+    //     //           << aa_sel[i].restype << ' '
+    //     //           << std::endl;
+    // }
+    /* ---------------------------------------------------------
+       Create aa_zero, aa_later reference states. End.
+       --------------------------------------------------------- */
+
+
+
+#ifdef DCDREAD
     /* ---------------------------------------------------------
        Step 3.0 DCD Read. Preload.
        --------------------------------------------------------- */
-#ifdef DCDREAD
     int frame_position;
     frame_position = 0;
     int start,stop,step;
@@ -766,7 +883,6 @@ int main(int argc, char *argv[]) {
     start = atoi(argv[3]);
     stop = atoi(argv[4]);
     step = atoi(argv[5]);
-
 
 
     /* ---------------------------------------------------------
@@ -850,8 +966,6 @@ int main(int argc, char *argv[]) {
     // } dcdhandle;
 
 
-
-
     printf("----->  READING DCD  <-----\n");
     // int atoms_in_chain;
     // 2. to read a dcd.
@@ -873,291 +987,8 @@ int main(int argc, char *argv[]) {
     // close_file_read(v);
 
     /* ---------------------------------------------------------
-       Analysis Before. But with DCD Open. Begin.
+       DCD OPEN!
        --------------------------------------------------------- */
-
-
-#ifdef CONTACTS_BEFORE
-
-#ifdef MTMAP2
-    std::cout << "MTMAP2: Beginning contacts by sector." << std::endl;
-
-    //   time        chain       contacts      contact
-    // std::vector<std::vector<std::vector<boost::tuple<int,int,double>>>> all_contacts;
-
-    // std::vector<boost::tuple<int,int,double>> contacts0; // * 8
-    // std::vector<std::vector<std::vector<boost::tuple<int,int,double>>>>  contacts8 (8,boost::tuple<int,int,double>);
-
-
-    // std::vector<std::vector<boost::tuple>> frame_contacts (boost::tuple<int,int,double>(8));
-    // std::vector<std::vector<boost::tuple<int,int,double>>> frame_contacts;
-    // std::vector<boost::tuple<int,int,double>> chain_contacts;
-    // std::cout << frame_contacts.size() << std::endl;
-
-    // std::vector<std::vector<boost::tuple<int,int,double>>>
-    //     frame_contacts(8,std::vector<boost::tuple<int,int,double>>);
-
-
-    // std::vector<std::vector<int>> mt_matrix(18, std::vector<int>(8,-1));
-
-
-
-    // exit(0);
-
-    // std::vector<std::vector<int>> mt_matrix(dimers.size(), std::vector<int>(8,-1));
-    // std::vector<boost::tuple<int,int,double>> chain_contacts;
-
-    // iterators:
-    // std::vector<boost::tuple<int,int,double>>::iterator icc;
-
-
-    // Contacts **contacts_all = new Contacts *;
-    // contacts_all = Contacts[8][aa_ref[0].num_chains];
-
-    // Contacts *contacts_0;
-    // try
-    // {
-    //     contacts_0 = new Contacts[aa_ref[0].num_chains];
-    // }
-    // catch (std::bad_alloc xa)
-    // {
-    //     std::cout << "Allocation Failure\n";
-    //     exit(1);
-    // }
-    // std::cout << "frame_contacts: " << contacts_0[0].frame_contacts.size() << std::endl;
-    // std::cout << "chain_contacts: " << contacts_0[0].chain_contacts.size() << std::endl;
-    // std::cout << "initial_contacts: " << contacts_0[0].initial_contacts.size() << std::endl;
-    // exit(0);
-
-
-
-
-    // FrameNeighborSetContact
-    // ChainContacts NeighborContacts (8,Contact(0));
-    // for(auto c: NeighborContacts)
-    // {
-    //     std::cout << n.size() << std::endl;
-    // }
-
-
-
-    SetContacts contact_set;
-    SetNeighbors neighbor_set;
-    SetChains chain_set;
-    SetGlobalContacts global_contacts;
-
-
-    // int ch_alpha = -1;
-    // int ch_beta = -1;
-    // int ch_count = -1;
-
-    for(auto c: mt_matrix)
-    {
-        // ch_count += 1;
-        // ch_alpha = 2 * ch_count;
-        // ch_beta = 2 * ch_count + 1;
-
-        neighbor_set.clear();
-
-
-        // std::cout << " "
-        //           << c[0] << " "
-        //           << c[1] << " "
-        //           << c[2] << " "
-        //           << c[3] << " "
-        //           << c[4] << " "
-        //           << c[5] << " "
-        //           << c[6] << " "
-        //           << c[7] << " "
-        //           << std::endl;
-
-        // Alpha, Beta, Alpha-Beta
-        // contact_set = get_contacts_for_chain(chain_ref[c[0]],chain_ref[c[0]],8.0);
-        // neighbor_set.push_back(contact_set);
-        // contact_set.clear();
-        // contact_set = get_contacts_for_chain(chain_ref[c[1]],chain_ref[c[1]],8.0);
-        // neighbor_set.push_back(contact_set);
-        // contact_set.clear();
-        contact_set = get_contacts_for_chain(chain_ref[c[0]],8.0,mtmap_subdomain,c[0]);
-        neighbor_set.push_back(contact_set);
-        contact_set.clear();
-        contact_set = get_contacts_for_chain(chain_ref[c[1]],8.0,mtmap_subdomain,c[1]);
-        neighbor_set.push_back(contact_set);
-        contact_set.clear();
-
-        contact_set = get_contacts_for_chain(chain_ref[c[0]],chain_ref[c[1]],8.0,
-                                             mtmap_subdomain,
-                                             c[0],
-                                             c[1]);
-
-        neighbor_set.push_back(contact_set);
-        contact_set.clear();
-
-        for(int m=2; m<=4; m++)
-        {
-            if(c[m] < 0)
-            {
-                contact_set.clear();
-                neighbor_set.push_back(contact_set);
-                continue;
-            }
-            contact_set = get_contacts_for_chain(chain_ref[c[0]],
-                                                 chain_ref[c[m]],
-                                                 8.0,
-                                                 mtmap_subdomain,
-                                                 c[0],
-                                                 c[m]);
-            neighbor_set.push_back(contact_set);
-            contact_set.clear();
-        }
-
-        for(int m=5; m<=7; m++)
-        {
-            if(c[m] < 0)
-            {
-                contact_set.clear();
-                neighbor_set.push_back(contact_set);
-                continue;
-            }
-            contact_set = get_contacts_for_chain(chain_ref[c[1]],
-                                                 chain_ref[c[m]],
-                                                 8.0,
-                                                 mtmap_subdomain,
-                                                 c[1],
-                                                 c[m]);
-
-            neighbor_set.push_back(contact_set);
-            contact_set.clear();
-        }
-
-        // for(auto n: c)
-        // {
-        //     std::cout << n << std::endl;
-        // }
-        // std::d::cout << std::endl;
-
-        chain_set.push_back(neighbor_set);
-
-
-        //     // std::cout << "-------------------------------------------" << std::endl;
-        //     // break;
-        // }
-    }
-    global_contacts.push_back(chain_set);
-    chain_set.clear();
-    // exit(0);
-
-
-
-
-    // iterate through the connectivity matrix.
-    // dimers only. all 8 neighbors.
-    // for(itmap = mt_matrix.begin(); itmap != mt_matrix.end(); itmap++)
-    // {
-    //     int ibin = -1;
-    //     // std::cout << (*itmap)[0] << std::endl;
-    //     // get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap_n)],
-    //     //                        8.0,contacts_0[(*itmap)[0]].chain_set);
-    //     // std::cout << "contact_size: " << contacts_0[(*itmap)[0]].chain_set.size() << std::endl;
-
-
-    //     // INJECT Neighbors here. 8!
-    //     for(itmap_n = (*itmap).begin(); itmap_n != (*itmap).end(); itmap_n++)
-    //     {
-    //         ibin += 1;
-    //         // std::cout << "bin: " << ibin << std::endl; // 0-7
-    //         // std :: cout << (*itmap)[0] << " " << (*itmap_n) << std::endl;
-
-    //         // This loop prevents the need for the following Allocation failure...
-    //         if(((*itmap)[0] == -1) or ((*itmap_n) == -1))
-    //         {
-    //             // std::cout << "No interface here." << std::endl;
-    //             contact_set.clear();
-    //             // continue;
-    //         }
-    //         else
-    //         {
-    //             std::cout << ibin << " " << (*itmap)[0] << " " << (*itmap)[1] << std::endl;
-    //             if((ibin >= 0) and (ibin <=3))
-    //             {
-
-    //                 contact_set = get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap_n)],8.0);
-    //             }
-    //             else
-    //             {
-
-    //                 contact_set = get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap_n)],8.0);
-    //             }
-    //         neighbor_set.push_back(contact_set); // builds up to 8.
-    //         // std::cout << neighbor_set.size() << std::endl;
-    //         // neighbor_set[ibin] = contact_set;
-
-    //         // std::cout << "# of contacts: " << contact_set.size() << std::endl;
-    //         contact_set.clear();
-
-    //         // std::cout << "# of contacts: " << chain_set.size() << std::endl;
-    //         // try
-    //         // {
-    //         //     chain_set = get_contacts_for_chain(chain_ref[(*itmap)[0]],chain_ref[(*itmap_n)],8.0);
-
-    //         // }
-    //         // catch (const std::bad_alloc &chain_set)
-    //         // {
-    //         //     std::cout << "Allocation failed: " << chain_set.what() << std::endl;
-    //         //     continue;
-    //         // }
-
-    //         // std::cout << "chain: " << (*itmap_n) << std::endl;
-    //         // std::cout << frame_contacts.size() << std::endl;
-    //         // std::cout << frame_contacts[ibin].size() << std::endl;
-    //         // frame_contacts[ibin]->push_back(chain_set);
-    //     }
-    //     chain_set.push_back(neighbor_set);
-    //     neighbor_set.clear();
-
-    //     // std::cout << "-------------------------------------------" << std::endl;
-    //     // break;
-    // }
-    // global_contacts.push_back(chain_set);
-
-
-    std::cout << "Original Contacts obtained!" << std::endl;
-    std::cout << global_contacts.size() << std::endl;
-
-
-    // KEEP THIS.
-    // Print some of the original contacts.
-    // int cmax = 0;
-    // for(auto f: global_contacts)
-    // {
-    //     std::cout << f.size() << std::endl;
-
-    //     for(auto c: f)
-    //     {
-    //         cmax += 1;
-    //         if (cmax > 5)
-    //         {
-    //             break;
-    //         }
-    //         std::cout << "\t" << c.size() << std::endl;
-
-    //         for(auto n: c)
-    //         {
-    //             std::cout << "\t\t" << n.size() << std::endl;
-    //         }
-    //     }
-    // }
-    // exit(0);
-
-
-#endif // MTMAP2
-#endif // CONTACTS_BEFORE
-
-
-    /* ---------------------------------------------------------
-       Analysis Before. But with DCD Open. End.
-       --------------------------------------------------------- */
-
 
     /* ---------------------------------------------------------
        Step 3.3 DCD Load.
@@ -1167,7 +998,15 @@ int main(int argc, char *argv[]) {
 
     // THIS ONE
     // load_dcd_to_chain(dcd,aa_zero,num_chains);
-    load_dcd_to_atoms(dcd,aa_zero);
+    // load_dcd_to_atoms(dcd,aa_zero);
+    allatoms_0 = load_dcd_to_atoms(dcd,allatoms_0);
+
+    // for(auto a: allatoms_ref)
+    // {
+    //     std::cout << a.x << std::endl;
+    // }
+    // exit(0);
+
 
     // printf("%f %f %f\n",)
     // printf("frame_position: %d\n",frame_position);
@@ -1179,8 +1018,24 @@ int main(int argc, char *argv[]) {
     advance_dcd(dcd->nsets,0,dcd,natoms,&timestep); // 2nd. 2-vmd
 
     // THIS ONE
-    load_dcd_to_atoms(dcd,aa_later);
+    // load_dcd_to_atoms(dcd,aa_later);
+    // allatoms = load_dcd_to_atoms(dcd,allatoms);
+    // allatoms = load_dcd_to_atoms(dcd,allatoms);
     printf("frame_position: %d\n",frame_position);
+
+    // std::cout << sel_all.size() << std::endl;
+    // std::cout << "Reference-Pointer:(2) " << std::endl;
+    // for(int i=0; i<atomcheck; i++)
+    // {
+    //     std::cout << sel_all[i]->x << " "
+    //               << sel_all[i]->y << " "
+    //               << sel_all[i]->z << " "
+    //               << std::endl;
+    //     // sel_all[i]->print_Coords();
+    // }
+    // exit(0);
+
+
     // Advancing Rules.
     // ----------------
     // example. step size -> 5.
@@ -1202,7 +1057,9 @@ int main(int argc, char *argv[]) {
 
         // THIS ONE
         // load_dcd_to_chain(dcd,chain_later,num_chains);
-        load_dcd_to_atoms(dcd,aa_later);
+        // load_dcd_to_atoms(dcd,aa_later);
+        // allatoms = load_dcd_to_atoms(dcd,allatoms);
+        allatoms = load_dcd_to_atoms(dcd,allatoms);
 
         debug("forwarding --> frame_position: %d\n",frame_position);
     }
@@ -1217,47 +1074,74 @@ int main(int argc, char *argv[]) {
     int nset2;
     nset2 = frame_position;
     do {
+
+
 #endif //DCDREAD
+
+
 
 
 #if defined (DCDREAD) || defined (DCD_WRITE_B) || defined (DCD_WRITE) || defined (DCD_WRITE_E)
         /* ---------------------------------------------------------
-           Step 4.0 Analysis During. Start.
+           DURING DCD
+           DCD LOAD
            --------------------------------------------------------- */
-        debug("middle-index: %d\n",someindex);
-        debug("coords: %f %f %f\n",aa_ref[someindex].x,aa_ref[someindex].y,aa_ref[someindex].z);
-        debug("coords: %f %f %f\n",aa_zero[someindex].x,aa_zero[someindex].y,aa_zero[someindex].z);
-        debug("coords: %f %f %f\n",aa_later[someindex].x,aa_later[someindex].y,aa_later[someindex].z);
+        // std::vector<Atom> amov;
+        // std::vector<std::vector<Atom>> chain_later;
 
-        debug("\n");
-        debug("coords(8)[0]: %f %f %f\n",aa_zero[8].x,aa_zero[8].y,aa_zero[8].z);
-        debug("coords(8)[%d]: %f %f %f\n",frame_position,aa_later[8].x,aa_later[8].y,aa_later[8].z);
-        debug("coords(37)[0]: %f %f %f\n",aa_zero[37].x,aa_zero[37].y,aa_zero[37].z);
-        debug("coords(37)[%d]: %f %f %f\n",frame_position,aa_later[37].x,aa_later[37].y,aa_later[37].z);
+        // EXAMPLE Iteration: chain_ref
+        // for(itchain = chain_ref.begin(); itchain != chain_ref.end(); itchain++)
+        // {
+        //     amov = load_dcd_to_atoms(dcd,(*itchain));
+        //     // ATOM    438  CA                 83.230 104.659 560.812
+        //     // ATOM    438  CA                 86.611 102.589 557.086
+        //     chain_later.push_back(amov);
+        // }
+
+        // DCD OPEN, Coordinates Read, Loaded. Analysis During follows..
+        // debug("middle-index: %d\n",someindex);
+        // debug("coords: %f %f %f\n",aa_ref[someindex].x,aa_ref[someindex].y,aa_ref[someindex].z);
+        // debug("coords: %f %f %f\n",aa_zero[someindex].x,aa_zero[someindex].y,aa_zero[someindex].z);
+        // debug("coords: %f %f %f\n",aa_later[someindex].x,aa_later[someindex].y,aa_later[someindex].z);
+        // debug("\n");
+        // debug("coords(8)[0]: %f %f %f\n",aa_zero[8].x,aa_zero[8].y,aa_zero[8].z);
+        // debug("coords(8)[%d]: %f %f %f\n",frame_position,aa_later[8].x,aa_later[8].y,aa_later[8].z);
+        // debug("coords(37)[0]: %f %f %f\n",aa_zero[37].x,aa_zero[37].y,aa_zero[37].z);
+        // debug("coords(37)[%d]: %f %f %f\n",frame_position,aa_later[37].x,aa_later[37].y,aa_later[37].z);
+
+        if(frame_position <=10)
+        {
+            std::cout << "Reference-Object:(t<10) " << std::endl;
+            for(int i=0; i<atomcheck; i++)
+            {
+                allatoms_ref[i].print_Coords();
+            }
+        }
+
+        // std::cout << "Reference-Pointer:(t) " << std::endl;
+        // for(int i=0; i<atomcheck; i++)
+        // {
+        //     sel_all[i]->print_Coords();
+        // }
+
+        // Failure
+        std::cout << sel_all.size() << std::endl;
+        std::cout << "Reference-Pointer:(2) " << std::endl;
+        // for(int i=0; i<atomcheck; i++)
+        // {
+        //     std::cout << sel_all[i]->x << " "
+        //               << sel_all[i]->y << " "
+        //               << sel_all[i]->z << " "
+        //               << std::endl;
+        //     // sel_all[i]->print_Coords();
+        // }
+        // exit(0);
 
 
         /* ---------------------------------------------------------
-           Step 3.5 DCD Load during evaluation.
+           Analysis During:
            --------------------------------------------------------- */
-        std::vector<Atom> amov;
-        std::vector<std::vector<Atom>> chain_later;
-
-        // EXAMPLE Iteration: chain_ref
-        for(itchain = chain_ref.begin(); itchain != chain_ref.end(); itchain++)
-        {
-            amov = load_dcd_to_atoms(dcd,(*itchain));
-            // ATOM    438  CA                 83.230 104.659 560.812
-            // ATOM    438  CA                 86.611 102.589 557.086
-            chain_later.push_back(amov);
-        }
-
-
-#ifdef CONTACTS_DURING
-
-
-
-
-#ifdef MTMAP2
+#ifdef MTMAP2_DURING
         std::cout << "MTMAP2: Evaluating contacts by sector." << std::endl;
         std::cout << "Global Contacts: " << std::endl;
         std::cout << global_contacts[0].size() << std::endl;
@@ -1284,7 +1168,8 @@ int main(int argc, char *argv[]) {
 
             for(auto n: c)
             {
-                contact_set = get_contacts_for_chain_later(aa_later,
+                // aa_later, allatoms_chain, allatoms, sel_all
+                contact_set = get_contacts_for_chain_later(sel_all,
                                                            8.0,2.0,
                                                            global_contacts[0][it_c][it_n]);
                 // std::cout << contact_set.size() << std::endl;
@@ -1297,7 +1182,6 @@ int main(int argc, char *argv[]) {
             it_c += 1;
         }
         global_contacts.push_back(chain_set);
-
 
 
         // for(auto c: mt_matrix)
@@ -1338,10 +1222,7 @@ int main(int argc, char *argv[]) {
         // std::cout << global_contacts[0][1][4].size() << std::endl; // frame-156-8-sc
         // std::cout << global_contacts[0][2][1].size() << std::endl; // frame-156-8-sc
         // exit(0);
-
-#endif // MTMAP2
-
-#endif // CONTACTS_DURING
+#endif // MTMAP2_DURING
 
 
 #ifdef PHIPSI_M // Begin.
@@ -1353,7 +1234,7 @@ int main(int argc, char *argv[]) {
         vec_dihedrals.clear();
         for(int j=0; j<num_select; j+=3)
         {
-            Atoms backbone(3); // vector<Atom>
+            vAtoms backbone(3); // vector<Atom>
 
             for(int k=0; k<3; k++)
             {
@@ -1425,18 +1306,20 @@ int main(int argc, char *argv[]) {
 
         // THIS ONE
         // load_chain_to_timestep(chain_later,num_chains,&timestep_w);
-        load_atom_to_timestep(&timestep_w,aa_later);
+        // load_atom_to_timestep(&timestep_w,aa_later);
+        // load_atom_to_timestep(&timestep_w,allatoms);
 
 #ifdef DCD_WRITE_UNMOD
-    // Write the DCD read in.
+        // Write the DCD read in.
         write_timestep(vw,&timestep);
 
-    // #elif DCD_WRITE_ROT
 #else
         // Write modified coordinates.
         write_timestep(vw,&timestep_w);
-#endif // A
-#endif
+
+#endif // DCD_WRITE_UNMOD
+
+#endif // DCD_WRITE
 
 
 #ifdef DCDREAD
@@ -1453,7 +1336,8 @@ int main(int argc, char *argv[]) {
 
             // THIS ONE
             // load_dcd_to_chain(dcd,chain_later,num_chains);
-            load_dcd_to_atoms(dcd,aa_later);
+            // load_dcd_to_atoms(dcd,aa_later);
+            allatoms = load_dcd_to_atoms(dcd,allatoms);
 
             // nset2 += advance_size + 1;
         }
@@ -1475,23 +1359,18 @@ int main(int argc, char *argv[]) {
     /* ---------------------------------------------------------
        Analysis After. Start.
        --------------------------------------------------------- */
-    debug("middle-index: %d\n",someindex);
-    debug("coords: %f %f %f\n",aa_ref[someindex].x,aa_ref[someindex].y,aa_ref[someindex].z);
-    debug("coords: %f %f %f\n",aa_zero[someindex].x,aa_zero[someindex].y,aa_zero[someindex].z);
-    debug("coords: %f %f %f\n",aa_later[someindex].x,aa_later[someindex].y,aa_later[someindex].z);
+    // debug("middle-index: %d\n",someindex);
+    // debug("coords: %f %f %f\n",aa_ref[someindex].x,aa_ref[someindex].y,aa_ref[someindex].z);
+    // debug("coords: %f %f %f\n",aa_zero[someindex].x,aa_zero[someindex].y,aa_zero[someindex].z);
+    // debug("coords: %f %f %f\n",aa_later[someindex].x,aa_later[someindex].y,aa_later[someindex].z);
+    // debug("\n");
+    // debug("coords(8)[0]: %f %f %f\n",aa_zero[8].x,aa_zero[8].y,aa_zero[8].z);
+    // debug("coords(8)[%d]: %f %f %f\n",frame_position,aa_later[8].x,aa_later[8].y,aa_later[8].z);
+    // debug("coords(37)[0]: %f %f %f\n",aa_zero[37].x,aa_zero[37].y,aa_zero[37].z);
+    // debug("coords(37)[%d]: %f %f %f\n",frame_position,aa_later[37].x,aa_later[37].y,aa_later[37].z);
 
 
-    debug("\n");
-    debug("coords(8)[0]: %f %f %f\n",aa_zero[8].x,aa_zero[8].y,aa_zero[8].z);
-    debug("coords(8)[%d]: %f %f %f\n",frame_position,aa_later[8].x,aa_later[8].y,aa_later[8].z);
-    debug("coords(37)[0]: %f %f %f\n",aa_zero[37].x,aa_zero[37].y,aa_zero[37].z);
-    debug("coords(37)[%d]: %f %f %f\n",frame_position,aa_later[37].x,aa_later[37].y,aa_later[37].z);
-
-
-#ifdef CONTACTS_AFTER
-
-
-#ifdef MTMAP2
+#ifdef MTMAP2_AFTER
     std::cout << "MTMAP2: Contacts by sector complete." << std::endl;
 
     // KEEP THIS.
@@ -1538,11 +1417,8 @@ int main(int argc, char *argv[]) {
     // fp_contacts3 = fopen("emol_mtcontacts_by_subdomain3.dat", "w+");
     // fp_contacts3n = fopen("emol_mtcontacts_by_subdomain3n.dat", "w+");
 
-#endif // MTMAP2
+#endif // MTMAP2_AFTER
 
-
-
-#endif // CONTACTS_AFTER
 
 #ifdef PHIPSI_E // PHIPSI Final section.
     std::cout << "Getting phi/psi angles completed." << std::endl;
@@ -1558,10 +1434,8 @@ int main(int argc, char *argv[]) {
             std::cout << ph.first << " \t " << ph.second << std::endl;
         }
     }
-
-
-
 #endif // PHIPSI_E End.
+
 
 #endif // multi-dcd
 

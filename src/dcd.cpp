@@ -188,7 +188,7 @@ void load_dcd_to_atoms(dcdhandle *dcd,Atom *aa)
 
 }
 
-std::vector<Atom> load_dcd_to_atoms(dcdhandle *dcd,std::vector<Atom> chain)
+std::vector<Atom> load_dcd_to_atoms(dcdhandle *dcd,std::vector<Atom> atoms)
 // void load_dcd_to_atoms(dcdhandle *dcd,std::vector<Atom> chain)
 {
     // Vector of Atoms...
@@ -201,7 +201,7 @@ std::vector<Atom> load_dcd_to_atoms(dcdhandle *dcd,std::vector<Atom> chain)
        --------------------------------------------------------- */
     // debug("coordinate loading for Vector of Atoms..\n");
 
-    for(auto aa: chain)
+    for(auto aa: atoms)
     {
         // aa.print_Atom();
         aa.x = dcd->x[aa.index];
@@ -230,6 +230,27 @@ std::vector<Atom> load_dcd_to_atoms(dcdhandle *dcd,std::vector<Atom> chain)
 
 
     return movedatoms;
+}
+
+void load_dcd_to_atoms(dcdhandle *dcd,std::vector<Atom *> atoms)
+{
+    // Vector of Atoms...
+    std::cout << "Moving the Atoms at Pointers." << std::endl;
+
+    /* ---------------------------------------------------------
+       for DCD reading.
+       natoms: total atoms from DCD
+       --------------------------------------------------------- */
+    // debug("coordinate loading for Vector of Pointers to Atoms..\n");
+
+    for(auto aa: atoms)
+    {
+        // aa.print_Atom();
+        aa->x = dcd->x[aa->index];
+        aa->y = dcd->y[aa->index];
+        aa->z = dcd->z[aa->index];
+    }
+    return;
 }
 
 

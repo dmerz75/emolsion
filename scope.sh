@@ -11,8 +11,8 @@
 
 preparation () {
     # echo '' > cscope.files
-    find . -name "*.c*" ! -path "./exclude*" > cscope.files
-    find . -name "*.h*" ! -path "./exclude*" >> cscope.files
+    find . -name "*.c*" ! -path "./exclude*" ! -path "./other*" > cscope.files
+    find . -name "*.h*" ! -path "./exclude*" ! -path "./other*" >> cscope.files
     # find ./src -name "*.c*" >> cscope.files
     # find ./include -name "*.h*" >> cscope.files
     echo "Makefile" >> cscope.files

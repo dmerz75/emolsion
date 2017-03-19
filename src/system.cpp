@@ -28,13 +28,13 @@
 /* ---------------------------------------------------------
    functions
    --------------------------------------------------------- */
-pAtoms select(Atoms aa,char const *criterion)
+vpAtoms select(vAtoms aa,char const *criterion)
 {
     // std::cout << "Selecting .." << std::endl;
     std::string selection(criterion);
     // std::cout << criterion << std::endl;
 
-    pAtoms asel;
+    vpAtoms asel;
 
     int num;
     num = 0;
@@ -232,6 +232,28 @@ pAtoms select(Atoms aa,char const *criterion)
                     asel.push_back(&aa[i]);
                     num += 1;
                 }
+            }
+        }
+    }
+
+    // Atomtype
+    std::string str6("atomtype ");
+    std::size_t found6 = selection.find(str6);
+    if (found6 != std::string::npos) // found "atomtype"
+    {
+        // MUST HAVE "atomtype .."
+        std::string sel_atomtype0 = selection.replace(found6,str6.length(),"");
+
+        for(int i=0; i < aa.size(); i++)
+        {
+            // std::cout << aa[i].atomtype;
+            // std::cout << " " << sel_atomtype0 << std::endl;
+
+            if(aa[i].atomtype.compare(sel_atomtype0) == 0)
+            {
+                // asel[num] = aa[i];
+                asel.push_back(&aa[i]);
+                num += 1;
             }
         }
     }
@@ -1106,8 +1128,32 @@ void get_minmax(System sys)
 //     // return total;
 // }
 
-Vector get_centroid(Atoms aa)
+Vector get_centroid(vpAtoms aa)
 {
+    // OVERLOADED
+    // std::cout << "Welcome to get_centroid!" << std::endl;
+    // std::cout << a.size() << std::endl;
+
+    Vector v;
+    float x,y,z;
+    x = y = z = 0.0;
+
+    for(auto a: aa)
+    {
+        x += a->x;
+        y += a->y;
+        z += a->z;
+    }
+
+    v.x = x / aa.size();
+    v.y = y / aa.size();
+    v.z = z / aa.size();
+
+    return v;
+}
+Vector get_centroid(vAtoms aa)
+{
+    // OVERLOADED
     // std::cout << "Welcome to get_centroid!" << std::endl;
     // std::cout << a.size() << std::endl;
 
@@ -1129,17 +1175,18 @@ Vector get_centroid(Atoms aa)
     return v;
 }
 
-Atoms set_chainid(Atoms aa)
+// vAtoms set_chainid(vAtoms aa)
+vAtoms set_chainid(vAtoms aa)
 {
-    std::cout << "Getting Segments/chains." << std::endl;
-    std::cout << "Num_atoms: " << aa.size() << std::endl;
+    // std::cout << "Getting Segments/chains." << std::endl;
+    // std::cout << "Num_atoms: " << aa.size() << std::endl;
 
     int chainid = 0;
 
     std::string chain;
     chain = aa[0].chain; // Get "A"
 
-    Atoms a_ret; // return
+    vAtoms a_ret; // return
     a_ret.reserve(aa.size());
 
     for(int i=0; i<aa.size(); i++)
@@ -1170,36 +1217,59 @@ Atoms set_chainid(Atoms aa)
     // exit(0);
 }
 
-SegChain sort_segment_chain(Atoms aa)
+vvpAtoms sort_segment_chain(vAtoms aa)
 {
-    std::cout << "Sorting segments & chains." << std::endl;
 
-    SegChain segment;
-    pAtoms pa;
+    // int chainid = 0;
+    int chainid = aa[0].chainid;
+    vvpAtoms segment;
+    vpAtoms pa;
+    // Atom *a;
 
-    int chainid = 0;
+    std::cout << "Sorting segments & chains. "
+              << "First chainid: " << chainid
+              << std::endl;
+
+    // for(auto a: aa)
+    // {
+    //     std::cout << "Chainid: " << a.chainid << std::endl;
+    // }
+
 
     for(int i=0; i<aa.size(); i++)
     {
+        // a = *aa[i];
+
         if(chainid == aa[i].chainid)
         {
+            // std::cout << "Pushing back atom." << std::endl;
             pa.push_back(&aa[i]);
+            // pa.push_back(a);
         }
         else
         {
+            // std::cout << "Pushing back segment. "
+            //           << chainid
+            //           << std::endl;
+            // std::cout << "Size: " << pa.size() << std::endl;
             segment.push_back(pa);
             pa.clear();
             chainid = aa[i].chainid;
-            std::cout << "add segment: " << chainid
-                      << " " << aa[i].chainid << std::endl;
+
             // std::cout << "current_point_size: " << pa.size() << std::endl;
             pa.push_back(&aa[i]);
+            // pa.push_back(a);
             // std::cout << "current_point_size: " << pa.size() << std::endl;
         }
     }
+
+    // std::cout << "Pushing back segment. "
+    //           << chainid
+    //           << std::endl;
+    // std::cout << "Size: " << pa.size() << std::endl;
     segment.push_back(pa);
     pa.clear();
-    // std::cout << "Atoms added: " << tally_atoms << std::endl;
 
+    std::cout << "Number of chains: " << segment.size() << std::endl;
     return segment;
 }

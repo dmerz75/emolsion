@@ -39,7 +39,7 @@ class System
 public:
     System();
     ~System();
-    void print_prop();
+    void print_Prop();
 
     int num_chains;
     int num_residues;
@@ -70,7 +70,7 @@ inline System::~System()
     // debug("System destruction commencing.\n");
 
 }
-inline void System::print_prop()
+inline void System::print_Prop()
 {
     std::cout << "SYSTEM:"
               << "\n\tChains: " << num_chains
@@ -93,7 +93,7 @@ public:
     Chain();
     Chain(const Chain &obj);
     ~Chain();
-    void print_prop();
+    void print_Prop();
 
     std::string chain; // by pdb (pdbfile.cpp, 2nd pass)
     int num_residues;
@@ -124,7 +124,7 @@ inline Chain::~Chain()
     // debug("Chain destruction commencing.\n");
 
 }
-inline void Chain::print_prop()
+inline void Chain::print_Prop()
 {
     std::cout << "Chain: "
               << "\n\t" << chainid << " has " << num_residues
@@ -141,7 +141,7 @@ public:
     Residue();
     Residue(const Residue &obj);
     ~Residue();
-    void print_prop();
+    void print_Prop();
 
     int id_global;
     int id_local;
@@ -179,7 +179,7 @@ inline Residue::~Residue()
     // debug("Residue destruction commencing.\n");
 
 }
-inline void Residue::print_prop()
+inline void Residue::print_Prop()
 {
     std::cout << "Residue: "
               << "\n\tglobal,local,resid: "
@@ -200,7 +200,7 @@ public:
 
 
     ~Atom();
-    void print_coords();
+    void print_Coords();
     void print_Atom();
 
     float x, y, z;
@@ -283,7 +283,7 @@ inline void Atom::print_Atom()
               << " resid: "  << resid
               << std::endl;
 }
-inline void Atom::print_coords()
+inline void Atom::print_Coords()
 {
     printf("ATOM %6d  %3s %3s          %8.3f%8.3f%8.3f",
            index,atomtype.c_str(),
@@ -291,6 +291,14 @@ inline void Atom::print_coords()
     printf("                       %s\n",general_atomtype.c_str());
 
 }
+// inline void Atom::print_Coords()
+// {
+//     printf("ATOM %6d  %3s %3s          %8.3f%8.3f%8.3f",
+//            index,atomtype.c_str(),
+//            restype.c_str(),x,y,z);
+//     printf("                       %s\n",general_atomtype.c_str());
+
+// }
 // inline void Atom::print_info()
 // {
 //     // std::cout << restype << ": " << atomtype << " " << general_atomtype << std::endl;
@@ -307,15 +315,19 @@ int system_select(Atom *aa,char const *criterion,int total);
 void system_select(Atom *aa,char const *criterion,int total,Atom *asel);
 
 
-typedef std::vector<std::vector<Atom>> Dihedral;
-typedef std::vector<Atom *> pAtoms;
-typedef std::vector<std::vector<Atom *>> SegChain;
-typedef std::vector<Atom> Atoms;
+// vAtoms, vvAtoms | Vector of Atoms, Vector of Vector of Atoms
+typedef std::vector<Atom> vAtoms;
+typedef std::vector<std::vector<Atom>> vvAtoms;
 
-Atoms set_chainid(Atoms aa);
-SegChain sort_segment_chain(Atoms aa);
-Vector get_centroid(Atoms aa);
-pAtoms select(Atoms aa,char const *criterion);
+// vpAtoms,
+typedef std::vector<Atom *> vpAtoms;
+typedef std::vector<std::vector<Atom *>> vvpAtoms;
+
+
+vAtoms set_chainid(vAtoms aa);
+vvpAtoms sort_segment_chain(vAtoms aa);
+Vector get_centroid(vpAtoms aa);
+vpAtoms select(vAtoms aa,char const *criterion);
 
 void get_minmax(System sys);
 

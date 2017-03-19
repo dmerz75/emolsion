@@ -147,13 +147,13 @@ int ReadPDBfile(char filename[40],int total_atoms,Atom *aa)
     return total_atoms;
 }
 
-Atoms ReadPDBfile(char filename[40])
+vAtoms ReadPDBfile(char filename[40])
 {
     // char filename
     // string fn
     // string line
     // ifstream pdbfile
-    Atoms aa;
+    vAtoms aa;
 
     string fn(filename);
     cout << "Reading: " << fn.c_str() << endl;

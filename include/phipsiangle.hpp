@@ -53,7 +53,7 @@ typedef std::vector<PhiPsi> Global_PhiPsi;
    function declarations:
    --------------------------------------------------------- */
 // void ReadPDBfile(PDBfile *pdbfile,char filename[40]);
-PhiPsi compute_phipsi(Dihedral dh);
+PhiPsi compute_phipsi(vvAtoms dihedral);
 
 
 #endif

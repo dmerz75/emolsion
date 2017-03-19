@@ -65,26 +65,54 @@ typedef std::vector<SetChains> SetGlobalContacts;
    --------------------------------------------------------- */
 void get_contacts(Atom *a1,Atom *a2,char dcdfilename[40],int num_atoms);
 
-MtNeighbors get_map_of_mtneighbors(std::vector<std::vector <Atom>> chain_ref,
+// MtNeighbors get_map_of_mtneighbors(std::vector<std::vector <Atom>> chain_ref,
+//                                    DimerList dimers);
+MtNeighbors get_map_of_mtneighbors(vvpAtoms chains,
                                    DimerList dimers);
 
-SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
-                                   std::vector <Atom> chain2,
+// SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
+//                                    std::vector <Atom> chain2,
+//                                    double cutoff);
+// SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
+//                                    double cutoff);
+// SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
+//                                    double cutoff,
+//                                    MtIndexMap map,
+//                                    int cid);
+// SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
+//                                    std::vector <Atom> chain2,
+//                                    double cutoff,
+//                                    MtIndexMap map,
+//                                    int cid1,
+//                                    int cid2);
+
+
+// SM
+SetContacts get_contacts_for_chain(vpAtoms chain1,
+                                   vpAtoms chain2,
                                    double cutoff);
-SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
+SetContacts get_contacts_for_chain(vpAtoms chain1,
                                    double cutoff);
-SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
+
+// MT
+SetContacts get_contacts_for_chain(vpAtoms chain1,
                                    double cutoff,
                                    MtIndexMap map,
                                    int cid);
-SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
-                                   std::vector <Atom> chain2,
+SetContacts get_contacts_for_chain(vpAtoms chain1,
+                                   vpAtoms chain2,
                                    double cutoff,
                                    MtIndexMap map,
                                    int cid1,
                                    int cid2);
 
-SetContacts get_contacts_for_chain_later(Atom *alater,
+
+
+// SetContacts get_contacts_for_chain_later(Atom *alater,
+//                                          double cutoff,
+//                                          double tolerance,
+//                                          SetContacts contacts);
+SetContacts get_contacts_for_chain_later(vpAtoms alater,
                                          double cutoff,
                                          double tolerance,
                                          SetContacts contacts);

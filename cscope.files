@@ -1,3 +1,4 @@
+./src/phipsiangle.cpp
 ./src/dcd.cpp
 ./src/contacts.cpp
 ./src/main.cpp
@@ -7,6 +8,7 @@
 ./include/dcd.h
 ./include/microtubule.hpp
 ./include/debug.h
+./include/phipsiangle.hpp
 ./include/md.h
 ./include/molfile_plugin.h
 ./include/contacts.hpp
