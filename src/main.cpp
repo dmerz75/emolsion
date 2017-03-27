@@ -115,16 +115,14 @@ int main(int argc, char *argv[]) {
     // 2.1.1 The PDB
     // Besides allatoms_ref,_0, everything else should POINT to allatoms.
     // allatoms_later -> allatoms;
-    vAtoms allatoms; // not a pointer, this is what will evolve in time.
     vAtoms allatoms_ref; // from PDB
     vAtoms allatoms_0; // from DCD-0
-
+    vAtoms allatoms; // evolve in time.
 
     // Reserve space for my 3 standards. allatoms, _ref, _0.
-    allatoms.reserve(num_atoms);
     allatoms_ref.reserve(num_atoms);
     allatoms_0.reserve(num_atoms);
-
+    allatoms.reserve(num_atoms);
 
     // Populate allatoms.
     allatoms_ref = ReadPDBfile(argv[1]);
@@ -182,72 +180,91 @@ int main(int argc, char *argv[]) {
 
 
     /* ---------------------------------------------------------
-       Select: vector of pointers at an Atom
+       Select: vector of Atoms
        --------------------------------------------------------- */
     // select()
-    vpAtoms chainH;
+    IndexGroup chainH;
     chainH = select(allatoms,"chain H");
     std::cout << "chain H: " << chainH.size() << std::endl;
 
-    vpAtoms chainD;
+    IndexGroup chainD;
     chainD = select(allatoms,"chain D");
     std::cout << "chain D: " << chainD.size() << std::endl;
 
-    vpAtoms chainA;
+    IndexGroup chainA;
     chainA = select(allatoms,"chain A");
     std::cout << "chain A: " << chainA.size() << std::endl;
 
-    vpAtoms resid5;
+    IndexGroup resid5;
     resid5 = select(allatoms,"resid 539 to 541");
     std::cout << "resid 539 to 541: " << resid5.size() << std::endl;
 
-    vpAtoms resid3;
+    IndexGroup resid3;
     resid3 = select(allatoms,"resid 37");
     std::cout << "resid 37: " << resid3.size() << std::endl;
 
-    vpAtoms sel150;
+    IndexGroup sel150;
     sel150 = select(allatoms,"index 150 to 350");
     std::cout << "Selection: index 150 to 350: " << sel150.size() << std::endl;
 
-    vpAtoms sel597;
+    IndexGroup sel597;
     sel597 = select(allatoms,"index 597");
     std::cout << "Selection: index 597: " << sel597.size() << std::endl;
 
-    vpAtoms sel0;
+    IndexGroup sel0;
     sel0 = select(allatoms,"chainid 0");
     std::cout << "Selection: chainid 0: " << sel0.size() << std::endl;
 
-    vpAtoms sel1;
+    IndexGroup sel1;
     sel1 = select(allatoms,"chainid 1");
     std::cout << "Selection: chainid 1: " << sel1.size() << std::endl;
 
-    vpAtoms sel_all;
+    IndexGroup sel_all;
     sel_all = select(allatoms,"all");
     std::cout << "Selection: (all)  " << sel_all.size() << std::endl;
     // exit(0);
 
-    vpAtoms sel_calpha;
+    IndexGroup sel_calpha;
     sel_calpha = select(allatoms,"atomtype CA");
     std::cout << "Selection: (CALPHA) " << sel_calpha.size() << std::endl;
-
     /* ---------------------------------------------------------
        End of Selection.
        --------------------------------------------------------- */
 
-
     /* ---------------------------------------------------------
        Vector of chain-vectors of Atoms.
        --------------------------------------------------------- */
-    // Build allatoms_chain, as pointers to allatoms, but sorted by chain.
+    // IndexGroup
+    // for(auto i: sel_all)
+    // {
+    //     std::cout << i << std::endl;
+    // }
+    // exit(0);
 
+    // Build allatoms_chain, as indices from allatoms, but sorted by chain.
+    vIndexGroup isel_chain;
+    isel_chain = sort_segment_chain(allatoms);
+    // for(auto c: isel_chain)
+    // {
+    //     std::cout << c.size() << std::endl;
+    //     // for(auto i: c)
+    //     // {
+    //     //     std::cout << i << " ";
+    //     // }
+    // }
+    // // exit(0);
+
+
+    // Build allatoms_chain, as pointers to allatoms, but sorted by chain.
     // Example: ALL
+    // std::cout << "Pointers?" << std::endl;
     // for(auto a: sel_all)
     // {
     //     // std::cout << a->x << std::endl;
     //     a->print_Coords();
     // }
 
-    // Example: CALPHA
+    // // Example: CALPHA
     // for(auto ca: sel_calpha)
     // {
     //     ca->print_Coords();
@@ -255,9 +272,9 @@ int main(int argc, char *argv[]) {
     // exit(0);
 
 
-    vvpAtoms allatoms_chain;
-    allatoms_chain = sort_segment_chain(allatoms); // returns the point_vec_Atoms
-    std::cout << "Chains acquired. " << allatoms_chain.size() << std::endl;
+    // vvpAtoms allatoms_chain;
+    // allatoms_chain = sort_segment_chain(allatoms); // returns the point_vec_Atoms
+    // std::cout << "Chains acquired. " << allatoms_chain.size() << std::endl;
     // Check Segments:
     // Failure ...
     // if(allatoms_chain.size() > 1)
@@ -281,8 +298,6 @@ int main(int argc, char *argv[]) {
     //     }
 
     // }
-
-    // std::cout << "Total Atoms: " << allatoms_ref.size() << std::endl;
     // exit(0);
 
 
@@ -385,7 +400,7 @@ int main(int argc, char *argv[]) {
     /* ---------------------------------------------------------
        BEFORE DCD
        --------------------------------------------------------- */
-#ifdef MTMAP_PREP
+#ifdef MTMAP2_BEFORE
     // Pairs: A(~439) and B(427-8).
     DimerList dimers;
     MtIndexMap mtmap_subdomain;
@@ -396,40 +411,44 @@ int main(int argc, char *argv[]) {
     int betabool = -1;
     int i_count = -1;
     int high_index, low_index, Nterm2, Mterm1, Mterm2, Cterm1;
+
+
+    // std::cout << "exiting .." << std::endl;
+    // exit(0);
     // std::cout << "mtmap-size: " << mtmap_subdomain[0].size() << std::endl;
 
-    // for(auto c: chain_ref)
-    for(auto c: allatoms_chain)
+    for(auto c: isel_chain)
     {
+        // std::cout << "ChainSize: " << c.size() << std::endl;
         high_index = low_index = Nterm2 = Mterm1 = Mterm2 = Cterm1 = -1;
         i_count += 1;
         betabool = -1;
         imonomer += 1;
 
-        std::cout << "ChainSize: " << c.size() << std::endl;
         if((c.size() >= 433) and (c.size() <= 442))
         {
+            // std::cout << "Alpha." << std::endl;
             dimers.push_back(std::make_pair(imonomer-1,imonomer));
             betabool = 0;
         }
         else if ((c.size() > 420) and (c.size() < 433))
         {
+            // std::cout << "Beta." << std::endl;
             betabool = 1;
         }
         else
         {
+            // std::cout << "Neither." << std::endl;
             continue;
         }
+        // exit(0);
 
-
-        high_index = -1;
-        for(auto a: c)
+        // high_index = -1;
+        for(auto i:c)
         {
-            std::cout << "Index: " << a->index << " HighIndex: " << high_index
-                      << std::endl;
-            if (a->index > high_index)
+            if(i > high_index)
             {
-                high_index = a->index;
+                high_index = i;
             }
         }
 
@@ -469,8 +488,9 @@ int main(int argc, char *argv[]) {
         mtentry.clear();
         // mtdemarcations.push_back()
     }
+    // exit(0);
 
-    // PRINT mtmap
+    // // PRINT mtmap
     // for(auto m:mtmap_subdomain)
     // {
     //     std::cout << "chaintype: " << m["chaintype"] << " \n"
@@ -481,10 +501,8 @@ int main(int argc, char *argv[]) {
     //               << "Cterm1: " << m["Cterm1"] << " \n"
     //               << "findex: " << m["findex"] << " \n"
     //               << std::endl;
-
     // }
-    // exit(0);
-
+    // // exit(0);
 
 
     // Print DimerList dimers.
@@ -496,6 +514,7 @@ int main(int argc, char *argv[]) {
     // }
     // exit(0);
 
+
     // // DIMERS
     // std::vector<std::pair<int,int>>::iterator itdimers;
     // for(itdimers = dimers.begin(); itdimers != dimers.end(); itdimers++)
@@ -503,13 +522,6 @@ int main(int argc, char *argv[]) {
     //     std::cout << (*itdimers).first << ' ' << (*itdimers).second << std::endl;
     // }
     // exit(0);
-
-
-
-    // External Neighbor (chainid).
-    // std::vector<std::vector<int>> mt_matrix(aa_ref[0].num_chains, std::vector<int>(8,-1));
-    // std::vector<std::vector<Atom>>::iterator itchain;
-    // std::vector<Atom>::iterator ita;
 
 
     /* ---------------------------------------------------------
@@ -520,39 +532,15 @@ int main(int argc, char *argv[]) {
     // Get Map of MtNeighbors.
     // mt_matrix = get_map_of_mtneighbors(chain_ref,dimers);
     // mt_matrix = get_map_of_mtneighbors(&allatoms_chain,dimers);
-    exit(0);
-    mt_matrix = get_map_of_mtneighbors(allatoms_chain,dimers);
+    // mt_matrix = get_map_of_mtneighbors(allatoms_chain,dimers);
+    std::cout << "Getting map for microtubule." << std::endl;
+    mt_matrix = get_map_of_mtneighbors(isel_chain,allatoms_ref,dimers);
 
-    // KEEP THIS.
     // Print Map of MT neighbors.
-    // for(auto mt_ch: mt_matrix)
-    // {
-    //     for(auto mt_n: mt_ch)
-    //     {
-    //         std::cout << std::setw(4) << mt_n << " ";
-    //     }
-    //     std::cout << std::endl;
-    // }
-
-
-    // KEEP (still the old way.)
-    // Print Map of MT neighbors. (old way..?)
-    // std::vector<std::vector<int>>::iterator itmap;
-    // std::vector<int>::iterator itmap_n;
-    // for(itmap = mt_matrix.begin(); itmap != mt_matrix.end(); itmap++)
-    // {
-    //     // std::cout << (*itmap).size() << std::endl;
-
-    //     for(itmap_n = (*itmap).begin(); itmap_n != (*itmap).end(); itmap_n++)
-    //     {
-    //         std::cout << std::setw(4) << (*itmap_n) << " ";
-    //     }
-    //             std::cout << std::endl;
-    // }
+    // std::cout << "Printing map of microtubule neighbors." << std::endl;
+    // print_mt_map(mt_matrix);
     // exit(0);
-#endif // MTMAP_PREP
 
-#ifdef MTMAP2_BEFORE
     std::cout << "MTMAP2: Beginning contacts by sector." << std::endl;
 
     SetContacts contact_set;
@@ -571,20 +559,36 @@ int main(int argc, char *argv[]) {
         // contact_set = get_contacts_for_chain(chain_ref[c[1]],chain_ref[c[1]],8.0);
         // neighbor_set.push_back(contact_set);
         // contact_set.clear();
-        contact_set = get_contacts_for_chain(allatoms_chain[c[0]],8.0,mtmap_subdomain,c[0]);
-        neighbor_set.push_back(contact_set);
-        contact_set.clear();
-        contact_set = get_contacts_for_chain(allatoms_chain[c[1]],8.0,mtmap_subdomain,c[1]);
-        neighbor_set.push_back(contact_set);
-        contact_set.clear();
 
-        contact_set = get_contacts_for_chain(allatoms_chain[c[0]],allatoms_chain[c[1]],8.0,
+        // contact_set = get_contacts_for_chain(allatoms_ref[c[0]],8.0,mtmap_subdomain,c[0]);
+        // contact_set = get_contacts_for_chain(allatoms_ref[c[1]],8.0,mtmap_subdomain,c[1]);
+        // contact_set = get_contacts_for_chain(allatoms_ref[c[0]],allatoms_ref[c[1]],8.0,
+        //                                      mtmap_subdomain,
+        //                                      c[0],
+        //                                      c[1]);
+
+        contact_set = get_contacts_for_chain(allatoms_ref,8.0,
                                              mtmap_subdomain,
-                                             c[0],
-                                             c[1]);
-
+                                             isel_chain[c[0]],
+                                             c[0]);
         neighbor_set.push_back(contact_set);
         contact_set.clear();
+        contact_set = get_contacts_for_chain(allatoms_ref,8.0,
+                                             mtmap_subdomain,
+                                             isel_chain[c[1]],
+                                             c[1]);
+        neighbor_set.push_back(contact_set);
+        contact_set.clear();
+
+        contact_set = get_contacts_for_chain(allatoms_ref,8.0,
+                                             mtmap_subdomain,
+                                             isel_chain[c[0]],
+                                             isel_chain[c[1]],
+                                             c[0],c[1]);
+        neighbor_set.push_back(contact_set);
+        contact_set.clear();
+    // }
+    // exit(0);
 
         for(int m=2; m<=4; m++)
         {
@@ -594,10 +598,17 @@ int main(int argc, char *argv[]) {
                 neighbor_set.push_back(contact_set);
                 continue;
             }
-            contact_set = get_contacts_for_chain(allatoms_chain[c[0]],
-                                                 allatoms_chain[c[m]],
+            // contact_set = get_contacts_for_chain(allatoms_ref[c[0]],
+            //                                      allatoms_ref[c[m]],
+            //                                      8.0,
+            //                                      mtmap_subdomain,
+            //                                      c[0],
+            //                                      c[m]);
+            contact_set = get_contacts_for_chain(allatoms_ref,
                                                  8.0,
                                                  mtmap_subdomain,
+                                                 isel_chain[c[0]],
+                                                 isel_chain[c[m]],
                                                  c[0],
                                                  c[m]);
             neighbor_set.push_back(contact_set);
@@ -612,20 +623,20 @@ int main(int argc, char *argv[]) {
                 neighbor_set.push_back(contact_set);
                 continue;
             }
-            contact_set = get_contacts_for_chain(allatoms_chain[c[1]],
-                                                 allatoms_chain[c[m]],
+            contact_set = get_contacts_for_chain(allatoms_ref,
                                                  8.0,
                                                  mtmap_subdomain,
+                                                 isel_chain[c[0]],
+                                                 isel_chain[c[m]],
                                                  c[1],
                                                  c[m]);
-
             neighbor_set.push_back(contact_set);
             contact_set.clear();
         }
 
         chain_set.push_back(neighbor_set);
-
     }
+
     global_contacts.push_back(chain_set);
     chain_set.clear();
     // exit(0);
@@ -657,7 +668,6 @@ int main(int argc, char *argv[]) {
     //     }
     // }
     // exit(0);
-
 #endif // MTMAP2_BEFORE
 
 #ifdef PHIPSI_B // PHIPSI Beginning section.
@@ -1169,7 +1179,7 @@ int main(int argc, char *argv[]) {
             for(auto n: c)
             {
                 // aa_later, allatoms_chain, allatoms, sel_all
-                contact_set = get_contacts_for_chain_later(sel_all,
+                contact_set = get_contacts_for_chain_later(allatoms,
                                                            8.0,2.0,
                                                            global_contacts[0][it_c][it_n]);
                 // std::cout << contact_set.size() << std::endl;
@@ -1462,7 +1472,8 @@ int main(int argc, char *argv[]) {
     /* ---------------------------------------------------------
        The End.
        --------------------------------------------------------- */
-    std::cout << "\nclosing stdin,stdout,stderr.\n";
+    std::cout << "\nClosing stdin,stdout,stderr.." << std::endl;
+    std::cout << "Emolsion Out." << std::endl;
     fclose(stdin);
     fclose(stdout);
     fclose(stderr);

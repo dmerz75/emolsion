@@ -28,13 +28,15 @@
 /* ---------------------------------------------------------
    functions
    --------------------------------------------------------- */
-vpAtoms select(vAtoms aa,char const *criterion)
+// vpAtoms select(vAtoms aa,char const *criterion)
+IndexGroup select(vAtoms aa,char const *criterion)
 {
     // std::cout << "Selecting .." << std::endl;
     std::string selection(criterion);
     // std::cout << criterion << std::endl;
 
-    vpAtoms asel;
+    // vpAtoms asel;
+    IndexGroup isel; // Indices selected.
 
     int num;
     num = 0;
@@ -52,7 +54,8 @@ vpAtoms select(vAtoms aa,char const *criterion)
             if(aa[i].chain.compare(sel_chain) == 0)
             {
                 // asel[num] = aa[i];
-                asel.push_back(&aa[i]);
+                // asel.push_back(&aa[i]);
+                isel.push_back(aa[i].index);
                 num += 1;
             }
         }
@@ -86,7 +89,8 @@ vpAtoms select(vAtoms aa,char const *criterion)
                 if((aa[i].resid >= r1) and (aa[i].resid <= r2))
                 {
                     // asel[num] = aa[i];
-                    asel.push_back(&aa[i]);
+                    // asel.push_back(&aa[i]);
+                    isel.push_back(aa[i].index);
                     num += 1;
                 }
             }
@@ -105,7 +109,8 @@ vpAtoms select(vAtoms aa,char const *criterion)
                 if(aa[i].resid == r1)
                 {
                     // asel[num] = aa[i];
-                    asel.push_back(&aa[i]);
+                    // asel.push_back(&aa[i]);
+                    isel.push_back(aa[i].index);
                     num += 1;
                 }
             }
@@ -141,7 +146,8 @@ vpAtoms select(vAtoms aa,char const *criterion)
                 if((aa[i].index >= r1) and (aa[i].index <= r2))
                 {
                     // asel[num] = aa[i];
-                    asel.push_back(&aa[i]);
+                    // asel.push_back(&aa[i]);
+                    isel.push_back(aa[i].index);
                     num += 1;
                 }
             }
@@ -159,7 +165,8 @@ vpAtoms select(vAtoms aa,char const *criterion)
                 if(aa[i].index == r1)
                 {
                     // asel[num] = aa[i];
-                    asel.push_back(&aa[i]);
+                    // asel.push_back(&aa[i]);
+                    isel.push_back(aa[i].index);
                     num += 1;
                 }
             }
@@ -174,7 +181,8 @@ vpAtoms select(vAtoms aa,char const *criterion)
         for(int i=0; i < aa.size(); i++)
         {
             // asel[num] = aa[i];
-            asel.push_back(&aa[i]);
+            // asel.push_back(&aa[i]);
+            isel.push_back(aa[i].index);
             num += 1;
         }
     }
@@ -210,7 +218,8 @@ vpAtoms select(vAtoms aa,char const *criterion)
                 if((aa[i].chainid >= cid1) and (aa[i].chainid <= cid2))
                 {
                     // asel[num] = aa[i];
-                    asel.push_back(&aa[i]);
+                    // asel.push_back(&aa[i]);
+                    isel.push_back(aa[i].index);
                     num += 1;
                 }
             }
@@ -229,7 +238,8 @@ vpAtoms select(vAtoms aa,char const *criterion)
                 if(aa[i].chainid == cid1)
                 {
                     // asel[num] = aa[i];
-                    asel.push_back(&aa[i]);
+                    // asel.push_back(&aa[i]);
+                    isel.push_back(aa[i].index);
                     num += 1;
                 }
             }
@@ -252,13 +262,15 @@ vpAtoms select(vAtoms aa,char const *criterion)
             if(aa[i].atomtype.compare(sel_atomtype0) == 0)
             {
                 // asel[num] = aa[i];
-                asel.push_back(&aa[i]);
+                // asel.push_back(&aa[i]);
+                isel.push_back(aa[i].index);
                 num += 1;
             }
         }
     }
 
-    return asel;
+    // return asel;
+    return isel;
 }
 
 int system_select(Atom *aa,char const *criterion,int total)
@@ -1128,7 +1140,7 @@ void get_minmax(System sys)
 //     // return total;
 // }
 
-Vector get_centroid(vpAtoms aa)
+Vector get_centroid(IndexGroup ig,vAtoms aa)
 {
     // OVERLOADED
     // std::cout << "Welcome to get_centroid!" << std::endl;
@@ -1138,16 +1150,27 @@ Vector get_centroid(vpAtoms aa)
     float x,y,z;
     x = y = z = 0.0;
 
-    for(auto a: aa)
+    // for(auto a: aa)
+    // {
+    //     x += a->x;
+    //     y += a->y;
+    //     z += a->z;
+    // }
+
+    for(auto i:ig)
     {
-        x += a->x;
-        y += a->y;
-        z += a->z;
+        x += aa[i].x;
+        y += aa[i].y;
+        z += aa[i].z;
     }
 
-    v.x = x / aa.size();
-    v.y = y / aa.size();
-    v.z = z / aa.size();
+    // v.x = x / aa.size();
+    // v.y = y / aa.size();
+    // v.z = z / aa.size();
+
+    v.x = x / ig.size();
+    v.y = y / ig.size();
+    v.z = z / ig.size();
 
     return v;
 }
@@ -1217,14 +1240,18 @@ vAtoms set_chainid(vAtoms aa)
     // exit(0);
 }
 
-vvpAtoms sort_segment_chain(vAtoms aa)
+vIndexGroup sort_segment_chain(vAtoms aa)
 {
 
     // int chainid = 0;
     int chainid = aa[0].chainid;
-    vvpAtoms segment;
-    vpAtoms pa;
+    // vvpAtoms segment;
+    // vpAtoms pa;
     // Atom *a;
+
+    IndexGroup segment;
+    vIndexGroup segments;
+
 
     std::cout << "Sorting segments & chains. "
               << "First chainid: " << chainid
@@ -1243,8 +1270,9 @@ vvpAtoms sort_segment_chain(vAtoms aa)
         if(chainid == aa[i].chainid)
         {
             // std::cout << "Pushing back atom." << std::endl;
-            pa.push_back(&aa[i]);
+            // pa.push_back(&aa[i]);
             // pa.push_back(a);
+            segment.push_back(aa[i].index);
         }
         else
         {
@@ -1252,13 +1280,15 @@ vvpAtoms sort_segment_chain(vAtoms aa)
             //           << chainid
             //           << std::endl;
             // std::cout << "Size: " << pa.size() << std::endl;
-            segment.push_back(pa);
-            pa.clear();
+            segments.push_back(segment);
+            segment.clear();
             chainid = aa[i].chainid;
 
             // std::cout << "current_point_size: " << pa.size() << std::endl;
-            pa.push_back(&aa[i]);
+            // pa.push_back(&aa[i]);
             // pa.push_back(a);
+            segment.push_back(aa[i].index);
+
             // std::cout << "current_point_size: " << pa.size() << std::endl;
         }
     }
@@ -1267,9 +1297,11 @@ vvpAtoms sort_segment_chain(vAtoms aa)
     //           << chainid
     //           << std::endl;
     // std::cout << "Size: " << pa.size() << std::endl;
-    segment.push_back(pa);
-    pa.clear();
+    // segment.push_back(pa);
+    segments.push_back(segment);
+    // pa.clear();
+    segment.clear();
 
-    std::cout << "Number of chains: " << segment.size() << std::endl;
-    return segment;
+    std::cout << "Number of chains: " << segments.size() << std::endl;
+    return segments;
 }

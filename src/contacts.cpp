@@ -17,6 +17,7 @@
 #include <cmath>
 #include <vector>
 // #include "boost/tuple/tuple.hpp"
+#include <iomanip> // setw
 
 
 /* ---------------------------------------------------------
@@ -141,9 +142,10 @@ void get_contacts(Atom *a1,Atom *a2,char dcdfilename[40],int natoms)
 //                             std::vector <Atom> chain2,
 //                             float cutoff,
 //                             std::vector<boost::tuple<int,int,double>> contacts)
-SetContacts get_contacts_for_chain(vpAtoms chain1,
-                                   vpAtoms chain2,
-                                   double cutoff)
+SetContacts get_contacts_for_chain(vAtoms aa,
+                                   double cutoff,
+                                   IndexGroup ig1,
+                                   IndexGroup ig2)
 {
     // INTERCHAIN, Not MT
 
@@ -151,7 +153,7 @@ SetContacts get_contacts_for_chain(vpAtoms chain1,
     // std::cout << "Cutoff: " << cutoff << std::endl;
     // std::vector<boost::tuple<int,int,double>> contacts;
     SetContacts contacts;
-    // std::cout << "chain1: " << chain1.size() << std::endl;
+    // std::cout << "chain1: " << aa.size() << std::endl;
     // std::cout << "chain2: " << chain2.size() << std::endl;
 
 
@@ -167,100 +169,55 @@ SetContacts get_contacts_for_chain(vpAtoms chain1,
 
     // int total_contacts = 0;
 
-    for(auto a1: chain1)
+    for(auto i: ig1)
     {
-        // std::cout << i1 << " " << a1.index << std::endl;
-        // std::cout << a1.index << std::endl;
-        a1v.x = a1->x;
-        a1v.y = a1->y;
-        a1v.z = a1->z;
+        // std::cout << i1 << " " << a.index << std::endl;
+        // std::cout << a.index << std::endl;
+        a1v.x = aa[i].x;
+        a1v.y = aa[i].y;
+        a1v.z = aa[i].z;
 
-        for(auto a2: chain2)
+        for(auto j: ig2)
         {
-            // if(a2.index <)
-
-            // if(i2 <= i1)
-            // {
-            //     continue;
-            // }
-
-
             // Directive: Exclude an index being in contact with itself,
             // or its +/- 2 neighbor.
-            if((a2->index - 2 >= a1->index) and (a2->index + 2 <= a1->index))
-               // or
-               // (a2.index - 1 == a1.index))
+            if((j - 2 >= i) and (j + 2 <= i))
             {
                 continue;
             }
 
+            a2v.x = aa[j].x;
+            a2v.y = aa[j].y;
+            a2v.z = aa[j].z;
+            dist = distance(a1v,a2v);
+            // a.print_coords();
+            // a2.print_coords();
 
-                // std::cout << "\t" << i2 << "\t" << a2.index << std::endl;
-                // std::cout << "\t" << a2.index << std::endl;
-
-                a2v.x = a2->x;
-                a2v.y = a2->y;
-                a2v.z = a2->z;
-
-                dist = distance(a1v,a2v);
-
-
-                // a1.print_coords();
-                // a2.print_coords();
-
-
-                if(dist <= cutoff)
-                {
-                    // contacts.push_back(boost::tuple<int,int,int,double>(a1.index,a2.index,1,dist));
-                    // total_contacts += 1;
-
-                    contacts.push_back(boost::tuple<int,int,double,int,int>(
-                                           a1->index,
-                                           a2->index,
-                                           dist,
-                                           subd1,
-                                           subd2));
-                    // try
-                    // {
-                    //     contacts.push_back(boost::tuple<int,int,double>(a1.index,a2.index,dist));
-
-                    // }
-                    // catch (const std::bad_alloc &contacts)
-                    // {
-                    //     std::cout << "Allocation failed for single contact: " << contacts.what() << std::endl;
-                    // }
-                }
-                // i2 += 1;
-
-            // }
+            if(dist <= cutoff)
+            {
+                // contacts.push_back(boost::tuple<int,int,int,double>(a.index,a2.index,1,dist));
+                // total_contacts += 1;
+                contacts.push_back(boost::tuple<int,int,double,int,int>(
+                                       i,
+                                       j,
+                                       dist,
+                                       subd1,
+                                       subd2));
+            }
         }
-        // i1 += 1;
-        // i2 = 0;
-        // i += 1;
     }
 
     // std::cout << "contacts_size: " << contacts.size() << std::endl;
     // std::cout << "contacts_counted: " << total_contacts << std::endl;
     return contacts;
-
-    // if (total_contacts > 0)
-    // {
-    //     return contacts;
-    // }
-    // else
-    // {
-    //     // contacts.push_back(boost::tuple<int,int,double>(-1,-1,0));
-    //     return std::vector<boost::tuple<int,int,double>>(1,(-1,-1,0));
-    // }
-
 }
 
-SetContacts get_contacts_for_chain(vpAtoms chain1,
-                                   vpAtoms chain2,
+SetContacts get_contacts_for_chain(vAtoms aa,
                                    double cutoff,
                                    MtIndexMap map,
-                                   int cid1,
-                                   int cid2)
+                                   IndexGroup ig1,
+                                   IndexGroup ig2,
+                                   int cid1,int cid2)
 {
     // INTERCHAIN, w/MT
 
@@ -271,92 +228,66 @@ SetContacts get_contacts_for_chain(vpAtoms chain1,
     // std::cout << "chain1: " << chain1.size() << std::endl;
     // std::cout << "chain2: " << chain2.size() << std::endl;
 
-
-    // int i1, i2;
-    // i1 = i2 = 0;
-    // int i = 0;
-
     Vector a1v,a2v;
     double dist = 0.0;
 
     int subd1 = -1; // subdomains 1 & 2
     int subd2 = -1;
 
-    // int total_contacts = 0;
-
-    for(auto a1: chain1)
+    for(auto i: ig1)
     {
-        // std::cout << i1 << " " << a1.index << std::endl;
-        // std::cout << a1.index << std::endl;
-        a1v.x = a1->x;
-        a1v.y = a1->y;
-        a1v.z = a1->z;
+        // a1v.x = a1->x;
+        // a1v.y = a1->y;
+        // a1v.z = a1->z;
+        a1v.x = aa[i].x;
+        a1v.y = aa[i].y;
+        a1v.z = aa[i].z;
 
-        for(auto a2: chain2)
+        for(auto j: ig2)
         {
-            // if(a2.index <)
-
-            // if(i2 <= i1)
-            // {
-            //     continue;
-            // }
-
-
             // Directive: Exclude an index being in contact with itself,
             // or its +/- 2 neighbor.
-            if((a2->index - 2 >= a1->index) and (a2->index + 2 <= a1->index))
-                // or
-                // (a2.index - 1 == a1.index))
+            if((j - 2 >= i) and (j + 2 <= i))
             {
                 continue;
             }
 
-
-            // std::cout << "\t" << i2 << "\t" << a2.index << std::endl;
-            // std::cout << "\t" << a2.index << std::endl;
-
-            a2v.x = a2->x;
-            a2v.y = a2->y;
-            a2v.z = a2->z;
-
+            a2v.x = aa[j].x;
+            a2v.y = aa[j].y;
+            a2v.z = aa[j].z;
             dist = distance(a1v,a2v);
-
-
-            // a1.print_coords();
+            // a.print_coords();
             // a2.print_coords();
-
 
             if(dist <= cutoff)
             {
                 // contacts.push_back(boost::tuple<int,int,int,double>(a1.index,a2.index,1,dist));
                 // total_contacts += 1;
-
-                if((a1->index >= map[cid1]["index"]) and (a1->index <= map[cid1]["Nterm2"]))
+                if((i >= map[cid1]["index"]) and (i <= map[cid1]["Nterm2"]))
                 {
                     subd1 = 0;
                 }
-                else if((a1->index >= map[cid1]["Mterm1"]) and (a1->index <= map[cid1]["Mterm2"]))
+                else if((i >= map[cid1]["Mterm1"]) and (i <= map[cid1]["Mterm2"]))
                 {
                     subd1 = 1;
                 }
-                else if((a1->index >= map[cid1]["Cterm1"]) and (a1->index <= map[cid1]["findex"]))
+                else if((i >= map[cid1]["Cterm1"]) and (i <= map[cid1]["findex"]))
                 {
                     subd1 = 2;
                 }
 
-                if((a2->index >= map[cid2]["index"]) and (a2->index <= map[cid2]["Nterm2"]))
+                if((j >= map[cid2]["index"]) and (j <= map[cid2]["Nterm2"]))
                 {
                     subd2 = 0;
                 }
-                else if((a2->index >= map[cid2]["Mterm1"]) and (a2->index <= map[cid2]["Mterm2"]))
+                else if((j >= map[cid2]["Mterm1"]) and (j <= map[cid2]["Mterm2"]))
                 {
                     subd2 = 1;
                 }
-                else if((a2->index >= map[cid2]["Cterm1"]) and (a2->index <= map[cid2]["findex"]))
+                else if((j >= map[cid2]["Cterm1"]) and (j <= map[cid2]["findex"]))
                 {
                     subd2 = 2;
                 }
-
 
                 if((subd1 == -1) or (subd2 == -1))
                 {
@@ -395,8 +326,8 @@ SetContacts get_contacts_for_chain(vpAtoms chain1,
                 }
 
                 contacts.push_back(boost::tuple<int,int,double,int,int>
-                                   (a1->index,
-                                    a2->index,
+                                   (i,
+                                    j,
                                     dist,
                                     subd1,
                                     subd2));
@@ -410,161 +341,26 @@ SetContacts get_contacts_for_chain(vpAtoms chain1,
                 //     std::cout << "Allocation failed for single contact: " << contacts.what() << std::endl;
                 // }
             }
-            // i2 += 1;
-
-            // }
         }
-        // i1 += 1;
-        // i2 = 0;
-        // i += 1;
     }
-
     // std::cout << "contacts_size: " << contacts.size() << std::endl;
     // std::cout << "contacts_counted: " << total_contacts << std::endl;
     return contacts;
-
-    // if (total_contacts > 0)
-    // {
-    //     return contacts;
-    // }
-    // else
-    // {
-    //     // contacts.push_back(boost::tuple<int,int,double>(-1,-1,0));
-    //     return std::vector<boost::tuple<int,int,double>>(1,(-1,-1,0));
-    // }
-
-
-
 }
 
-
-SetContacts get_contacts_for_chain(vpAtoms chain1,
-                                   double cutoff)
-{
-    // SINGLE, INTRACHAIN, Not MT
-
-    // std::cout << "Welcome to get_contacts_for_chain! MT, intra." << std::endl;
-    // std::cout << "Cutoff: " << cutoff << std::endl;
-    // std::vector<boost::tuple<int,int,double>> contacts;
-    SetContacts contacts;
-    // std::cout << "chain1: " << chain1.size() << std::endl;
-    // std::cout << "chain2: " << chain2.size() << std::endl;
-
-
-    // int i1, i2;
-    // i1 = i2 = 0;
-    // int i = 0;
-
-    Vector a1v,a2v;
-    double dist = 0.0;
-
-    int subd1 = -1; // subdomains 1 & 2
-    int subd2 = -1;
-
-    // int total_contacts = 0;
-
-    for(auto a1: chain1)
-    {
-        // std::cout << i1 << " " << a1->index << std::endl;
-        // std::cout << a1->index << std::endl;
-        a1v.x = a1->x;
-        a1v.y = a1->y;
-        a1v.z = a1->z;
-
-        for(auto a2: chain1)
-        {
-            // Directive: Exclude an index being in contact with itself,
-            // or its +/- 2 neighbor.
-            // if((a2->index - 2 >= a1->index) and (a2->index + 2 <= a1->index))
-            // {
-            //     continue;
-            // }
-            if (a2->index - 2 <= a1->index)
-            {
-                continue;
-            }
-
-
-                // std::cout << "\t" << i2 << "\t" << a2->index << std::endl;
-                // std::cout << "\t" << a2->index << std::endl;
-
-                a2v.x = a2->x;
-                a2v.y = a2->y;
-                a2v.z = a2->z;
-
-                dist = distance(a1v,a2v);
-
-
-                // a1->print_coords();
-                // a2->print_coords();
-
-
-                if(dist <= cutoff)
-                {
-                    // contacts.push_back(boost::tuple<int,int,int,double>(a1->index,a2->index,1,dist));
-                    // total_contacts += 1;
-
-                    contacts.push_back(boost::tuple<int,int,double,int,int>(
-                                           a1->index,
-                                           a2->index,
-                                           dist,
-                                           subd1,
-                                           subd2));
-                    // try
-                    // {
-                    //     contacts.push_back(boost::tuple<int,int,double>(a1->index,a2->index,dist));
-
-                    // }
-                    // catch (const std::bad_alloc &contacts)
-                    // {
-                    //     std::cout << "Allocation failed for single contact: " << contacts.what() << std::endl;
-                    // }
-                }
-                // i2 += 1;
-
-            // }
-        }
-        // i1 += 1;
-        // i2 = 0;
-        // i += 1;
-    }
-
-    // std::cout << "contacts_size: " << contacts.size() << std::endl;
-    // std::cout << "contacts_counted: " << total_contacts << std::endl;
-    return contacts;
-
-    // if (total_contacts > 0)
-    // {
-    //     return contacts;
-    // }
-    // else
-    // {
-    //     // contacts.push_back(boost::tuple<int,int,double>(-1,-1,0));
-    //     return std::vector<boost::tuple<int,int,double>>(1,(-1,-1,0));
-    // }
-
-
-
-}
-
-SetContacts get_contacts_for_chain(vpAtoms chain1,
+SetContacts get_contacts_for_chain(vAtoms aa,
                                    double cutoff,
                                    MtIndexMap map,
-                                   int cid)
+                                   IndexGroup ig1,
+                                   int cid1)
 {
-    // SINGLE, INTRACHAIN, w/MT
-
-    // std::cout << "Welcome to get_contacts_for_chain!" << std::endl;
+    // MT - intra
+    // std::cout << "Welcome to get_contacts_for_chain! MT, inter-chain." << std::endl;
     // std::cout << "Cutoff: " << cutoff << std::endl;
     // std::vector<boost::tuple<int,int,double>> contacts;
     SetContacts contacts;
     // std::cout << "chain1: " << chain1.size() << std::endl;
     // std::cout << "chain2: " << chain2.size() << std::endl;
-
-
-    // int i1, i2;
-    // i1 = i2 = 0;
-    // int i = 0;
 
     Vector a1v,a2v;
     double dist = 0.0;
@@ -572,133 +368,346 @@ SetContacts get_contacts_for_chain(vpAtoms chain1,
     int subd1 = -1; // subdomains 1 & 2
     int subd2 = -1;
 
-    // int total_contacts = 0;
-
-    // int ch1 = -1;
-    // int ch2 = -1;
-
-    for(auto a1: chain1)
+    for(auto i: ig1)
     {
-        // ch1 += 1;
-        // ch2 = -1;
+        a1v.x = aa[i].x;
+        a1v.y = aa[i].y;
+        a1v.z = aa[i].z;
 
-        // std::cout << i1 << " " << a1->index << std::endl;
-        // std::cout << a1->index << std::endl;
-        a1v.x = a1->x;
-        a1v.y = a1->y;
-        a1v.z = a1->z;
-
-        for(auto a2: chain1)
+        for(auto j: ig1)
         {
-            // ch2 += 1;
-
             // Directive: Exclude an index being in contact with itself,
             // or its +/- 2 neighbor.
-            // if((a2->index - 2 >= a1->index) and (a2->index + 2 <= a1->index))
-            // {
-            //     continue;
-            // }
-            if (a2->index - 2 <= a1->index)
+            if((j - 2 >= i) and (j + 2 <= i))
             {
                 continue;
             }
 
-
-            // std::cout << "\t" << i2 << "\t" << a2.index << std::endl;
-            // std::cout << "\t" << a2->index << std::endl;
-
-
-
-            a2v.x = a2->x;
-            a2v.y = a2->y;
-            a2v.z = a2->z;
-
+            a2v.x = aa[j].x;
+            a2v.y = aa[j].y;
+            a2v.z = aa[j].z;
             dist = distance(a1v,a2v);
-
-
-            // a1->print_coords();
-            // a2->print_coords();
-
+            // a.print_coords();
+            // a2.print_coords();
 
             if(dist <= cutoff)
             {
-                // contacts.push_back(boost::tuple<int,int,int,double>(a1->index,a2->index,1,dist));
+                // contacts.push_back(boost::tuple<int,int,int,double>(a1.index,a2.index,1,dist));
                 // total_contacts += 1;
-
-                // std::cout << "chaintype: " << m["chaintype"] << " \n"
-                //           << "index: " << m["index"] << " \n"
-                //           << "Nterm2: " << m["Nterm2"] << " \n"
-                //           << "Mterm1: " << m["Mterm1"] << " \n"
-                //           << "Mterm2: " << m["Mterm2"] << " \n"
-                //           << "Cterm1: " << m["Cterm1"] << " \n"
-                //           << "findex: " << m["findex"] << " \n"
-
-                if((a1->index >= map[cid]["index"]) and (a1->index <= map[cid]["Nterm2"]))
+                if((i >= map[cid1]["index"]) and (i <= map[cid1]["Nterm2"]))
                 {
                     subd1 = 0;
                 }
-                else if((a1->index >= map[cid]["Mterm1"]) and (a1->index <= map[cid]["Mterm2"]))
+                else if((i >= map[cid1]["Mterm1"]) and (i <= map[cid1]["Mterm2"]))
                 {
                     subd1 = 1;
                 }
-                else if((a1->index >= map[cid]["Cterm1"]) and (a1->index <= map[cid]["findex"]))
+                else if((i >= map[cid1]["Cterm1"]) and (i <= map[cid1]["findex"]))
                 {
                     subd1 = 2;
                 }
 
-                if((a2->index >= map[cid]["index"]) and (a2->index <= map[cid]["Nterm2"]))
+                if((j >= map[cid1]["index"]) and (j <= map[cid1]["Nterm2"]))
                 {
                     subd2 = 0;
                 }
-                else if((a2->index >= map[cid]["Mterm1"]) and (a2->index <= map[cid]["Mterm2"]))
+                else if((j >= map[cid1]["Mterm1"]) and (j <= map[cid1]["Mterm2"]))
                 {
                     subd2 = 1;
                 }
-                else if((a2->index >= map[cid]["Cterm1"]) and (a2->index <= map[cid]["findex"]))
+                else if((j >= map[cid1]["Cterm1"]) and (j <= map[cid1]["findex"]))
                 {
                     subd2 = 2;
                 }
 
-                contacts.push_back(boost::tuple<int,int,double,int,int>(
-                                       a1->index,
-                                       a2->index,
-                                       dist,
-                                       subd1,
-                                       subd2));
-                // try
-                // {
-                //     contacts.push_back(boost::tuple<int,int,double>(a1->index,a2->index,dist));
+                if((subd1 == -1) or (subd2 == -1))
+                {
+                    // std::cout << cid1 << " " << cid2 << " " << std::endl;
+                    // std::cout << a1.index << " " << a2.index << " " << std::endl;
 
-                // }
-                // catch (const std::bad_alloc &contacts)
-                // {
-                //     std::cout << "Allocation failed for single contact: " << contacts.what() << std::endl;
-                // }
+
+                    // std::cout << map[cid1] << " " << map[cid2] << " " << std::endl;
+
+
+
+                    // std::cout << "chaintype: " << map[cid1]["chaintype"] << " \n"
+                    //           << "index: " << map[cid1]["index"] << " \n"
+                    //           << "Nterm2: " << map[cid1]["Nterm2"] << " \n"
+                    //           << "Mterm1: " << map[cid1]["Mterm1"] << " \n"
+                    //           << "Mterm2: " << map[cid1]["Mterm2"] << " \n"
+                    //           << "Cterm1: " << map[cid1]["Cterm1"] << " \n"
+                    //           << "findex: " << map[cid1]["findex"] << " \n"
+                    //           << std::endl;
+
+
+                    // std::cout << "chaintype: " << map[cid2]["chaintype"] << " \n"
+                    //           << "index: " << map[cid2]["index"] << " \n"
+                    //           << "Nterm2: " << map[cid2]["Nterm2"] << " \n"
+                    //           << "Mterm1: " << map[cid2]["Mterm1"] << " \n"
+                    //           << "Mterm2: " << map[cid2]["Mterm2"] << " \n"
+                    //           << "Cterm1: " << map[cid2]["Cterm1"] << " \n"
+                    //           << "findex: " << map[cid2]["findex"] << " \n"
+                    //           << std::endl;
+
+
+
+                    // std::cout << subd1 << " " << subd2 << " " << std::endl;
+
+                    exit(0);
+                }
+
+                contacts.push_back(boost::tuple<int,int,double,int,int>
+                                   (i,
+                                    j,
+                                    dist,
+                                    subd1,
+                                    subd2));
             }
-            // i2 += 1;
-
-            // }
         }
-        // i1 += 1;
-        // i2 = 0;
-        // i += 1;
     }
-
     // std::cout << "contacts_size: " << contacts.size() << std::endl;
     // std::cout << "contacts_counted: " << total_contacts << std::endl;
     return contacts;
-
-    // if (total_contacts > 0)
-    // {
-    //     return contacts;
-    // }
-    // else
-    // {
-    //     // contacts.push_back(boost::tuple<int,int,double>(-1,-1,0));
-    //     return std::vector<boost::tuple<int,int,double>>(1,(-1,-1,0));
-    // }
-
 }
+
+
+
+
+// SetContacts get_contacts_for_chain(vAtoms aa,
+//                                    double cutoff)
+// {
+//     // SINGLE, INTRACHAIN, Not MT
+
+//     // std::cout << "Welcome to get_contacts_for_chain! MT, intra." << std::endl;
+//     // std::cout << "Cutoff: " << cutoff << std::endl;
+//     // std::vector<boost::tuple<int,int,double>> contacts;
+//     SetContacts contacts;
+//     // std::cout << "aa: " << aa.size() << std::endl;
+//     // std::cout << "chain2: " << chain2.size() << std::endl;
+
+
+//     // int i1, i2;
+//     // i1 = i2 = 0;
+//     // int i = 0;
+
+//     Vector a1v,a2v;
+//     double dist = 0.0;
+
+//     int subd1 = -1; // subdomains 1 & 2
+//     int subd2 = -1;
+
+//     // int total_contacts = 0;
+
+//     for(auto a1: aa)
+//     {
+//         // std::cout << i1 << " " << a1->index << std::endl;
+//         // std::cout << a1->index << std::endl;
+//         a1v.x = a1->x;
+//         a1v.y = a1->y;
+//         a1v.z = a1->z;
+
+//         for(auto a2: aa)
+//         {
+//             // Directive: Exclude an index being in contact with itself,
+//             // or its +/- 2 neighbor.
+//             // if((a2->index - 2 >= a1->index) and (a2->index + 2 <= a1->index))
+//             // {
+//             //     continue;
+//             // }
+//             if (a2->index - 2 <= a1->index)
+//             {
+//                 continue;
+//             }
+
+
+//             // std::cout << "\t" << i2 << "\t" << a2->index << std::endl;
+//             // std::cout << "\t" << a2->index << std::endl;
+
+//             a2v.x = a2->x;
+//             a2v.y = a2->y;
+//             a2v.z = a2->z;
+//             dist = distance(a1v,a2v);
+
+//             // a1->print_coords();
+//             // a2->print_coords();
+
+//             if(dist <= cutoff)
+//             {
+//                 // contacts.push_back(boost::tuple<int,int,int,double>(a1->index,a2->index,1,dist));
+//                 // total_contacts += 1;
+//                 contacts.push_back(boost::tuple<int,int,double,int,int>(
+//                                        a1->index,
+//                                        a2->index,
+//                                        dist,
+//                                        subd1,
+//                                        subd2));
+//                 // try
+//                 // {
+//                 //     contacts.push_back(boost::tuple<int,int,double>(a1->index,a2->index,dist));
+
+//                 // }
+//                 // catch (const std::bad_alloc &contacts)
+//                 // {
+//                 //     std::cout << "Allocation failed for single contact: " << contacts.what() << std::endl;
+//                 // }
+//             }
+//         }
+//     }
+//     return contacts;
+// }
+
+// SetContacts get_contacts_for_chain(vpAtoms chain1,
+//                                    double cutoff,
+//                                    MtIndexMap map,
+//                                    int cid)
+// {
+//     // SINGLE, INTRACHAIN, w/MT
+
+//     // std::cout << "Welcome to get_contacts_for_chain!" << std::endl;
+//     // std::cout << "Cutoff: " << cutoff << std::endl;
+//     // std::vector<boost::tuple<int,int,double>> contacts;
+//     SetContacts contacts;
+//     // std::cout << "chain1: " << chain1.size() << std::endl;
+//     // std::cout << "chain2: " << chain2.size() << std::endl;
+
+
+//     // int i1, i2;
+//     // i1 = i2 = 0;
+//     // int i = 0;
+
+//     Vector a1v,a2v;
+//     double dist = 0.0;
+
+//     int subd1 = -1; // subdomains 1 & 2
+//     int subd2 = -1;
+
+//     // int total_contacts = 0;
+
+//     // int ch1 = -1;
+//     // int ch2 = -1;
+
+//     for(auto a1: chain1)
+//     {
+//         // ch1 += 1;
+//         // ch2 = -1;
+
+//         // std::cout << i1 << " " << a1->index << std::endl;
+//         // std::cout << a1->index << std::endl;
+//         a1v.x = a1->x;
+//         a1v.y = a1->y;
+//         a1v.z = a1->z;
+
+//         for(auto a2: chain1)
+//         {
+//             // ch2 += 1;
+
+//             // Directive: Exclude an index being in contact with itself,
+//             // or its +/- 2 neighbor.
+//             // if((a2->index - 2 >= a1->index) and (a2->index + 2 <= a1->index))
+//             // {
+//             //     continue;
+//             // }
+//             if (a2->index - 2 <= a1->index)
+//             {
+//                 continue;
+//             }
+
+
+//             // std::cout << "\t" << i2 << "\t" << a2.index << std::endl;
+//             // std::cout << "\t" << a2->index << std::endl;
+
+
+
+//             a2v.x = a2->x;
+//             a2v.y = a2->y;
+//             a2v.z = a2->z;
+
+//             dist = distance(a1v,a2v);
+
+
+//             // a1->print_coords();
+//             // a2->print_coords();
+
+
+//             if(dist <= cutoff)
+//             {
+//                 // contacts.push_back(boost::tuple<int,int,int,double>(a1->index,a2->index,1,dist));
+//                 // total_contacts += 1;
+
+//                 // std::cout << "chaintype: " << m["chaintype"] << " \n"
+//                 //           << "index: " << m["index"] << " \n"
+//                 //           << "Nterm2: " << m["Nterm2"] << " \n"
+//                 //           << "Mterm1: " << m["Mterm1"] << " \n"
+//                 //           << "Mterm2: " << m["Mterm2"] << " \n"
+//                 //           << "Cterm1: " << m["Cterm1"] << " \n"
+//                 //           << "findex: " << m["findex"] << " \n"
+
+//                 if((a1->index >= map[cid]["index"]) and (a1->index <= map[cid]["Nterm2"]))
+//                 {
+//                     subd1 = 0;
+//                 }
+//                 else if((a1->index >= map[cid]["Mterm1"]) and (a1->index <= map[cid]["Mterm2"]))
+//                 {
+//                     subd1 = 1;
+//                 }
+//                 else if((a1->index >= map[cid]["Cterm1"]) and (a1->index <= map[cid]["findex"]))
+//                 {
+//                     subd1 = 2;
+//                 }
+
+//                 if((a2->index >= map[cid]["index"]) and (a2->index <= map[cid]["Nterm2"]))
+//                 {
+//                     subd2 = 0;
+//                 }
+//                 else if((a2->index >= map[cid]["Mterm1"]) and (a2->index <= map[cid]["Mterm2"]))
+//                 {
+//                     subd2 = 1;
+//                 }
+//                 else if((a2->index >= map[cid]["Cterm1"]) and (a2->index <= map[cid]["findex"]))
+//                 {
+//                     subd2 = 2;
+//                 }
+
+//                 contacts.push_back(boost::tuple<int,int,double,int,int>(
+//                                        a1->index,
+//                                        a2->index,
+//                                        dist,
+//                                        subd1,
+//                                        subd2));
+//                 // try
+//                 // {
+//                 //     contacts.push_back(boost::tuple<int,int,double>(a1->index,a2->index,dist));
+
+//                 // }
+//                 // catch (const std::bad_alloc &contacts)
+//                 // {
+//                 //     std::cout << "Allocation failed for single contact: " << contacts.what() << std::endl;
+//                 // }
+//             }
+//             // i2 += 1;
+
+//             // }
+//         }
+//         // i1 += 1;
+//         // i2 = 0;
+//         // i += 1;
+//     }
+
+//     // std::cout << "contacts_size: " << contacts.size() << std::endl;
+//     // std::cout << "contacts_counted: " << total_contacts << std::endl;
+//     return contacts;
+
+//     // if (total_contacts > 0)
+//     // {
+//     //     return contacts;
+//     // }
+//     // else
+//     // {
+//     //     // contacts.push_back(boost::tuple<int,int,double>(-1,-1,0));
+//     //     return std::vector<boost::tuple<int,int,double>>(1,(-1,-1,0));
+//     // }
+
+// }
 
 
 // void load_dcd_to_atoms(dcdhandle *dcd,Atom *aa);
@@ -1027,7 +1036,7 @@ void output_global_contacts_by_subdomain(SetGlobalContacts gc)
 
 // MtNeighbors get_map_of_mtneighbors(std::vector<std::vector <Atom>> chain_ref,
 //                                    DimerList dimers)
-MtNeighbors get_map_of_mtneighbors(vvpAtoms chain_ref,DimerList dimers)
+MtNeighbors get_map_of_mtneighbors(vIndexGroup isel_chain,vAtoms aa,DimerList dimers)
 {
     // printf("Welcome to get_map_of_mtneighbors!\n");
     // std::cout << matrix.size() << std::endl;
@@ -1042,10 +1051,10 @@ MtNeighbors get_map_of_mtneighbors(vvpAtoms chain_ref,DimerList dimers)
     std::vector<Vector> centroids;
 
 
-    for(auto ch: chain_ref)
+    for(auto ch: isel_chain)
     {
         // std::cout << ch.size() << std::endl;
-        centroid = get_centroid(ch);
+        centroid = get_centroid(ch,aa); // ch: list of indices, aa: allatoms_ref
         // centroid.print_Vector();
         centroids.push_back(centroid);
 
@@ -1060,6 +1069,7 @@ MtNeighbors get_map_of_mtneighbors(vvpAtoms chain_ref,DimerList dimers)
         // ic += 1;
     }
     // std::cout << "# of centroids: " << centroids.size() << std::endl;
+    // exit(0);
 
     int id;
     id = 0;
@@ -1114,7 +1124,6 @@ MtNeighbors get_map_of_mtneighbors(vvpAtoms chain_ref,DimerList dimers)
             }
             else
             {
-
                 // std::cout << "comparing: m2-m1 " << m2 << " <-> "<< m1 << std::endl;
                 vdist = get_vector(centroids[m1],centroids[m2]);
                 // vdist.print_Vector();
@@ -1132,6 +1141,7 @@ MtNeighbors get_map_of_mtneighbors(vvpAtoms chain_ref,DimerList dimers)
         candidates.clear();
     }
     // std::cout << "Candidates acquired." << std::endl;
+    // exit(0);
 
 
     int ican,pdim;
@@ -1284,4 +1294,35 @@ MtNeighbors get_map_of_mtneighbors(vvpAtoms chain_ref,DimerList dimers)
     } // monomers.
 
     return matrix;
+}
+
+void print_mt_map(MtNeighbors mt_matrix)
+{
+    // KEEP THIS.
+    // Print Map of MT neigbors.
+    for(auto mt_ch: mt_matrix)
+    {
+        for(auto mt_n: mt_ch)
+        {
+            std::cout << std::setw(4) << mt_n << " ";
+        }
+        std::cout << std::endl;
+    }
+
+
+    // KEEP (still the old way.)
+    // Print Map of MT neighbors. (old way..?)
+    // std::vector<std::vector<int>>::iterator itmap;
+    // std::vector<int>::iterator itmap_n;
+    // for(itmap = mt_matrix.begin(); itmap != mt_matrix.end(); itmap++)
+    // {
+    //     // std::cout << (*itmap).size() << std::endl;
+
+    //     for(itmap_n = (*itmap).begin(); itmap_n != (*itmap).end(); itmap_n++)
+    //     {
+    //         std::cout << std::setw(4) << (*itmap_n) << " ";
+    //     }
+    //             std::cout << std::endl;
+    // }
+
 }

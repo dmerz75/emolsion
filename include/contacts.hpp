@@ -67,8 +67,10 @@ void get_contacts(Atom *a1,Atom *a2,char dcdfilename[40],int num_atoms);
 
 // MtNeighbors get_map_of_mtneighbors(std::vector<std::vector <Atom>> chain_ref,
 //                                    DimerList dimers);
-MtNeighbors get_map_of_mtneighbors(vvpAtoms chains,
-                                   DimerList dimers);
+// MtNeighbors get_map_of_mtneighbors(vvpAtoms chains,
+//                                    DimerList dimers);
+MtNeighbors get_map_of_mtneighbors(vIndexGroup isel_chain,vAtoms aa,DimerList dimers);
+void print_mt_map(MtNeighbors mt_matrix);
 
 // SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
 //                                    std::vector <Atom> chain2,
@@ -88,31 +90,52 @@ MtNeighbors get_map_of_mtneighbors(vvpAtoms chains,
 
 
 // SM
-SetContacts get_contacts_for_chain(vpAtoms chain1,
-                                   vpAtoms chain2,
-                                   double cutoff);
-SetContacts get_contacts_for_chain(vpAtoms chain1,
-                                   double cutoff);
+// vAtoms chain2,
+// SM - inter
+SetContacts get_contacts_for_chain(vAtoms aa,
+                                   double cutoff,
+                                   IndexGroup ig1,
+                                   IndexGroup ig2);
 
-// MT
-SetContacts get_contacts_for_chain(vpAtoms chain1,
+// MT - inter
+SetContacts get_contacts_for_chain(vAtoms aa,
                                    double cutoff,
                                    MtIndexMap map,
-                                   int cid);
-SetContacts get_contacts_for_chain(vpAtoms chain1,
-                                   vpAtoms chain2,
+                                   IndexGroup ig1,
+                                   IndexGroup ig2,
+                                   int cid1,int cid2);
+// contact_set = get_contacts_for_chain(allatoms_ref,8.0,isel_chain[c[0]],
+//                                      c[0]);
+
+// MT - intra
+SetContacts get_contacts_for_chain(vAtoms aa,
                                    double cutoff,
                                    MtIndexMap map,
-                                   int cid1,
-                                   int cid2);
+                                   IndexGroup ig1,
+                                   int cid1);
 
+// SetContacts get_contacts_for_chain(vAtoms aa,
+//                                    double cutoff,
+//                                    IndexGroup ig1);
+// // MT
+// SetContacts get_contacts_for_chain(vAtoms chain1,
+//                                    double cutoff,
+//                                    MtIndexMap map,
+//                                    int cid);
+// SetContacts get_contacts_for_chain(vAtoms chain1,
+//                                    double cutoff,
+//                                    MtIndexMap map,
+//                                    int cid1,
+//                                    int cid2);
+
+// vAtoms chain2,
 
 
 // SetContacts get_contacts_for_chain_later(Atom *alater,
 //                                          double cutoff,
 //                                          double tolerance,
 //                                          SetContacts contacts);
-SetContacts get_contacts_for_chain_later(vpAtoms alater,
+SetContacts get_contacts_for_chain_later(vAtoms alater,
                                          double cutoff,
                                          double tolerance,
                                          SetContacts contacts);

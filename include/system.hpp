@@ -323,13 +323,20 @@ typedef std::vector<std::vector<Atom>> vvAtoms;
 typedef std::vector<Atom *> vpAtoms;
 typedef std::vector<std::vector<Atom *>> vvpAtoms;
 
+typedef std::vector<int> IndexGroup;
+typedef std::vector<std::vector<int>> vIndexGroup;
+
+// SELECT:
+// vpAtoms select(vAtoms aa,char const *criterion);
+IndexGroup select(vAtoms aa,char const *criterion);
 
 vAtoms set_chainid(vAtoms aa);
-vvpAtoms sort_segment_chain(vAtoms aa);
-Vector get_centroid(vpAtoms aa);
-vpAtoms select(vAtoms aa,char const *criterion);
+// vvpAtoms sort_segment_chain(vAtoms aa);
+Vector get_centroid(IndexGroup ig,vAtoms aa);
+
 
 void get_minmax(System sys);
+vIndexGroup sort_segment_chain(vAtoms aa);
 
 // typedef std::vector<
 // typedef std::vector<Atom> Dihedral(4);
