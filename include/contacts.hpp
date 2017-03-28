@@ -135,11 +135,13 @@ SetContacts get_contacts_for_chain(vAtoms aa,
 //                                          double cutoff,
 //                                          double tolerance,
 //                                          SetContacts contacts);
-SetContacts get_contacts_for_chain_later(vAtoms alater,
+SetContacts get_contacts_for_chain_later(vAtoms allatoms,
                                          double cutoff,
                                          double tolerance,
                                          SetContacts contacts);
 
+void print_global_contacts(SetGlobalContacts gc);
+void print_global_contacts_count(SetGlobalContacts gc);
 void output_global_contacts(SetGlobalContacts gc);
 void output_global_contacts_by_subdomain(SetGlobalContacts gc);
 

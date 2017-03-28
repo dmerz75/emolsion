@@ -97,36 +97,24 @@ int main(int argc, char *argv[]) {
     /* ---------------------------------------------------------
        Step 2. Read the pdb.
        --------------------------------------------------------- */
-    int num_atoms;
-    num_atoms = -1;
-    // () ReadPDBfile
-    // () Count the total "num_atoms".
-    Atom a_initial[0];
-    // std::cout << "1. Currently, there are " << num_atoms << " atoms." << std::endl;
-    num_atoms = ReadPDBfile(argv[1],num_atoms,a_initial);
-    std::cout << "Total_atoms: " << num_atoms << std::endl;
-    // delete a_initial ?
-
-
     // 2.1.1 Copy for the Reference state. (PDB)
     // 2.1.2 Copy for DCD-0.
     // 2.1.3 Pointers for aa_later.
 
-    // 2.1.1 The PDB
-    // Besides allatoms_ref,_0, everything else should POINT to allatoms.
-    // allatoms_later -> allatoms;
-    vAtoms allatoms_ref; // from PDB
+    // 2.1.1 allatoms_ref (PDB)
+    vAtoms allatoms_ref;
+    allatoms_ref = ReadPDBfile(argv[1]);
+
+    int num_atoms;
+    num_atoms = allatoms_ref.size();
+    // std::cout << "Number of atoms in allatoms_ref: " << allatoms_ref.size() << std::endl;
+
+    // Reserve space for the standards.
+    // allatoms_ref  -->  allatoms_0, allatoms.
     vAtoms allatoms_0; // from DCD-0
     vAtoms allatoms; // evolve in time.
-
-    // Reserve space for my 3 standards. allatoms, _ref, _0.
-    allatoms_ref.reserve(num_atoms);
     allatoms_0.reserve(num_atoms);
     allatoms.reserve(num_atoms);
-
-    // Populate allatoms.
-    allatoms_ref = ReadPDBfile(argv[1]);
-    // std::cout << "Number of atoms in allatoms_ref: " << allatoms_ref.size() << std::endl;
 
     // Set the chainid based on switch from chain A to chain B .. etc.
     allatoms_ref = set_chainid(allatoms_ref);
@@ -179,6 +167,7 @@ int main(int argc, char *argv[]) {
     // exit(0);
 
 
+#ifndef NDEBUG
     /* ---------------------------------------------------------
        Select: vector of Atoms
        --------------------------------------------------------- */
@@ -227,19 +216,10 @@ int main(int argc, char *argv[]) {
     IndexGroup sel_calpha;
     sel_calpha = select(allatoms,"atomtype CA");
     std::cout << "Selection: (CALPHA) " << sel_calpha.size() << std::endl;
-    /* ---------------------------------------------------------
-       End of Selection.
-       --------------------------------------------------------- */
+#endif // NDEBUG Selection.
 
-    /* ---------------------------------------------------------
-       Vector of chain-vectors of Atoms.
-       --------------------------------------------------------- */
-    // IndexGroup
-    // for(auto i: sel_all)
-    // {
-    //     std::cout << i << std::endl;
-    // }
-    // exit(0);
+    // Primary Selection:
+    // Organization by chains: isel_chain.
 
     // Build allatoms_chain, as indices from allatoms, but sorted by chain.
     vIndexGroup isel_chain;
@@ -254,152 +234,48 @@ int main(int argc, char *argv[]) {
     // }
     // // exit(0);
 
-
-    // Build allatoms_chain, as pointers to allatoms, but sorted by chain.
-    // Example: ALL
-    // std::cout << "Pointers?" << std::endl;
-    // for(auto a: sel_all)
-    // {
-    //     // std::cout << a->x << std::endl;
-    //     a->print_Coords();
-    // }
-
-    // // Example: CALPHA
-    // for(auto ca: sel_calpha)
-    // {
-    //     ca->print_Coords();
-    // }
-    // exit(0);
-
-
-    // vvpAtoms allatoms_chain;
-    // allatoms_chain = sort_segment_chain(allatoms); // returns the point_vec_Atoms
-    // std::cout << "Chains acquired. " << allatoms_chain.size() << std::endl;
-    // Check Segments:
-    // Failure ...
-    // if(allatoms_chain.size() > 1)
-    // {
-    //     for(auto va: allatoms_chain)
-    //     {
-    //         std::cout << "Segment Size: " << va.size() << " "
-    //                   << "Segment: " << va[0]->chain << " "
-    //                   << std::endl;
-
-    //         // for(auto c: a)
-    //         // {
-    //         //     std::cout << c->chainid
-    //         //               << " " << c->chain
-    //         //               << " " << std::endl;
-    //         // << "x: " << a.x << " "
-    //         // << std::endl;
-
-    //         // }
-    //         // std::cout << "New Segment." << std::endl;
-    //     }
-
-    // }
-    // exit(0);
-
-
-
-// #ifdef NDEBUG
-    // Atom *aa_sel;
-    // int num_select = 0;
-// #endif
-
-    // std::vector<std::vector<Atom>> chain_ref;
-    // // std::vector<std::pair<int,int>> dimers;
-
-    // // ITERATORS: itchain, ita for chain, atom.
-    // std::vector<std::vector<Atom>>::iterator itchain;
-    // std::vector<Atom>::iterator ita;
-
-    // for(int i=0; i<aa_ref[0].num_chains; i++)
-    // {
-    //     std::vector<Atom> atombin; // Empty?
-
-    //     // Atom *aa_sel;
-    //     std::string selection = "chainid " + std::to_string(i);
-    //     const char *pickme = selection.c_str();
-    //     // std::cout << i << ' ' << pickme << std::endl;
-    //     num_select = system_select(aa_ref,pickme,num_select);
-
-    //     // std::cout << i << ' '
-    //     //           << "We found " << num_select
-    //     //           << " atoms for this selection: "
-    //     //           << selection
-    //     //           << " : "
-    //     //           << num_select
-    //     //           << " atoms."
-    //     //           << std::endl;
-    //     // std::cout << "Number of chains in chain_ref(size): " << chain_ref.size() << std::endl;
-
-    //     try
-    //     {
-    //         aa_sel = new Atom[num_select];
-    //     }
-    //     catch (std::bad_alloc xa)
-    //     {
-    //         std::cout << "Allocation Failure\n";
-    //         exit(1);
-    //     }
-    //     system_select(aa_ref,pickme,num_select,aa_sel);
-
-
-    //     for(int j=0; j<num_select; j++)
-    //     {
-    //         // aa_sel[j].print_coords();
-    //         Atom a1 = aa_sel[j]; // Copy Constructor
-    //         // a1.print_coords();
-    //         atombin.push_back(a1);
-    //         // atombin.push_back(&a1);
-    //         // atombin.push_back(aa_sel[j]);
-
-    //         // if(j>3)
-    //         // {
-    //         //     break;
-    //         // }
-    //     }
-    //     chain_ref.push_back(atombin);
-    //     // printf("\n");
-    //     // std::cout << "binsize: " << atombin.size() << std::endl; // 439, 427, 2..
-
-
-    //     // if(i>4)
-    //     // {
-    //     //     break;
-    //     // }
-    //     // break;
-    // }
-    // std::cout << "# of chains: " << chain_ref.size() << std::endl;
-
-
-    // Chain
-    // exit(0);
-
-
-    // KEEP THIS.
-    // // EXAMPLE Iteration: chain_ref
-    // for(itchain = chain_ref.begin(); itchain != chain_ref.end(); itchain++)
-    // {
-    //     std::cout << "Atoms in chain: " << (*itchain).size() << std::endl;
-    //     for(ita = (*itchain).begin(); ita != (*itchain).end(); ita++)
-    //     {
-    //         (*ita).print_coords();
-    //     }
-    //     break;
-    // }
-    // exit(0);
-
     /* ---------------------------------------------------------
-       Vector of chain-vectors of Atoms. END.
+       End of Selection.
        --------------------------------------------------------- */
 
 
+#if defined (DCDREAD) || defined (DCD_WRITE_B) || defined (DCD_WRITE) || defined (DCD_WRITE_E)
 
     /* ---------------------------------------------------------
-       BEFORE DCD
+       Analysis Before. Start.
+       Before DCD Read is open. Just checking coordinates at this point.
        --------------------------------------------------------- */
+
+#ifndef NDEBUG // Double Negative Define: Not No-debugging.
+    // Position Check with
+    int atomcheck = 0;
+    atomcheck = allatoms_ref.size() * 0.5;
+    if(atomcheck == 0)
+    {
+        atomcheck = 1;
+    }
+    else if(atomcheck > 5)
+    {
+        atomcheck = 5;
+    }
+
+    std::cout << "Allatoms-Ref:" << std::endl;
+    for(int i=0; i<atomcheck; i++)
+    {
+        allatoms_ref[i].print_Coords();
+    }
+
+    std::cout << "Allatoms-t:" << std::endl;
+    for(int i=0; i<atomcheck; i++)
+    {
+        allatoms[i].print_Coords();
+        // std::cout << "\t" << allatoms[i].x << " "
+        //           << "\t" << allatoms[i].y << " "
+        //           << "\t" << allatoms[i].z << " "
+        //           << std::endl;
+    }
+#endif // NDEBUG
+
 #ifdef MTMAP2_BEFORE
     // Pairs: A(~439) and B(427-8).
     DimerList dimers;
@@ -644,31 +520,13 @@ int main(int argc, char *argv[]) {
     std::cout << "Original Contacts obtained!" << std::endl;
     std::cout << global_contacts.size() << std::endl;
 
-
-    // KEEP THIS.
     // Print some of the original contacts.
-    // int cmax = 0;
-    // for(auto f: global_contacts)
-    // {
-    //     std::cout << f.size() << std::endl;
-
-    //     for(auto c: f)
-    //     {
-    //         cmax += 1;
-    //         if (cmax > 5)
-    //         {
-    //             break;
-    //         }
-    //         std::cout << "\t" << c.size() << std::endl;
-
-    //         for(auto n: c)
-    //         {
-    //             std::cout << "\t\t" << n.size() << std::endl;
-    //         }
-    //     }
-    // }
+    // std::cout << "Printing global_contacts, 0th frame: " << std::endl;
+    // print_global_contacts(global_contacts);
+    // print_global_contacts_count(global_contacts);
     // exit(0);
 #endif // MTMAP2_BEFORE
+
 
 #ifdef PHIPSI_B // PHIPSI Beginning section.
     std::cout << "Getting PHI / PSI Angles!" << std::endl;
@@ -771,113 +629,12 @@ int main(int argc, char *argv[]) {
 
 #endif // PHIPSI_B End.
 
-#ifdef GET_CONTACTS
-    // void get_contacts(Atom *a1,Atom *a2,char dcdfilename[40],int num_atoms);
-    // get_contacts(aa_sel,aa_sel,argv[2],num_atoms);
-    // get_contacts(aa_sel,argv[2],num_atoms);
-#endif // GET_CONTACTS
 
-
-
-#if defined (DCDREAD) || defined (DCD_WRITE_B) || defined (DCD_WRITE) || defined (DCD_WRITE_E)
-    /* ---------------------------------------------------------
-       Analysis Before. Start.
-       --------------------------------------------------------- */
-    // Before DCD Read is open. Just checking coordinates at this point.
-    int atomcheck = 0;
-    atomcheck = allatoms_ref.size();
-    if(atomcheck > 3)
-    {
-        atomcheck = 3;
-    }
-
-    std::cout << "Reference-Object:(0) " << std::endl;
-    for(int i=0; i<atomcheck; i++)
-    {
-        allatoms_ref[i].print_Coords();
-    }
-    // Failure
-    // std::cout << "Reference-Pointer:(0) " << std::endl;
-    // for(int i=0; i<atomcheck; i++)
-    // {
-    //     // sel_all[i]->print_Coords();
-    //     std::cout << sel_all[i]->x << " "
-    //               << sel_all[i]->y << " "
-    //               << sel_all[i]->z << " "
-    //               << std::endl;
-    // }
-
-    // int someindex = 0;
-    // someindex = allatoms_ref.size() * 0.5;
-    // debug("middle-index: %d\n",someindex);
-    // debug("coords: %f %f %f\n",
-    //       allatoms_ref[someindex].x,
-    //       allatoms_ref[someindex].y,
-    //       allatoms_ref[someindex].z);
-    // exit(0);
-    // debug("coords: %f %f %f\n",aa_zero[someindex].x,aa_zero[someindex].y,aa_zero[someindex].z);
-    // debug("coords: %f %f %f\n",aa_later[someindex].x,aa_later[someindex].y,aa_later[someindex].z);
-    // debug("\n");
-    // debug("coords(8)[0]: %f %f %f\n",aa_zero[8].x,aa_zero[8].y,aa_zero[8].z);
-    // debug("coords(8)[later]: %f %f %f\n",aa_later[8].x,aa_later[8].y,aa_later[8].z);
-    // debug("coords(37)[0]: %f %f %f\n",aa_zero[37].x,aa_zero[37].y,aa_zero[37].z);
-    // debug("coords(37)[later]: %f %f %f\n",aa_later[37].x,aa_later[37].y,aa_later[37].z);
     /* ---------------------------------------------------------
        Analysis Before. Finish.
        --------------------------------------------------------- */
+
 #endif // multi-dcd
-
-
-    /* ---------------------------------------------------------
-       Create aa_zero, aa_later reference states.
-       --------------------------------------------------------- */
-    // Atom *aa_zero;
-    // try
-    // {
-    //     aa_zero = new Atom[num_atoms];
-    // }
-    // catch (std::bad_alloc xa)
-    // {
-    //     std::cout << "Allocation Failure\n";
-    //     exit(1);
-    // }
-
-    // Atom *aa_later;
-    // try
-    // {
-    //     aa_later = new Atom[num_atoms];
-    // }
-    // catch (std::bad_alloc xa)
-    // {
-    //     std::cout << "Allocation Failure\n";
-    //     exit(1);
-    // }
-
-    // //
-    // system_select(aa_ref,"all",num_atoms,aa_zero);
-    // system_select(aa_ref,"all",num_atoms,aa_later);
-
-
-    // // Verify aa_zero and aa_later.
-    // for(int i=0; i<num_atoms; i++)
-    // {
-    //     aa_zero[i].num_atoms = num_atoms;
-    //     aa_later[i].num_atoms = num_atoms;
-
-    //     // aa_ref[i].print_coords();
-    //     // printf("%s  ",aa_ref[i].chain.c_str());
-    //     // printf("%d\n",aa_ref[i].resid);
-    //     // std::cout << "select_i: " << ' '
-    //     //           << aa_sel[i].num_atoms << ' '
-    //     //           << aa_sel[i].index << ' '
-    //     //           << aa_sel[i].resid << ' '
-    //     //           << aa_sel[i].chain << ' '
-    //     //           << aa_sel[i].restype << ' '
-    //     //           << std::endl;
-    // }
-    /* ---------------------------------------------------------
-       Create aa_zero, aa_later reference states. End.
-       --------------------------------------------------------- */
 
 
 
@@ -947,7 +704,6 @@ int main(int argc, char *argv[]) {
     // timestep.coords = (float *)malloc(3*sizeof(float)*natoms);
 #endif // DCD_WRITE_B
 
-
     /* ---------------------------------------------------------
        Step 3.2 DCD Read.
        --------------------------------------------------------- */
@@ -976,10 +732,14 @@ int main(int argc, char *argv[]) {
     // } dcdhandle;
 
 
-    printf("----->  READING DCD  <-----\n");
-    // int atoms_in_chain;
+    /* ---------------------------------------------------------
+       Step 3.3 Open DCD.
+       --------------------------------------------------------- */
     // 2. to read a dcd.
+    printf("----->  READING DCD  <-----\n");
+
     natoms = 0;
+
     v = open_dcd_read(argv[2],"dcd",&natoms);
     if (!v)
     {
@@ -991,161 +751,92 @@ int main(int argc, char *argv[]) {
     totalMB += sizeMB;
     timestep.coords = (float *)malloc(3*sizeof(float)*natoms);
     // timestep.velocities = (float *)malloc(3*sizeof(float)*natoms);
-
-    // printf("main) file: %s\n", *argv);
     // printf("  %d atoms, %d frames, size: %6.1fMB\n", natoms, dcd->nsets, sizeMB);
-    // close_file_read(v);
+
 
     /* ---------------------------------------------------------
-       DCD OPEN!
+       Step 3.3 Load DCD.
        --------------------------------------------------------- */
-
-    /* ---------------------------------------------------------
-       Step 3.3 DCD Load.
-       --------------------------------------------------------- */
+    // Load first frame into allatoms_0. (0-position)
     frame_position = 1;
     advance_dcd(dcd->nsets,0,dcd,natoms,&timestep); // 1st advance. 1-vmd
-
-    // THIS ONE
-    // load_dcd_to_chain(dcd,aa_zero,num_chains);
-    // load_dcd_to_atoms(dcd,aa_zero);
     allatoms_0 = load_dcd_to_atoms(dcd,allatoms_0);
 
-    // for(auto a: allatoms_ref)
-    // {
-    //     std::cout << a.x << std::endl;
-    // }
-    // exit(0);
-
-
-    // printf("%f %f %f\n",)
-    // printf("frame_position: %d\n",frame_position);
-    // printf("ref-findex(%d): %f\n",chain_ref[0].findex,chain_ref[0].pos[chain_ref[0].findex].y);
-    // printf("0-findex(%d): %f\n",chain_0[0].findex,chain_0[0].pos[chain_0[0].findex].y);
-    // printf("later-findex(%d): %f\n",chain_later[0].findex,chain_later[0].pos[chain_later[0].findex].y);
-
+    // Load 2nd frame into allatoms. (time-later)
     frame_position = 2;
     advance_dcd(dcd->nsets,0,dcd,natoms,&timestep); // 2nd. 2-vmd
+    allatoms = load_dcd_to_atoms(dcd,allatoms);
 
-    // THIS ONE
-    // load_dcd_to_atoms(dcd,aa_later);
-    // allatoms = load_dcd_to_atoms(dcd,allatoms);
-    // allatoms = load_dcd_to_atoms(dcd,allatoms);
     printf("frame_position: %d\n",frame_position);
 
-    // std::cout << sel_all.size() << std::endl;
-    // std::cout << "Reference-Pointer:(2) " << std::endl;
-    // for(int i=0; i<atomcheck; i++)
-    // {
-    //     std::cout << sel_all[i]->x << " "
-    //               << sel_all[i]->y << " "
-    //               << sel_all[i]->z << " "
-    //               << std::endl;
-    //     // sel_all[i]->print_Coords();
-    // }
-    // exit(0);
 
-
+    /* ---------------------------------------------------------
+       Step 3.4 Advance DCD.
+       --------------------------------------------------------- */
     // Advancing Rules.
     // ----------------
     // example. step size -> 5.
     // int advance_size = atoi(argv[3]) - 1;
-    // step.
     int advance_size = step - 1; // 0 counts, so advance_size of 4, advances by 5.
 
-    // stop.
-    if(stop > dcd->nsets){
+    // stop. Check that the stopping frame isn't beyond the actual frame count.
+    if(stop > dcd->nsets)
+    {
         stop = dcd->nsets;
-        printf("use stop value: %d\n",stop);
+        std::cout << "Use stop value: " << stop << std::endl;
     }
 
-    for (int nset1=2; nset1<start; nset1 += 1 ) {
-        // for (int nset1=2; nset1<dcd->nsets; nset1 += step + 1) {
-        // debug("forwarding --> current: %d\n",nset1);
+
+    /* ---------------------------------------------------------
+       Step 3.5 Fast Forward DCD
+       --------------------------------------------------------- */
+    for (int nset1=2; nset1<start; nset1 += 1 )
+    {
         frame_position += advance_dcd(dcd->nsets,0,dcd,natoms,&timestep);
-
-
-        // THIS ONE
-        // load_dcd_to_chain(dcd,chain_later,num_chains);
-        // load_dcd_to_atoms(dcd,aa_later);
-        // allatoms = load_dcd_to_atoms(dcd,allatoms);
         allatoms = load_dcd_to_atoms(dcd,allatoms);
-
         debug("forwarding --> frame_position: %d\n",frame_position);
     }
 
     // Get initial starting point.
-    printf("--> fast forwarded. to frame: %d\n",frame_position);
+    printf("FF: -->\nframe_position: %d\n",frame_position);
 
 
     /* ---------------------------------------------------------
-       Step 3.4 major for loop begin || doloop.
+       Step 3.6 Loop through DCD, evaluate. (do loop)
        --------------------------------------------------------- */
     int nset2;
     nset2 = frame_position;
     do {
-
-
 #endif //DCDREAD
-
-
 
 
 #if defined (DCDREAD) || defined (DCD_WRITE_B) || defined (DCD_WRITE) || defined (DCD_WRITE_E)
         /* ---------------------------------------------------------
            DURING DCD
-           DCD LOAD
+           LOAD DCD
+           Analysis Evaluation.
            --------------------------------------------------------- */
-        // std::vector<Atom> amov;
-        // std::vector<std::vector<Atom>> chain_later;
 
-        // EXAMPLE Iteration: chain_ref
-        // for(itchain = chain_ref.begin(); itchain != chain_ref.end(); itchain++)
-        // {
-        //     amov = load_dcd_to_atoms(dcd,(*itchain));
-        //     // ATOM    438  CA                 83.230 104.659 560.812
-        //     // ATOM    438  CA                 86.611 102.589 557.086
-        //     chain_later.push_back(amov);
-        // }
 
-        // DCD OPEN, Coordinates Read, Loaded. Analysis During follows..
-        // debug("middle-index: %d\n",someindex);
-        // debug("coords: %f %f %f\n",aa_ref[someindex].x,aa_ref[someindex].y,aa_ref[someindex].z);
-        // debug("coords: %f %f %f\n",aa_zero[someindex].x,aa_zero[someindex].y,aa_zero[someindex].z);
-        // debug("coords: %f %f %f\n",aa_later[someindex].x,aa_later[someindex].y,aa_later[someindex].z);
-        // debug("\n");
-        // debug("coords(8)[0]: %f %f %f\n",aa_zero[8].x,aa_zero[8].y,aa_zero[8].z);
-        // debug("coords(8)[%d]: %f %f %f\n",frame_position,aa_later[8].x,aa_later[8].y,aa_later[8].z);
-        // debug("coords(37)[0]: %f %f %f\n",aa_zero[37].x,aa_zero[37].y,aa_zero[37].z);
-        // debug("coords(37)[%d]: %f %f %f\n",frame_position,aa_later[37].x,aa_later[37].y,aa_later[37].z);
-
+        /* ---------------------------------------------------------
+           Check that the points are evolving in time.
+           --------------------------------------------------------- */
+#ifndef NDEBUG // Double Negative Define: Not No-debugging.
         if(frame_position <=10)
         {
-            std::cout << "Reference-Object:(t<10) " << std::endl;
+            std::cout << "Allatoms-Ref:" << std::endl;
             for(int i=0; i<atomcheck; i++)
             {
                 allatoms_ref[i].print_Coords();
             }
+
+            std::cout << "Allatoms-t:" << std::endl;
+            for(int i=0; i<atomcheck; i++)
+            {
+                allatoms[i].print_Coords();
+            }
         }
-
-        // std::cout << "Reference-Pointer:(t) " << std::endl;
-        // for(int i=0; i<atomcheck; i++)
-        // {
-        //     sel_all[i]->print_Coords();
-        // }
-
-        // Failure
-        std::cout << sel_all.size() << std::endl;
-        std::cout << "Reference-Pointer:(2) " << std::endl;
-        // for(int i=0; i<atomcheck; i++)
-        // {
-        //     std::cout << sel_all[i]->x << " "
-        //               << sel_all[i]->y << " "
-        //               << sel_all[i]->z << " "
-        //               << std::endl;
-        //     // sel_all[i]->print_Coords();
-        // }
-        // exit(0);
+#endif // NDEBUG
 
 
         /* ---------------------------------------------------------
@@ -1182,6 +873,7 @@ int main(int argc, char *argv[]) {
                 contact_set = get_contacts_for_chain_later(allatoms,
                                                            8.0,2.0,
                                                            global_contacts[0][it_c][it_n]);
+
                 // std::cout << contact_set.size() << std::endl;
                 neighbor_set.push_back(contact_set);
                 contact_set.clear();
@@ -1238,7 +930,6 @@ int main(int argc, char *argv[]) {
 #ifdef PHIPSI_M // Begin.
         std::cout << "Getting the phi / psi angles." << std::endl;
 
-
         // Reload.
         load_dcd_to_atoms(dcd,aa_temp_backbone);
         vec_dihedrals.clear();
@@ -1282,6 +973,8 @@ int main(int argc, char *argv[]) {
 
         /* ---------------------------------------------------------
            Step 4. Analysis During. Finish.
+           DCD LOAD complete.
+           No more analysis. (unless it's just printing.)
            --------------------------------------------------------- */
 #endif // multi-dcd
 
@@ -1317,16 +1010,14 @@ int main(int argc, char *argv[]) {
         // THIS ONE
         // load_chain_to_timestep(chain_later,num_chains,&timestep_w);
         // load_atom_to_timestep(&timestep_w,aa_later);
-        // load_atom_to_timestep(&timestep_w,allatoms);
+        load_atom_to_timestep(&timestep_w,allatoms);
 
 #ifdef DCD_WRITE_UNMOD
         // Write the DCD read in.
         write_timestep(vw,&timestep);
-
 #else
         // Write modified coordinates.
         write_timestep(vw,&timestep_w);
-
 #endif // DCD_WRITE_UNMOD
 
 #endif // DCD_WRITE
@@ -1345,18 +1036,13 @@ int main(int argc, char *argv[]) {
             printf("frame: --> %d <-- loaded.\n",frame_position);
 
             // THIS ONE
-            // load_dcd_to_chain(dcd,chain_later,num_chains);
-            // load_dcd_to_atoms(dcd,aa_later);
             allatoms = load_dcd_to_atoms(dcd,allatoms);
-
-            // nset2 += advance_size + 1;
         }
         nset2 += advance_size + 1;
     } while (nset2<=stop);
 
     debug("\n..closing dcd..\n");
     close_file_read(v);
-
 
     printf("\n----->  READING DCD completed!  <-----\n");
     printf("\t\tThe maximum possible frame_position was: %d\n",stop);
@@ -1369,64 +1055,20 @@ int main(int argc, char *argv[]) {
     /* ---------------------------------------------------------
        Analysis After. Start.
        --------------------------------------------------------- */
-    // debug("middle-index: %d\n",someindex);
-    // debug("coords: %f %f %f\n",aa_ref[someindex].x,aa_ref[someindex].y,aa_ref[someindex].z);
-    // debug("coords: %f %f %f\n",aa_zero[someindex].x,aa_zero[someindex].y,aa_zero[someindex].z);
-    // debug("coords: %f %f %f\n",aa_later[someindex].x,aa_later[someindex].y,aa_later[someindex].z);
-    // debug("\n");
-    // debug("coords(8)[0]: %f %f %f\n",aa_zero[8].x,aa_zero[8].y,aa_zero[8].z);
-    // debug("coords(8)[%d]: %f %f %f\n",frame_position,aa_later[8].x,aa_later[8].y,aa_later[8].z);
-    // debug("coords(37)[0]: %f %f %f\n",aa_zero[37].x,aa_zero[37].y,aa_zero[37].z);
-    // debug("coords(37)[%d]: %f %f %f\n",frame_position,aa_later[37].x,aa_later[37].y,aa_later[37].z);
-
 
 #ifdef MTMAP2_AFTER
     std::cout << "MTMAP2: Contacts by sector complete." << std::endl;
-
-    // KEEP THIS.
-    // Print some of the original contacts.
-    // int cmax = 0;
-    // int fmax;
-    // fmax = cmax = 0;
-
-    // for(auto f: global_contacts)
-    // {
-    //     fmax += 1;
-    //     cmax = 0;
-    //     std::cout << f.size() << std::endl;
-
-    //     for(auto c: f)
-    //     {
-    //         cmax += 1;
-    //         if (cmax > 5)
-    //         {
-    //             break;
-    //         }
-    //         std::cout << "\t" << c.size() << std::endl;
-
-    //         for(auto n: c)
-    //         {
-    //             std::cout << "\t\t" << n.size() << std::endl;
-    //             // std::cout << n.get<0> << std::endl;
-    //         }
-    //     }
-    //     if(fmax > 3)
-    //     {
-    //         break;
-    //     }
-    // }
-    // exit(0);
-
 
     // Print Analysis of Contacts File.
     output_global_contacts(global_contacts);
 
     // Print Analysis of Contacts by Subdomain.
     output_global_contacts_by_subdomain(global_contacts);
+
+    // Notes:
     // fp_contacts = fopen("emol_mtcontacts_by_subdomain.dat", "w+");
     // fp_contacts3 = fopen("emol_mtcontacts_by_subdomain3.dat", "w+");
     // fp_contacts3n = fopen("emol_mtcontacts_by_subdomain3n.dat", "w+");
-
 #endif // MTMAP2_AFTER
 
 
@@ -1446,7 +1088,6 @@ int main(int argc, char *argv[]) {
     }
 #endif // PHIPSI_E End.
 
-
 #endif // multi-dcd
 
 
@@ -1455,7 +1096,6 @@ int main(int argc, char *argv[]) {
     // static void close_file_write(void *v) {
     close_file_write(vw);
 #endif // DCD_WRITE_E
-
 
 
 

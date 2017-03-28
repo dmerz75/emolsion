@@ -71,11 +71,10 @@ MACRO   = -D
 DCDTEST = -DDCDTEST
 DCD     = -DDCDREAD
 DCDW    = -DDCDREAD -DDCD_WRITE_B -DDCD_WRITE -DDCD_WRITE_E
-CONS    = -DGET_CONTACTS
 # MT2     =
 # MT2     = -DMTMAP_PREP
-MT2     = -DMTMAP2_BEFORE
-# MT2     = -DMTMAP_PREP -DMTMAP2_BEFORE -DMTMAP2_DURING -DMTMAP2_AFTER
+# MT2     = -DMTMAP2_BEFORE
+MT2     = -DMTMAP2_BEFORE -DMTMAP2_DURING -DMTMAP2_AFTER
 PHIPSI  = -DPHIPSI_B -DPHIPSI_M -DPHIPSI_E
 
 #  ---------------------------------------------------------  #
@@ -153,12 +152,13 @@ dcdr:
 dcdw:
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCDW) -o test/$(EXEC)_dcdwriter
 	cd test && ./$(EXEC)_dcdwriter mt.ref.pdb mt_partial.dcd 6 27 3 # 6-9 .. 21-24-27.
-contacts0:
-	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(CONS) -o test/$(EXEC)_contacts
-	cd test && ./$(EXEC)_contacts mt.ref.pdb mt_partial.dcd 6 27 3 # 6-9 .. 21-24-27.
 mt3:
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) $(MT2) -o test/$(EXEC)_mtcontacts3
 	cd test && ./$(EXEC)_mtcontacts3 mt.ref.pdb mt_partial.dcd 6 30 6 # 6-9 .. 21-24-27.
+mt6:
+# 6 dimer test system.
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) $(MT2) -o test/$(EXEC)_mtcontacts3
+	cd test && ./$(EXEC)_mtcontacts3 mtdimer6.pdb mtdimer6.dcd 0 16 1 # 6-9 .. 21-24-27.
 mtcontactstest:
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) $(MT2) -o test/$(EXEC)_mtcontacts2
 	cd test && ./$(EXEC)_mtcontacts2 mt_test1.pdb mt_test1.dcd 4 220 5

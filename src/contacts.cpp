@@ -718,7 +718,7 @@ SetContacts get_contacts_for_chain(vAtoms aa,
 //                                                                            std::vector<boost::tuple
 //                                                                            <int,int,int,double>> contacts)
 
-SetContacts get_contacts_for_chain_later(vpAtoms alater,
+SetContacts get_contacts_for_chain_later(vAtoms aa,
                                          double cutoff,
                                          double tolerance,
                                          SetContacts contacts)
@@ -759,22 +759,22 @@ SetContacts get_contacts_for_chain_later(vpAtoms alater,
         odist = boost::get<2>(c);
 
         // std::cout << std::endl;
-        // std::cout << alater[boost::get<0>(c)].x << std::endl;
-        // std::cout << alater[boost::get<0>(c)].y << std::endl;
-        // std::cout << alater[boost::get<0>(c)].z << std::endl;
+        // std::cout << aa[boost::get<0>(c)].x << std::endl;
+        // std::cout << aa[boost::get<0>(c)].y << std::endl;
+        // std::cout << aa[boost::get<0>(c)].z << std::endl;
 
-        p1.x = alater[boost::get<0>(c)]->x;
-        p1.y = alater[boost::get<0>(c)]->y;
-        p1.z = alater[boost::get<0>(c)]->z;
+        p1.x = aa[boost::get<0>(c)].x;
+        p1.y = aa[boost::get<0>(c)].y;
+        p1.z = aa[boost::get<0>(c)].z;
 
         // std::cout << std::endl;
-        // std::cout << alater[boost::get<1>(c)].x << std::endl;
-        // std::cout << alater[boost::get<1>(c)].y << std::endl;
-        // std::cout << alater[boost::get<1>(c)].z << std::endl;
+        // std::cout << aa[boost::get<1>(c)].x << std::endl;
+        // std::cout << aa[boost::get<1>(c)].y << std::endl;
+        // std::cout << aa[boost::get<1>(c)].z << std::endl;
 
-        p2.x = alater[boost::get<1>(c)]->x;
-        p2.y = alater[boost::get<1>(c)]->y;
-        p2.z = alater[boost::get<1>(c)]->z;
+        p2.x = aa[boost::get<1>(c)].x;
+        p2.y = aa[boost::get<1>(c)].y;
+        p2.z = aa[boost::get<1>(c)].z;
 
 
         dist = distance(p1,p2);
@@ -1325,4 +1325,88 @@ void print_mt_map(MtNeighbors mt_matrix)
     //             std::cout << std::endl;
     // }
 
+}
+
+void print_global_contacts(SetGlobalContacts gc)
+{
+    // std::cout << "Writing Global Contacts to file now." << std::endl;
+
+    int fn = 0;
+    int cn = 0;
+    int nn = 0;
+    int gcn = 0; // global contact number.
+
+    // FILE
+    for(auto f: gc) // frame in global contact array
+    {
+        fn += 1;
+        std::cout << "Frame: " << fn << std::endl;
+
+        for(auto c: f) // chain (but actually dimer) in frame, 156
+        {
+            std::cout << "Chain: " << cn << std::endl;
+
+            for(auto n: c) // 9 situations of 6 neighbors, 0,1,0-1; 0-2,3,4; 1-5,6,7
+            {
+                std::cout << "Neigbor: " << nn << " " << std::endl;
+
+                for(auto c1: n)
+                {
+                    std::cout << c1.get<0>() << "-" << c1.get<1>() << " ";
+
+                    gcn += 1;
+                }
+                std::cout << std::endl;
+                nn += 1;
+            }
+            std::cout << std::endl;
+
+            nn = 0;
+            cn += 1;
+        }
+        // fprintf(fp_contacts,"\n");
+    }
+    // fclose(fp_contacts);
+    std::cout << "The total number of contacts is: " << gcn << std::endl;
+}
+
+void print_global_contacts_count(SetGlobalContacts gc)
+{
+    // std::cout << "Writing Global Contacts to file now." << std::endl;
+
+    int fn = 0;
+    int cn = 0;
+    int nn = 0;
+    int gcn = 0; // global contact number.
+
+    // FILE
+    for(auto f: gc) // frame in global contact array
+    {
+        fn += 1;
+        std::cout << "Frame: " << fn << std::endl;
+
+        for(auto c: f) // chain (but actually dimer) in frame, 156
+        {
+            std::cout << "Chain: " << cn << std::endl;
+
+            for(auto n: c) // 9 situations of 6 neighbors, 0,1,0-1; 0-2,3,4; 1-5,6,7
+            {
+                std::cout << "  n: " << nn << " has " << n.size() << " contacts."<< std::endl;
+                for(auto c1: n)
+                {
+                    // std::cout << c1.get<0>() << "-" << c1.get<1>() << " ";
+                    gcn += 1;
+                }
+                // std::cout << std::endl;
+                nn += 1;
+            }
+            // std::cout << std::endl;
+
+            nn = 0;
+            cn += 1;
+        }
+        // fprintf(fp_contacts,"\n");
+    }
+    // fclose(fp_contacts);
+    std::cout << "The total number of contacts is: " << gcn << std::endl;
 }
