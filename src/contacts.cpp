@@ -18,6 +18,9 @@
 #include <vector>
 // #include "boost/tuple/tuple.hpp"
 #include <iomanip> // setw
+#include <fstream> // ifstream
+#include <string.h> // string.
+#include <boost/algorithm/string.hpp> // std::string, boost
 
 
 /* ---------------------------------------------------------
@@ -1393,6 +1396,93 @@ void write_contacts_to_file(FILE *fp_topology,SetContacts contact_set)
                 c.get<1>(),
                 c.get<2>(),
                 c.get<5>());
-        // fprintf(fp_topology,"%6d %6d %7.3f",);
+    }
+}
+
+SetContacts read_contacts_from_file(char filename[40])
+{
+    SetContacts contacts;
+    std::string line;
+    std::string fn(filename);
+
+    std::string str_index1;
+    std::string str_index2;
+    std::string str_dist;
+    std::string str_eh;
+
+    int index1, index2;
+    double dist, eh;
+    index1 = index2 = -1;
+    dist = eh = 0.0;
+
+
+    std::cout << "Reading contacts from topology file: "
+              << filename
+              << std::endl;
+
+
+    std::ifstream cfile(fn.c_str());
+
+
+    if(cfile.is_open())
+    {
+        std::cout << "file is now open." << std::endl;
+
+        while(getline(cfile,line))
+        {
+            if (boost::algorithm::starts_with(line,"#") == 1)
+            {
+                continue;
+            }
+            else
+            {
+                str_index1 = line.substr(0,6);
+                str_index2 = line.substr(9,6);
+                str_dist = line.substr(22,9);
+                str_eh = line.substr(34,8);
+
+                // std::cout << str_index1 << " "
+                //           << str_index2 << " "
+                //           << str_dist << " "
+                //           << str_eh << "\n"
+                //           << std::endl;
+
+                index1 = atoi(str_index1.c_str());
+                index2 = atoi(str_index2.c_str());
+                dist = std::stod(str_dist.c_str());
+                eh = std::stod(str_eh.c_str());
+
+                // std::cout << index1 << " "
+                //           << index2 << " "
+                //           << dist << " "
+                //           << eh << "\n"
+                //           << std::endl;
+
+                contacts.push_back(boost::tuple<int,int,double,int,int,double>(
+                                       index1,
+                                       index2,
+                                       dist,
+                                       -1,
+                                       -1,
+                                       eh));
+            }
+        }
+        cfile.close();
+
+        std::cout << "file is now closed." << std::endl;
+    }
+
+
+    return contacts;
+}
+
+void print_set_contacts(SetContacts cn)
+{
+    for(auto c: cn)
+    {
+        std::cout << c.get<0>() << "-"
+                  << c.get<1>() << "   "
+                  << c.get<2>() << "   \t"
+                  << c.get<5>() << "\n";
     }
 }

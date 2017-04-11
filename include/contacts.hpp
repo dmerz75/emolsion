@@ -95,6 +95,7 @@ MtNeighbors get_map_of_mtneighbors(vIndexGroup isel_chain,vAtoms aa,DimerList di
 void print_mt_map(MtNeighbors mt_matrix);
 
 // code development
+void print_set_contacts(SetContacts cn);
 void print_global_contacts(SetGlobalContacts gc);
 void print_global_contacts_count(SetGlobalContacts gc);
 // for data analysis
@@ -102,5 +103,6 @@ void output_global_contacts(SetGlobalContacts gc);
 void output_global_contacts_by_subdomain(SetGlobalContacts gc);
 // for topology creation
 void write_contacts_to_file(FILE *fp_topology,SetContacts contact_set);
+SetContacts read_contacts_from_file(char filename[40]);
 
 #endif

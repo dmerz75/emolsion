@@ -619,7 +619,6 @@ int main(int argc, char *argv[]) {
     // write_contacts_to_file_header();
 
 
-
     // MT case:
 #ifdef MTMAP2_BEFORE
     // skip global_contacts, chain_set, goto neighbor set, goto contact_set
@@ -641,6 +640,16 @@ int main(int argc, char *argv[]) {
 
     fclose(fp_topology);
 #endif // TOPO_write
+
+
+#ifdef TOPO_read // Begin.
+    SetContacts lst_contacts;
+    lst_contacts = read_contacts_from_file(argv[3]);
+    std::cout << "# of contacts from topology file:  " <<
+        lst_contacts.size() << std::endl;
+    print_set_contacts(lst_contacts);
+
+#endif // End. TOPO_read
 
 
     /* ---------------------------------------------------------
