@@ -73,6 +73,7 @@ DCD     = -DDCDREAD
 DCDW    = -DDCDREAD -DDCD_WRITE_B -DDCD_WRITE -DDCD_WRITE_E
 MT2     = -DMTMAP2_BEFORE -DMTMAP2_DURING -DMTMAP2_AFTER
 PHIPSI  = -DPHIPSI_B -DPHIPSI_M -DPHIPSI_E
+TOPO    = -DTOPO -DTOPO_write -DMTMAP2_BEFORE
 
 #  ---------------------------------------------------------  #
 #  Macros' Descriptions:                                      #
@@ -156,6 +157,10 @@ mt6:
 # 6 dimer test system.
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) $(MT2) -o test/$(EXEC)_mtcontacts3
 	cd test && ./$(EXEC)_mtcontacts3 mtdimer6.pdb mtdimer6.dcd 0 16 1 # 6-9 .. 21-24-27.
+topo0:
+# 6 dimer test system for topology writing.
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(TOPO) -o test/$(EXEC)_topo
+	cd test && ./$(EXEC)_topo mtdimer6.pdb nil.dcd 0 16 2 # 6-9 .. 21-24-27.
 mtcontactstest:
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) $(MT2) -o test/$(EXEC)_mtcontacts2
 	cd test && ./$(EXEC)_mtcontacts2 mt_test1.pdb mt_test1.dcd 4 220 5

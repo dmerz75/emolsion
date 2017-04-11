@@ -75,6 +75,8 @@ int main(int argc, char *argv[]) {
     //    () ReadPDBfile / Count the atoms.
     //    () Allocate for the Reference System. aa_ref
     //    () Populate some System parameters, like the total num_atoms.
+    // *. Topology
+    //
     // 3. Open the DCD.
     //    3.0 allocate for aa_later.
     //    3.1 If DCD exists, read coordinates, velocities.
@@ -238,8 +240,6 @@ int main(int argc, char *argv[]) {
        End of Selection.
        --------------------------------------------------------- */
 
-
-#if defined (DCDREAD) || defined (DCD_WRITE_B) || defined (DCD_WRITE) || defined (DCD_WRITE_E)
 
     /* ---------------------------------------------------------
        Analysis Before. Start.
@@ -411,14 +411,14 @@ int main(int argc, char *argv[]) {
     // mt_matrix = get_map_of_mtneighbors(allatoms_chain,dimers);
     std::cout << "Getting map for microtubule." << std::endl;
     mt_matrix = get_map_of_mtneighbors(isel_chain,allatoms_ref,dimers);
+    // ab-SEWNEW
 
     // Print Map of MT neighbors.
-    // std::cout << "Printing map of microtubule neighbors." << std::endl;
-    // print_mt_map(mt_matrix);
+    std::cout << "Printing map of microtubule neighbors." << std::endl;
+    print_mt_map(mt_matrix);
     // exit(0);
 
     std::cout << "MTMAP2: Beginning contacts by sector." << std::endl;
-
     SetContacts contact_set;
     SetNeighbors neighbor_set;
     SetChains chain_set;
@@ -518,7 +518,8 @@ int main(int argc, char *argv[]) {
     // exit(0);
 
     std::cout << "Original Contacts obtained!" << std::endl;
-    std::cout << global_contacts.size() << std::endl;
+    std::cout << "Chains_contacts: " << chain_set.size() << std::endl;
+    std::cout << "Global_contacts: (frames) " << global_contacts.size() << std::endl;
 
     // Print some of the original contacts.
     // std::cout << "Printing global_contacts, 0th frame: " << std::endl;
@@ -582,36 +583,6 @@ int main(int argc, char *argv[]) {
         backbone.clear();
     }
 
-    // // Select CA
-    // num_select = system_select_atomtype(aa_ref,"CA",num_atoms,aa_temp_backbone);
-    // // aa_temp_backbone[0].print_coords();
-    // for(int j=0; j<num_select; j++)
-    // {
-    //     Atom a1 = aa_temp_backbone[j]; // Copy Constructor
-    //     aa_backbone.push_back(a1);
-    // }
-    // num_select = system_select_atomtype(aa_ref,"C",num_atoms,aa_temp_backbone);
-    // for(int j=0; j<num_select; j++)
-    // {
-    //     Atom a1 = aa_temp_backbone[j]; // Copy Constructor
-    //     aa_backbone.push_back(a1);
-    // }
-    // num_select = system_select_atomtype(aa_ref,"O",num_atoms,aa_temp_backbone);
-    // for(int j=0; j<num_select; j++)
-    // {
-    //     Atom a1 = aa_temp_backbone[j]; // Copy Constructor
-    //     aa_backbone.push_back(a1);
-    // }
-    // num_select = system_select_atomtype(aa_ref,"N",num_atoms,aa_temp_backbone);
-    // for(int j=0; j<num_select; j++)
-    // {
-    //     Atom a1 = aa_temp_backbone[j]; // Copy Constructor
-    //     aa_backbone.push_back(a1);
-    // }
-
-    // Not needed .. cleared.
-    // std::cout << "backbone_size: " << backbone.size() << std::endl;
-
     Global_PhiPsi global_phipsi;
     PhiPsi local_phipsi;
     local_phipsi = compute_phipsi(vec_dihedrals);
@@ -630,11 +601,59 @@ int main(int argc, char *argv[]) {
 #endif // PHIPSI_B End.
 
 
+#ifdef TOPO // Begin.
+    /* ---------------------------------------------------------
+       Begin Topology.
+       --------------------------------------------------------- */
+    std::cout << "Topology Tools:" << std::endl;
+
+#ifdef TOPO_write
+    // build write_contacts_to_file, 2x overloaded.
+    // 1. chain_set
+    // 2. contact_set .. or maybe just this.
+
+    // FILE
+    FILE * fp_topology;
+    fp_topology = fopen("emol_topology.top", "a+");
+    fprintf(fp_topology,"# Topology written with emolsion.\n");
+    // write_contacts_to_file_header();
+
+
+
+    // MT case:
+#ifdef MTMAP2_BEFORE
+    // skip global_contacts, chain_set, goto neighbor set, goto contact_set
+    for(auto c: global_contacts) // chain (but actually dimer) in frame, 156
+    {
+        //                                             0 1 2    3   4 5  6   7 8
+        for(auto n: c) // 9 situations of 6 neighbors, 0,1,0-1; 0-2,3,4; 1-5,6,7
+        {
+            // std::cout << n.size() << std::endl;
+            for(auto c1: n)
+            {
+                std::cout << "\t" << c1.size() << std::endl;
+                write_contacts_to_file(fp_topology,c1);
+            }
+        }
+    }
+
+#endif // TOPO & TOPO_write & MTMAP2_BEFORE
+
+    fclose(fp_topology);
+#endif // TOPO_write
+
+
+    /* ---------------------------------------------------------
+       End Topology.
+       --------------------------------------------------------- */
+#endif // End TOPO
+
+
     /* ---------------------------------------------------------
        Analysis Before. Finish.
        --------------------------------------------------------- */
-
-#endif // multi-dcd
+// #if defined (DCDREAD) || defined (DCD_WRITE_B) || defined (DCD_WRITE) || defined (DCD_WRITE_E)
+// #endif // multi-dcd
 
 
 

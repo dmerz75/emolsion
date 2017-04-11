@@ -122,52 +122,25 @@ void get_contacts(Atom *a1,Atom *a2,char dcdfilename[40],int natoms)
     printf("Overall Size: %6.1f MB\n", totalMB);
 }
 
-// void get_contacts(Atom *a1,char *argv)
-// {
-//     debug("welcome to get_contacts. 1 (intra)\n");
-// }
-
-// void get_contacts_for_chain()
-// std::vector<boost::tuple<int,int,int,double>> get_contacts_for_chain(std::vector <Atom> chain1,
-//                                                                      std::vector <Atom> chain2,
-//                                                                      float cutoff)
-// std::vector<boost::tuple<int,int,double>> get_contacts_for_chain(std::vector <Atom> chain1,
-//                                                                  std::vector <Atom> chain2,
-//                                                                  float cutoff)
-// std::vector<boost::tuple<int,int,double>> get_contacts_for_chain(std::vector <Atom> chain1,
-//                                                                  std::vector <Atom> chain2,
-//                                                                  float cutoff,
-//                                                                  std::vector<boost::tuple<int,int,double>> contacts)
-// void get_contacts_for_chain(std::vector <Atom> chain1,
-//                             std::vector <Atom> chain2,
-//                             float cutoff,
-//                             std::vector<boost::tuple<int,int,double>> contacts)
 SetContacts get_contacts_for_chain(vAtoms aa,
                                    double cutoff,
                                    IndexGroup ig1,
                                    IndexGroup ig2)
 {
+    // SM, Single Molecule
     // INTERCHAIN, Not MT
 
     // std::cout << "Welcome to get_contacts_for_chain!" << std::endl;
     // std::cout << "Cutoff: " << cutoff << std::endl;
     // std::vector<boost::tuple<int,int,double>> contacts;
     SetContacts contacts;
-    // std::cout << "chain1: " << aa.size() << std::endl;
-    // std::cout << "chain2: " << chain2.size() << std::endl;
-
-
-    // int i1, i2;
-    // i1 = i2 = 0;
-    // int i = 0;
 
     Vector a1v,a2v;
     double dist = 0.0;
+    double eh = 0.0;
 
     int subd1 = -1; // subdomains 1 & 2
     int subd2 = -1;
-
-    // int total_contacts = 0;
 
     for(auto i: ig1)
     {
@@ -181,7 +154,12 @@ SetContacts get_contacts_for_chain(vAtoms aa,
         {
             // Directive: Exclude an index being in contact with itself,
             // or its +/- 2 neighbor.
-            if((j - 2 >= i) and (j + 2 <= i))
+            // if((j - 2 >= i) and (j + 2 <= i))
+            if((j >= i - 2) and (j <= i + 2))
+            {
+                continue;
+            }
+            if(j < i)
             {
                 continue;
             }
@@ -190,25 +168,19 @@ SetContacts get_contacts_for_chain(vAtoms aa,
             a2v.y = aa[j].y;
             a2v.z = aa[j].z;
             dist = distance(a1v,a2v);
-            // a.print_coords();
-            // a2.print_coords();
 
             if(dist <= cutoff)
             {
-                // contacts.push_back(boost::tuple<int,int,int,double>(a.index,a2.index,1,dist));
-                // total_contacts += 1;
-                contacts.push_back(boost::tuple<int,int,double,int,int>(
+                contacts.push_back(boost::tuple<int,int,double,int,int,double>(
                                        i,
                                        j,
                                        dist,
                                        subd1,
-                                       subd2));
+                                       subd2,
+                                       eh));
             }
         }
     }
-
-    // std::cout << "contacts_size: " << contacts.size() << std::endl;
-    // std::cout << "contacts_counted: " << total_contacts << std::endl;
     return contacts;
 }
 
@@ -230,6 +202,7 @@ SetContacts get_contacts_for_chain(vAtoms aa,
 
     Vector a1v,a2v;
     double dist = 0.0;
+    double eh = 0.0;
 
     int subd1 = -1; // subdomains 1 & 2
     int subd2 = -1;
@@ -247,7 +220,12 @@ SetContacts get_contacts_for_chain(vAtoms aa,
         {
             // Directive: Exclude an index being in contact with itself,
             // or its +/- 2 neighbor.
-            if((j - 2 >= i) and (j + 2 <= i))
+            // std::cout << i << "---" << j << std::endl;
+            if((j >= i - 2) and (j <= i + 2))
+            {
+                continue;
+            }
+            if(j < i)
             {
                 continue;
             }
@@ -293,11 +271,7 @@ SetContacts get_contacts_for_chain(vAtoms aa,
                 {
                     // std::cout << cid1 << " " << cid2 << " " << std::endl;
                     // std::cout << a1.index << " " << a2.index << " " << std::endl;
-
-
                     // std::cout << map[cid1] << " " << map[cid2] << " " << std::endl;
-
-
 
                     // std::cout << "chaintype: " << map[cid1]["chaintype"] << " \n"
                     //           << "index: " << map[cid1]["index"] << " \n"
@@ -307,7 +281,6 @@ SetContacts get_contacts_for_chain(vAtoms aa,
                     //           << "Cterm1: " << map[cid1]["Cterm1"] << " \n"
                     //           << "findex: " << map[cid1]["findex"] << " \n"
                     //           << std::endl;
-
 
                     // std::cout << "chaintype: " << map[cid2]["chaintype"] << " \n"
                     //           << "index: " << map[cid2]["index"] << " \n"
@@ -325,21 +298,13 @@ SetContacts get_contacts_for_chain(vAtoms aa,
                     exit(0);
                 }
 
-                contacts.push_back(boost::tuple<int,int,double,int,int>
+                contacts.push_back(boost::tuple<int,int,double,int,int,double>
                                    (i,
                                     j,
                                     dist,
                                     subd1,
-                                    subd2));
-                // try
-                // {
-                //     contacts.push_back(boost::tuple<int,int,double>(a1.index,a2.index,dist));
-
-                // }
-                // catch (const std::bad_alloc &contacts)
-                // {
-                //     std::cout << "Allocation failed for single contact: " << contacts.what() << std::endl;
-                // }
+                                    subd2,
+                                    eh));
             }
         }
     }
@@ -364,6 +329,7 @@ SetContacts get_contacts_for_chain(vAtoms aa,
 
     Vector a1v,a2v;
     double dist = 0.0;
+    double eh = 0.0;
 
     int subd1 = -1; // subdomains 1 & 2
     int subd2 = -1;
@@ -378,7 +344,12 @@ SetContacts get_contacts_for_chain(vAtoms aa,
         {
             // Directive: Exclude an index being in contact with itself,
             // or its +/- 2 neighbor.
-            if((j - 2 >= i) and (j + 2 <= i))
+            // if((j - 2 >= i) and (j + 2 <= i))
+            if((j >= i - 2) and (j <= i + 2))
+            {
+                continue;
+            }
+            if(j < i)
             {
                 continue;
             }
@@ -456,12 +427,13 @@ SetContacts get_contacts_for_chain(vAtoms aa,
                     exit(0);
                 }
 
-                contacts.push_back(boost::tuple<int,int,double,int,int>
+                contacts.push_back(boost::tuple<int,int,double,int,int,double>
                                    (i,
                                     j,
                                     dist,
                                     subd1,
-                                    subd2));
+                                    subd2,
+                                    eh));
             }
         }
     }
@@ -791,13 +763,13 @@ SetContacts get_contacts_for_chain_later(vAtoms aa,
             //                                                         boost::get<1>(c),
             //                                                         onoff,
             //                                                         dist));
-            cur_contacts.push_back(boost::tuple<int,int,double,int,int>(
+            cur_contacts.push_back(boost::tuple<int,int,double,int,int,double>(
                                        boost::get<0>(c),
                                        boost::get<1>(c),
                                        dist,
                                        boost::get<3>(c),
-                                       boost::get<4>(c)));
-
+                                       boost::get<4>(c),
+                                       boost::get<5>(c)));
         }
         // else
         // {
@@ -1034,8 +1006,6 @@ void output_global_contacts_by_subdomain(SetGlobalContacts gc)
     fclose(fp_contacts3);
 }
 
-// MtNeighbors get_map_of_mtneighbors(std::vector<std::vector <Atom>> chain_ref,
-//                                    DimerList dimers)
 MtNeighbors get_map_of_mtneighbors(vIndexGroup isel_chain,vAtoms aa,DimerList dimers)
 {
     // printf("Welcome to get_map_of_mtneighbors!\n");
@@ -1409,4 +1379,20 @@ void print_global_contacts_count(SetGlobalContacts gc)
     }
     // fclose(fp_contacts);
     std::cout << "The total number of contacts is: " << gcn << std::endl;
+}
+
+void write_contacts_to_file(FILE *fp_topology,SetContacts contact_set)
+{
+    // TOPOLOGY
+
+    // fprintf(fp_topology,"# contact set\n");
+    for(auto c: contact_set)
+    {
+        fprintf(fp_topology," %6d  %6d    1  %9.5f   %8.5f\n",
+                c.get<0>(),
+                c.get<1>(),
+                c.get<2>(),
+                c.get<5>());
+        // fprintf(fp_topology,"%6d %6d %7.3f",);
+    }
 }

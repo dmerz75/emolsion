@@ -5,7 +5,7 @@
 #define _contacts_hpp_
 
 /* ---------------------------------------------------------
-   libraries:
+   libraries & headers
    --------------------------------------------------------- */
 // #include <stdio.h>
 // #include <stdlib.h> // strtod?, stod
@@ -24,22 +24,13 @@
 #include "dcd.h"
 #include "microtubule.hpp"
 #include "boost/tuple/tuple.hpp"
-
-/* ---------------------------------------------------------
-   headers:
-   --------------------------------------------------------- */
 #include "debug.h"
-/* #include "system.hpp" */
-// #include "atom.hpp"
-
 
 
 /* ---------------------------------------------------------
    Definitions:
    --------------------------------------------------------- */
 /* #define BUFFERSIZE 900 */
-
-
 
 /* ---------------------------------------------------------
    Classes:
@@ -53,7 +44,15 @@
 // for the contact arrarys, in time, by chain, by neighbor.
 // Contacts, Set of Contacts, 9 Neighbors, Set of Chains/dimers ~ 156,
 // Lastly, by frame
-typedef boost::tuple<int,int,double,int,int> Contact;
+//
+// i1 index 1, i2 index 2
+// dist: distance between atoms
+// mt1: sector of a tubulin monomer for index 1 (contact)
+// mt2: sector of a tubulin monomer for index 2 (contacted)
+// eh: energy scaling of the Lennard-Jones potential
+//
+//                    i1  i2  dist  mt1 mt2 eh
+typedef boost::tuple<int,int,double,int,int,double> Contact;
 typedef std::vector<Contact> SetContacts;
 typedef std::vector<SetContacts> SetNeighbors;
 typedef std::vector<SetNeighbors> SetChains;
@@ -65,38 +64,12 @@ typedef std::vector<SetChains> SetGlobalContacts;
    --------------------------------------------------------- */
 void get_contacts(Atom *a1,Atom *a2,char dcdfilename[40],int num_atoms);
 
-// MtNeighbors get_map_of_mtneighbors(std::vector<std::vector <Atom>> chain_ref,
-//                                    DimerList dimers);
-// MtNeighbors get_map_of_mtneighbors(vvpAtoms chains,
-//                                    DimerList dimers);
-MtNeighbors get_map_of_mtneighbors(vIndexGroup isel_chain,vAtoms aa,DimerList dimers);
-void print_mt_map(MtNeighbors mt_matrix);
-
-// SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
-//                                    std::vector <Atom> chain2,
-//                                    double cutoff);
-// SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
-//                                    double cutoff);
-// SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
-//                                    double cutoff,
-//                                    MtIndexMap map,
-//                                    int cid);
-// SetContacts get_contacts_for_chain(std::vector <Atom> chain1,
-//                                    std::vector <Atom> chain2,
-//                                    double cutoff,
-//                                    MtIndexMap map,
-//                                    int cid1,
-//                                    int cid2);
-
-
 // SM
-// vAtoms chain2,
 // SM - inter
 SetContacts get_contacts_for_chain(vAtoms aa,
                                    double cutoff,
                                    IndexGroup ig1,
                                    IndexGroup ig2);
-
 // MT - inter
 SetContacts get_contacts_for_chain(vAtoms aa,
                                    double cutoff,
@@ -104,9 +77,6 @@ SetContacts get_contacts_for_chain(vAtoms aa,
                                    IndexGroup ig1,
                                    IndexGroup ig2,
                                    int cid1,int cid2);
-// contact_set = get_contacts_for_chain(allatoms_ref,8.0,isel_chain[c[0]],
-//                                      c[0]);
-
 // MT - intra
 SetContacts get_contacts_for_chain(vAtoms aa,
                                    double cutoff,
@@ -114,35 +84,23 @@ SetContacts get_contacts_for_chain(vAtoms aa,
                                    IndexGroup ig1,
                                    int cid1);
 
-// SetContacts get_contacts_for_chain(vAtoms aa,
-//                                    double cutoff,
-//                                    IndexGroup ig1);
-// // MT
-// SetContacts get_contacts_for_chain(vAtoms chain1,
-//                                    double cutoff,
-//                                    MtIndexMap map,
-//                                    int cid);
-// SetContacts get_contacts_for_chain(vAtoms chain1,
-//                                    double cutoff,
-//                                    MtIndexMap map,
-//                                    int cid1,
-//                                    int cid2);
 
-// vAtoms chain2,
-
-
-// SetContacts get_contacts_for_chain_later(Atom *alater,
-//                                          double cutoff,
-//                                          double tolerance,
-//                                          SetContacts contacts);
+// SM or MT (time later)
 SetContacts get_contacts_for_chain_later(vAtoms allatoms,
                                          double cutoff,
                                          double tolerance,
                                          SetContacts contacts);
 
+MtNeighbors get_map_of_mtneighbors(vIndexGroup isel_chain,vAtoms aa,DimerList dimers);
+void print_mt_map(MtNeighbors mt_matrix);
+
+// code development
 void print_global_contacts(SetGlobalContacts gc);
 void print_global_contacts_count(SetGlobalContacts gc);
+// for data analysis
 void output_global_contacts(SetGlobalContacts gc);
 void output_global_contacts_by_subdomain(SetGlobalContacts gc);
+// for topology creation
+void write_contacts_to_file(FILE *fp_topology,SetContacts contact_set);
 
 #endif
