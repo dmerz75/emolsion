@@ -71,10 +71,12 @@ MACRO   = -D
 DCDTEST = -DDCDTEST
 DCD     = -DDCDREAD
 DCDW    = -DDCDREAD -DDCD_WRITE_B -DDCD_WRITE -DDCD_WRITE_E
-MT2     = -DMTMAP2_BEFORE -DMTMAP2_DURING -DMTMAP2_AFTER
+MT2     = -DMTBUILDMAP -DMTMAP2_BEFORE -DMTMAP2_DURING -DMTMAP2_AFTER
 PHIPSI  = -DPHIPSI_B -DPHIPSI_M -DPHIPSI_E
-TOPOw   = -DTOPO -DTOPO_write -DMTMAP2_BEFORE
+TOPOw   = -DTOPO -DTOPO_write -DTOPO_write_mt -DMTBUILDMAP -DMTMAP2_BEFORE
 TOPOr   = -DTOPO -DTOPO_read
+TOPOmt  = -DDCDREAD -DTOPO -DTOPO_read -DTOPO_mt_BEFORE \
+	-DTOPO_mt_DURING -DTOPO_mt_AFTER -DMTBUILDMAP -DTOPO_mt_SORT
 
 #  ---------------------------------------------------------  #
 #  Macros' Descriptions:                                      #
@@ -161,11 +163,15 @@ mt6:
 topo-w:
 # 6 dimer test system for topology writing.
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(TOPOw) -o test/$(EXEC)_topo_write
-	cd test && ./$(EXEC)_topo_write mtdimer6.pdb nil.dcd 0 16 2 # 6-9 .. 21-24-27.
+	cd test && ./$(EXEC)_topo_write mtdimer6.pdb nil.dcd 0 16 2 emol_topology.top # 6-9 .. 21-24-27.
 topo-r:
 # 6 dimer test system for topology writing.
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(TOPOr) -o test/$(EXEC)_topo_read
-	cd test && ./$(EXEC)_topo_read mtdimer6.pdb nil.dcd emol_topology.top
+	cd test && ./$(EXEC)_topo_read mtdimer6.pdb nil.dcd 0 16 2 emol_topology.top
+topo-mt:
+# 6 dimer test system for topology writing.
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(TOPOmt) -o test/$(EXEC)_topo_mt
+	cd test && ./$(EXEC)_topo_mt mt.ref.pdb mt_partial.dcd 7 29 2 emol_topology.top
 mtcontactstest:
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) $(MT2) -o test/$(EXEC)_mtcontacts2
 	cd test && ./$(EXEC)_mtcontacts2 mt_test1.pdb mt_test1.dcd 4 220 5

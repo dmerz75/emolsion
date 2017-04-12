@@ -1486,3 +1486,73 @@ void print_set_contacts(SetContacts cn)
                   << c.get<5>() << "\n";
     }
 }
+
+SetContacts set_eh_contacts(SetContacts cn,double eh)
+{
+    //       v-------Major fix. Now it captures tuple by reference.
+    for(auto &c: cn)
+    {
+        // std::cout << c.get<5>() << " " << eh << std::endl;
+        c.get<5>() = eh;
+        // std::cout << c.get<5>() << std::endl;
+
+    }
+
+    // std::cout << "assignment complete.\n";
+    // for(auto c: cn)
+    // {
+    //     std::cout << c.get<5>() << std::endl;
+    // }
+
+    return cn;
+}
+
+void output_framecontact_set(SetFrameContacts framecontact_set)
+{
+    std::cout << "Writing FrameContacts to file now." << std::endl;
+
+    // FILE
+    FILE * fp_contacts;
+    fp_contacts = fopen("emol_mtcontacts_list.dat", "w+");
+    fprintf(fp_contacts,"# emol_mtcontacts_list.dat\n");
+
+    // for(auto f: framecontact_set) // frame in global contact array
+    // {
+        // for(auto c: f) // chain (but actually dimer) in frame, 156
+        // {
+            // for(auto cn: c) // 9 situations of 6 neighbors, 0,1,0-1; 0-2,3,4; 1-5,6,7
+            // {
+            //     fprintf(fp_contacts,"%d ",cn.size());
+            // }
+        // }
+    //     fprintf(fp_contacts,"\n");
+    // }
+    fclose(fp_contacts);
+}
+
+SetContacts sort_contacts(SetContacts cn,MtIndexMap mtmap,int c1, int c2)
+{
+    SetContacts contacts;
+
+    // std::cout << cn.size() << std::endl;
+    // std::cout << mtmap.size() << std::endl;
+    // std::cout << c1 << " " << c2 << std::endl;
+    // std::cout << mtmap[c1]["index"] << " " << mtmap[c1]["findex"] << std::endl;
+    // std::cout << mtmap[c2]["index"] << " " << mtmap[c2]["findex"] << std::endl;
+
+    for(auto c: cn)
+    {
+        // std::cout << c.get<0>() << " " << c.get<1>() << std::endl;
+
+        if((c.get<0>() >= mtmap[c1]["index"])
+           and (c.get<0>() <= mtmap[c1]["findex"])
+           and (c.get<1>() >= mtmap[c2]["index"])
+           and (c.get<1>() <= mtmap[c2]["findex"]))
+        {
+            contacts.push_back(c);
+        }
+    }
+    // exit(0);
+
+    return contacts;
+}

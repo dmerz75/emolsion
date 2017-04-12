@@ -55,6 +55,7 @@
 typedef boost::tuple<int,int,double,int,int,double> Contact;
 typedef std::vector<Contact> SetContacts;
 typedef std::vector<SetContacts> SetNeighbors;
+typedef std::vector<SetContacts> SetFrameContacts;
 typedef std::vector<SetNeighbors> SetChains;
 typedef std::vector<SetChains> SetGlobalContacts;
 
@@ -98,11 +99,17 @@ void print_mt_map(MtNeighbors mt_matrix);
 void print_set_contacts(SetContacts cn);
 void print_global_contacts(SetGlobalContacts gc);
 void print_global_contacts_count(SetGlobalContacts gc);
+
+SetContacts set_eh_contacts(SetContacts cn,double eh);
+
 // for data analysis
 void output_global_contacts(SetGlobalContacts gc);
 void output_global_contacts_by_subdomain(SetGlobalContacts gc);
+void output_framecontact_set(SetFrameContacts framecontact_set);
+
 // for topology creation
 void write_contacts_to_file(FILE *fp_topology,SetContacts contact_set);
 SetContacts read_contacts_from_file(char filename[40]);
+SetContacts sort_contacts(SetContacts cn,MtIndexMap mtmap,int c1, int c2);
 
 #endif
