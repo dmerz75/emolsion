@@ -279,8 +279,8 @@ int main(int argc, char *argv[]) {
 #ifdef MTBUILDMAP
     // Pairs: A(~439) and B(427-8).
     DimerList dimers;
-    MtIndexMap mtmap_subdomain;
-    MtIndexMapEntry mtentry;
+    MtIndexMap mtmap_subdomain; // std::map<std::string,int> MtIndexMapEntry;
+    MtIndexMapEntry mtentry; //    std::vector<MtIndexMapEntry> MtIndexMap;
 
     // ACCESS chain_ref
     int imonomer = 0;
@@ -413,8 +413,8 @@ int main(int argc, char *argv[]) {
     // ab-SEWNEW
 
     // Print Map of MT neighbors.
-    std::cout << "Printing map of microtubule neighbors." << std::endl;
-    print_mt_map(mt_matrix);
+    // std::cout << "Printing map of microtubule neighbors." << std::endl;
+    // print_mt_map(mt_matrix);
 #endif // MTBUILDMAP
 
 
@@ -656,86 +656,106 @@ int main(int argc, char *argv[]) {
 
 #ifdef TOPO_mt_SORT
     std::cout << "MT-SORT: Beginning contacts by sector." << std::endl;
+
     SetContacts contact_set;
     SetNeighbors neighbor_set;
     SetChains chain_set;
     SetGlobalContacts global_contacts;
+
+    // Index boundaries:
+    // print_chain_index_boundaries(mtmap_subdomain);
+
+    chain_set = sort_contacts2(lst_contacts,mtmap_subdomain,mt_matrix);
+    global_contacts.push_back(chain_set);
+    chain_set.clear();
+    // exit(0);
+
+
 
     // 9 situations:
     // 0, 1, 0-1
     // 0: 2, 3, 4 (SEW)
     // 1: 5, 6, 7 (NEW)
 
-    // index1 with index2
-    for(auto c: mt_matrix)
-    {
-        neighbor_set.clear();
+    // // index1 with index2
+    // for(auto c: mt_matrix)
+    // {
+    //     neighbor_set.clear();
 
-        contact_set = sort_contacts(lst_contacts,
-                                    mtmap_subdomain,
-                                    c[0],c[0]);
-        neighbor_set.push_back(contact_set);
-        contact_set.clear();
-
-
-        contact_set = sort_contacts(lst_contacts,
-                                    mtmap_subdomain,
-                                    c[1],c[1]);
-        neighbor_set.push_back(contact_set);
-        contact_set.clear();
+    //     contact_set = sort_contacts(lst_contacts,
+    //                                 mtmap_subdomain,
+    //                                 c[0],c[0]);
+    //     neighbor_set.push_back(contact_set);
+    //     contact_set.clear();
 
 
-        contact_set = sort_contacts(lst_contacts,
-                                    mtmap_subdomain,
-                                    c[0],c[1]);
-        neighbor_set.push_back(contact_set);
-        contact_set.clear();
+    //     contact_set = sort_contacts(lst_contacts,
+    //                                 mtmap_subdomain,
+    //                                 c[1],c[1]);
+    //     neighbor_set.push_back(contact_set);
+    //     contact_set.clear();
 
 
-        for(int m=2; m<=4; m++)
-        {
-            if(c[m] < 0)
-            {
-                contact_set.clear();
-                neighbor_set.push_back(contact_set);
-                continue;
-            }
-            contact_set = sort_contacts(lst_contacts,
-                                        mtmap_subdomain,
-                                        c[0],c[m]);
-            neighbor_set.push_back(contact_set);
-            contact_set.clear();
-        }
+    //     contact_set = sort_contacts(lst_contacts,
+    //                                 mtmap_subdomain,
+    //                                 c[0],c[1]);
+    //     neighbor_set.push_back(contact_set);
+    //     contact_set.clear();
 
-        for(int m=5; m<=7; m++)
-        {
-            if(c[m] < 0)
-            {
-                contact_set.clear();
-                neighbor_set.push_back(contact_set);
-                continue;
-            }
-            contact_set = sort_contacts(lst_contacts,
-                                        mtmap_subdomain,
-                                        c[1],c[m]);
-            neighbor_set.push_back(contact_set);
-            contact_set.clear();
-        }
-        chain_set.push_back(neighbor_set);
-    }
-    global_contacts.push_back(chain_set);
-    chain_set.clear();
+
+    //     for(int m=2; m<=4; m++)
+    //     {
+    //         if(c[m] < 0)
+    //         {
+    //             contact_set.clear();
+    //             neighbor_set.push_back(contact_set);
+    //             continue;
+    //         }
+    //         contact_set = sort_contacts(lst_contacts,
+    //                                     mtmap_subdomain,
+    //                                     c[0],c[m]);
+    //         neighbor_set.push_back(contact_set);
+    //         contact_set.clear();
+    //     }
+
+    //     for(int m=5; m<=7; m++)
+    //     {
+    //         if(c[m] < 0)
+    //         {
+    //             contact_set.clear();
+    //             neighbor_set.push_back(contact_set);
+    //             continue;
+    //         }
+    //         contact_set = sort_contacts(lst_contacts,
+    //                                     mtmap_subdomain,
+    //                                     c[1],c[m]);
+    //         neighbor_set.push_back(contact_set);
+    //         contact_set.clear();
+    //     }
+    //     // std::cout << "neighbors: " << neighbor_set.size() << std::endl;
+    //     chain_set.push_back(neighbor_set);
+    //     std::cout << "chain_size: " << chain_set.size() << std::endl;
+
+    // }
+    // global_contacts.push_back(chain_set);
+    // chain_set.clear();
     // exit(0);
 
-    std::cout << "Original Contacts obtained!" << std::endl;
-    std::cout << "Chains_contacts: " << chain_set.size() << std::endl;
-    std::cout << "Global_contacts: (frames) " << global_contacts.size() << std::endl;
+    // std::cout << "Original Contacts obtained!" << std::endl;
+    // std::cout << "Chains_contacts: " << chain_set.size() << std::endl;
+    // std::cout << "Global_contacts: (frames) " << global_contacts.size() << std::endl;
 
     // Print some of the original contacts.
     std::cout << "Printing global_contacts, 0th frame: " << std::endl;
-    print_global_contacts(global_contacts);
+    // print_global_contacts(global_contacts);
     print_global_contacts_count(global_contacts);
-    // exit(0);
+    // Chain: 27
+    //         n: 0 has 0 contacts.
+    //         n: 1 has 0 contacts.
+    //         n: 2 has 0 contacts.
+    //         n: 3 has 0 contacts.
+
+    exit(0);
 #endif // TOPO_mt_SORT
 #endif // End. TOPO_read
 

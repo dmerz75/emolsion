@@ -171,7 +171,8 @@ topo-r:
 topo-mt:
 # 6 dimer test system for topology writing.
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(TOPOmt) -o test/$(EXEC)_topo_mt
-	cd test && ./$(EXEC)_topo_mt mt.ref.pdb mt_partial.dcd 7 29 2 emol_topology.top
+	cd test && ./$(EXEC)_topo_mt mt.ref.pdb mt_partial.dcd 7 29 2 emol_topology_example.top
+# cd test && ./$(EXEC)_topo_mt mt.ref.pdb mt_partial.dcd 7 29 2 emol_topology_mtref.top
 mtcontactstest:
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) $(MT2) -o test/$(EXEC)_mtcontacts2
 	cd test && ./$(EXEC)_mtcontacts2 mt_test1.pdb mt_test1.dcd 4 220 5

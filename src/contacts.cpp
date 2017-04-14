@@ -1436,7 +1436,7 @@ SetContacts read_contacts_from_file(char filename[40])
             }
             else
             {
-                str_index1 = line.substr(0,6);
+                str_index1 = line.substr(1,6);
                 str_index2 = line.substr(9,6);
                 str_dist = line.substr(22,9);
                 str_eh = line.substr(34,8);
@@ -1528,6 +1528,312 @@ void output_framecontact_set(SetFrameContacts framecontact_set)
     //     fprintf(fp_contacts,"\n");
     // }
     fclose(fp_contacts);
+}
+
+void print_chain_index_boundaries(MtIndexMap mtmap)
+{
+    for(auto m: mtmap)
+    {
+        // std::cout << m.size();
+        std::cout << " " << std::setw(6) << m["index"];
+        std::cout << " " << std::setw(6) << m["findex"];
+        std::cout << " " << std::setw(6) << m["findex"] - m["index"] + 1;
+        std::cout << std::endl;
+    }
+}
+
+// SetChains sort_contacts2(SetContacts cn,MtIndexMap mtmap)
+SetChains sort_contacts2(SetContacts cn,MtIndexMap mtmap,MtNeighbors matrix)
+{
+    std::cout << "mtmap: " << mtmap.size() << std::endl;
+    std::cout << "matrix: "  << matrix.size() << std::endl;
+
+    // SetContacts cn0,cn1,cn2,cn3,cn4,cn5,cn6,cn7,cn8; // 9
+    Contact contact;
+    SetContacts cn0;
+    SetNeighbors neighbor_set;
+    SetChains chain_set;
+    int cin1,fin1,cin2,fin2,numchain,m1,m2,c1,c2;
+    int cc;
+    cc = -1;
+    // cin, fin: chain index, final index
+    //
+    // m: monomer
+    cin1 = cin2 = fin1 = fin2 = c1 = c2 = numchain = m1 = m2 = -1;
+
+    std::vector<std::pair<int,int>> combos;
+    combos.push_back(std::make_pair(0,0));
+    combos.push_back(std::make_pair(1,1));
+    combos.push_back(std::make_pair(0,1));
+    combos.push_back(std::make_pair(0,2));
+    combos.push_back(std::make_pair(0,3));
+    combos.push_back(std::make_pair(0,4));
+    combos.push_back(std::make_pair(1,5));
+    combos.push_back(std::make_pair(1,6));
+    combos.push_back(std::make_pair(1,7));
+
+
+    // global (not present)  | SetGlobalcontacts
+    // chains (1/2)          | SetChains
+    // 9 neighbors           | SetNeighbors
+    // contacts              | SetContacts
+
+    // for(auto m: matrix)
+    // {
+    //     // 0-310, 156 total
+    //     std::cout << " " << std::setw(3) << m[0];
+    //     std::cout << " " << std::setw(3) << m[1];
+    //     std::cout << " " << std::setw(3) << m[2];
+    //     std::cout << " " << std::setw(3) << m[3];
+    //     std::cout << " " << std::setw(3) << m[4];
+    //     std::cout << " " << std::setw(3) << m[5];
+    //     std::cout << " " << std::setw(3) << m[6];
+    //     std::cout << " " << std::setw(3) << m[7];
+    //     std::cout << std::endl;
+    // }
+
+
+
+    // for(auto m: mtmap)
+    // {
+    //     std::cout << m.size();
+    //     std::cout << " " << m["index"];
+    //     std::cout << " " << m["findex"];
+    //     std::cout << std::endl;
+    // }
+
+
+    // n is all 8 neighbors --> 9 situations.
+    // for(auto n: matrix)
+    // 9 situations:
+    // 0, 1, 0-1
+    // 0: 2, 3, 4 (SEW)
+    // 1: 5, 6, 7 (NEW)
+
+
+    std::vector<int> n(8);
+
+    for(int i=0; i<matrix.size(); i++)
+    {
+        // i: 0 - 155
+        n = matrix[i];
+
+        for(auto cb: combos)
+        {
+            cn0.clear();
+
+            // m: monomer 15 in contact 40.
+            // 14  15  -1  16  12  40  17  13
+            // cb: 0-0, 1-1, 0-1, 0-2, 0-3, 0-4, 1-5,1-6,1-7
+            m1 = n[cb.first];
+            m2 = n[cb.second];
+
+            if((m1 == -1) or (m2 == -1))
+            {
+                neighbor_set.push_back(cn0);
+                continue;
+            }
+            else
+            {
+                cin1 = mtmap[m1]["index"];
+                fin1 = mtmap[m1]["findex"];
+                cin2 = mtmap[m2]["index"];
+                fin2 = mtmap[m2]["findex"];
+
+                // std::cout << cb.first << "-" << cb.second;
+                // std::cout << "   " << n[cb.first] << "  " << n[cb.second];
+                // // << std::endl;
+                // std::cout << " | " << cin1 << " " << fin1
+                //           << " " << cin2 << " " << fin2
+                //           << " " << cn.size() << std::endl;
+
+                // Begin:
+                cc = -1;
+                for(auto c: cn)
+                {
+                    cc += 1;
+                    c1 = c.get<0>();
+                    c2 = c.get<1>();
+
+
+                    // PRINT HERE?
+                    // std::cout << "c12: " << c1 << " " << c2 << std::endl;
+                    // std::cout << "i12: " << cin1 << " " << fin1 << std::endl;
+                    // std::cout << "n12: " << cin2 << " " << fin2 << std::endl;
+
+                    if(((c1 >= cin1) and (c1 <= fin1)
+                        and (c2 >= cin2) and (c2 <= fin2)))
+                    {
+                        // std::cout << c.get<0>() << " ";
+                        // std::cout << c.get<1>() << " ";
+                        // std::cout << c.get<2>() << " ";
+                        // std::cout << c.get<3>() << " ";
+                        // std::cout << c.get<4>() << " ";
+                        // std::cout << c.get<5>() << " ";
+                        // std::cout << std::endl;
+
+                        // contact = c;
+                        cn0.push_back(contact);
+                        // cn.erase(cc);
+                    }
+                    //    or
+                    //    ((c1 >= cin2) and (c1 <= fin2)
+                    //     and (c2 >= cin1) and (c2 <= fin2)))
+                    // {
+                    //     cn0.push_back(c);
+                    //     // cn.erase(c);
+                    // }
+                }
+            }
+            std::cout << "cn-size: " << cn0.size() << std::endl;
+            neighbor_set.push_back(cn0);
+
+        } // next combo: 0, 1, 0-1, 0-234, 1-567;
+
+        chain_set.push_back(neighbor_set);
+        neighbor_set.clear();
+    }
+
+
+
+
+    // for(int i=0; i<matrix.size(); i++)
+    // {
+    //     // i ==> 0 - 156;
+    //     n = matrix[i];
+
+    //     cn0.clear();
+    //     cn1.clear();
+    //     cn2.clear();
+    //     cn3.clear();
+    //     cn4.clear();
+    //     cn5.clear();
+    //     cn6.clear();
+    //     cn7.clear();
+    //     cn8.clear();
+    //     neighbor_set.clear();
+
+    //     // numchain = n[0] / 2;
+
+    //     for(auto c: cn)
+    //     {
+    //         cin = c.get<0>();
+    //         fin = c.get<1>();
+
+    //         if(
+    //             (cin >= mtmap[n[0]]["index"])
+    //            and (cin <= mtmap[n[0]]["findex"])
+    //            and (fin >= mtmap[n[0]]["index"])
+    //            and (fin <= mtmap[n[0]]["findex"]))
+    //         {
+    //             cn0.push_back(c);
+    //             continue;
+    //         }
+    //         // else if(
+    //         //     (cin >= mtmap[n[1]]["index"])
+    //         //     and (cin <= mtmap[n[1]]["findex"])
+    //         //     and (fin >= mtmap[n[1]]["index"])
+    //         //     and (fin <= mtmap[n[1]]["findex"]))
+    //         // {
+    //         //     cn1.push_back(c);
+    //         //     continue;
+    //         // }
+    //         // else if(
+    //         //     (cin >= mtmap[n[0]]["index"])
+    //         //     and (cin <= mtmap[n[0]]["findex"])
+    //         //     and (fin >= mtmap[n[1]]["index"])
+    //         //     and (fin <= mtmap[n[1]]["findex"]))
+    //         // {
+    //         //     cn2.push_back(c);
+    //         //     continue;
+    //         // }
+    //         // else if(
+    //         //     (cin >= mtmap[n[0]]["index"])
+    //         //     and (cin <= mtmap[n[0]]["findex"])
+    //         //     and (fin >= mtmap[n[2]]["index"])
+    //         //     and (fin <= mtmap[n[2]]["findex"]))
+    //         // {
+    //         //     cn3.push_back(c);
+    //         //     continue;
+    //         // }
+    //         // else if(
+    //         //     (cin >= mtmap[n[0]]["index"])
+    //         //     and (cin <= mtmap[n[0]]["findex"])
+    //         //     and (fin >= mtmap[n[3]]["index"])
+    //         //     and (fin <= mtmap[n[3]]["findex"]))
+    //         // {
+    //         //     cn4.push_back(c);
+    //         //     continue;
+    //         // }
+    //         // else if(
+    //         //     (cin >= mtmap[n[0]]["index"])
+    //         //     and (cin <= mtmap[n[0]]["findex"])
+    //         //     and (fin >= mtmap[n[4]]["index"])
+    //         //     and (fin <= mtmap[n[4]]["findex"]))
+    //         // {
+    //         //     cn5.push_back(c);
+    //         //     continue;
+    //         // }
+    //         // else if(
+    //         //     (cin >= mtmap[n[1]]["index"])
+    //         //     and (cin <= mtmap[n[1]]["findex"])
+    //         //     and (fin >= mtmap[n[5]]["index"])
+    //         //     and (fin <= mtmap[n[5]]["findex"]))
+    //         // {
+    //         //     cn6.push_back(c);
+    //         //     continue;
+    //         // }
+    //         // else if(
+    //         //     (cin >= mtmap[n[1]]["index"])
+    //         //     and (cin <= mtmap[n[1]]["findex"])
+    //         //     and (fin >= mtmap[n[6]]["index"])
+    //         //     and (fin <= mtmap[n[6]]["findex"]))
+    //         // {
+    //         //     cn7.push_back(c);
+    //         //     continue;
+    //         // }
+    //         // else if(
+    //         //     (cin >= mtmap[n[1]]["index"])
+    //         //     and (cin <= mtmap[n[1]]["findex"])
+    //         //     and (fin >= mtmap[n[7]]["index"])
+    //         //     and (fin <= mtmap[n[7]]["findex"]))
+    //         // {
+    //         //     cn8.push_back(c);
+    //         //     continue;
+    //         // }
+
+
+    //     } // end for loop through contacts
+    //     // 0:
+    //     // 1:
+    //     // 0-1:
+    //     // 0-2:
+    //     // 0-3:
+    //     // 0-4:
+    //     // 1-5:
+    //     // 1-6:
+    //     // 1-7:
+
+    //     neighbor_set.push_back(cn0);
+    //     neighbor_set.push_back(cn1);
+    //     neighbor_set.push_back(cn2);
+    //     neighbor_set.push_back(cn3);
+    //     neighbor_set.push_back(cn4);
+    //     neighbor_set.push_back(cn5);
+    //     neighbor_set.push_back(cn6);
+    //     neighbor_set.push_back(cn7);
+    //     neighbor_set.push_back(cn8);
+
+    //     chain_set.push_back(neighbor_set);
+    // }
+
+    for(auto ch: chain_set)
+    {
+        std::cout << " " << ch.size();
+    }
+    std::cout << std::endl;
+    std::cout << "Chain_size: " << chain_set.size() << std::endl;
+    return chain_set;
 }
 
 SetContacts sort_contacts(SetContacts cn,MtIndexMap mtmap,int c1, int c2)

@@ -112,4 +112,7 @@ void write_contacts_to_file(FILE *fp_topology,SetContacts contact_set);
 SetContacts read_contacts_from_file(char filename[40]);
 SetContacts sort_contacts(SetContacts cn,MtIndexMap mtmap,int c1, int c2);
 
+SetChains sort_contacts2(SetContacts cn,MtIndexMap mtmap,MtNeighbors matrix);
+void print_chain_index_boundaries(MtIndexMap mtmap);
+
 #endif
