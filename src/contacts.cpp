@@ -195,7 +195,6 @@ SetContacts get_contacts_for_chain(vAtoms aa,
                                    int cid1,int cid2)
 {
     // INTERCHAIN, w/MT
-
     // std::cout << "Welcome to get_contacts_for_chain! MT, inter-chain." << std::endl;
     // std::cout << "Cutoff: " << cutoff << std::endl;
     // std::vector<boost::tuple<int,int,double>> contacts;
@@ -698,6 +697,7 @@ SetContacts get_contacts_for_chain_later(vAtoms aa,
                                          double tolerance,
                                          SetContacts contacts)
 {
+// #pragma omp parallel
     // std::cout << "Welcome to Contacts - Later!" << std::endl;
     // std::vector<std::vector<boost::tuple<int,int,int,double>>> vec_contacts;
     // std::vector<boost::tuple<int,int,int,double>> cur_contacts;
@@ -709,6 +709,8 @@ SetContacts get_contacts_for_chain_later(vAtoms aa,
     Vector p1, p2;
     double dist;
     double odist;
+    // double threshold1,threshold2,threshold;
+    double threshold;
     // int onoff; // onoff; 0/1.
 
 
@@ -721,78 +723,142 @@ SetContacts get_contacts_for_chain_later(vAtoms aa,
 
     // std::cout << "evaluating " << contacts.size() << " contacts." << std::endl;
 
-    for(auto c: contacts)
-    {
-        // onoff = -1; // will be set to 0,1 in all cases.
-        dist = 0.0;
-        odist = 0.0;
 
-        // std::cout << boost::get<0>(c) << std::endl;
-        // std::cout << boost::get<1>(c) << std::endl;
-        // std::cout << boost::get<2>(c) << std::endl;
-        // std::cout << "orig_dist: " << boost::get<3>(c) << std::endl;
-        odist = boost::get<2>(c);
+    // Parallelize:
+    // #pragma omp parallel
+    // for(int i=0)
+    // for(auto c: contacts)
+    // #pragma omp parallel for
+    // #pragma omp simd
 
-        // std::cout << std::endl;
-        // std::cout << aa[boost::get<0>(c)].x << std::endl;
-        // std::cout << aa[boost::get<0>(c)].y << std::endl;
-        // std::cout << aa[boost::get<0>(c)].z << std::endl;
+    // {
+    // #pragma omp for
+    // #pragma omp parallel num_threads(4)
+    // #pragma omp for ordered schedule(dynamic)
 
-        p1.x = aa[boost::get<0>(c)].x;
-        p1.y = aa[boost::get<0>(c)].y;
-        p1.z = aa[boost::get<0>(c)].z;
+    // Failing due to race condition ...? probably not
+    // https://software.intel.com/en-us/articles/getting-started-with-openmp
 
-        // std::cout << std::endl;
-        // std::cout << aa[boost::get<1>(c)].x << std::endl;
-        // std::cout << aa[boost::get<1>(c)].y << std::endl;
-        // std::cout << aa[boost::get<1>(c)].z << std::endl;
-
-        p2.x = aa[boost::get<1>(c)].x;
-        p2.y = aa[boost::get<1>(c)].y;
-        p2.z = aa[boost::get<1>(c)].z;
-
-
-        dist = distance(p1,p2);
-
-        // std::cout << "cur_dist: " << dist << std::endl;
-        // std::cout << std::endl;
-
-        if((dist < cutoff) or (dist < odist + tolerance))
+    // works
+// #pragma omp parallel for private(dist,odist,threshold,p1,p2,cur_contacts)
+        for(int i=0; i<contacts.size(); i++)
         {
-            // onoff = 1;
+            // onoff = -1; // will be set to 0,1 in all cases.
+            dist = 0.0;
+            odist = 0.0;
+
+            // std::cout << boost::get<0>(c) << std::endl;
+            // std::cout << boost::get<1>(c) << std::endl;
+            // std::cout << boost::get<2>(c) << std::endl;
+            // std::cout << "orig_dist: " << boost::get<3>(c) << std::endl;
+            odist = boost::get<2>(contacts[i]);
+
+            // std::cout << std::endl;
+            // std::cout << aa[boost::get<0>(c)].x << std::endl;
+            // std::cout << aa[boost::get<0>(c)].y << std::endl;
+            // std::cout << aa[boost::get<0>(c)].z << std::endl;
+
+            p1.x = aa[boost::get<0>(contacts[i])].x;
+            p1.y = aa[boost::get<0>(contacts[i])].y;
+            p1.z = aa[boost::get<0>(contacts[i])].z;
+
+            // std::cout << std::endl;
+            // std::cout << aa[boost::get<1>(c)].x << std::endl;
+            // std::cout << aa[boost::get<1>(c)].y << std::endl;
+            // std::cout << aa[boost::get<1>(c)].z << std::endl;
+
+            p2.x = aa[boost::get<1>(contacts[i])].x;
+            p2.y = aa[boost::get<1>(contacts[i])].y;
+            p2.z = aa[boost::get<1>(contacts[i])].z;
+
+            dist = distance(p1,p2);
+
+            // cutoff: 8
+            // tolerance: 2
+            if(odist > (cutoff - tolerance))
+            {
+                // 6 - 8
+                threshold = odist + tolerance;
+            }
+            else
+            {
+                threshold = cutoff;
+            }
+
+            // if((dist < cutoff) or (dist < odist + tolerance))
+            if(dist < threshold)
+            {
+                // index, index, dist, subdomain, subdomain, eh
+                cur_contacts.push_back(
+                    boost::tuple<int,int,double,int,int,double>
+                    (boost::get<0>(contacts[i]),
+                     boost::get<1>(contacts[i]),
+                     dist,
+                     boost::get<3>(contacts[i]),
+                     boost::get<4>(contacts[i]),
+                     boost::get<5>(contacts[i])));
+            }
             // Contact:
             // tuple: <index,index, 0 or 1, current-distance>
             // cur_contacts.push_back(boost::tuple<int,int,int,double>(boost::get<0>(c),
             //                                                         boost::get<1>(c),
             //                                                         onoff,
             //                                                         dist));
-            cur_contacts.push_back(boost::tuple<int,int,double,int,int,double>(
-                                       boost::get<0>(c),
-                                       boost::get<1>(c),
-                                       dist,
-                                       boost::get<3>(c),
-                                       boost::get<4>(c),
-                                       boost::get<5>(c)));
+
+            // cur_contacts.clear();
         }
-        // else
-        // {
-        //     onoff = 0;
+        // } // pragma
+
+        // break;
+
+        return cur_contacts;
         // }
+}
 
+SetContacts get_contacts_for_chain_later(vAtoms aa,
+                                         double cutoff,
+                                         SetContacts contacts)
+{
+    // Hard cutoff:
 
-        // Contact:
-        // tuple: <index,index, 0 or 1, current-distance>
-        // cur_contacts.push_back(boost::tuple<int,int,int,double>(boost::get<0>(c),
-        //                                                         boost::get<1>(c),
-        //                                                         onoff,
-        //                                                         dist));
+    SetContacts cur_contacts;
+    Vector p1, p2;
+    double dist;
+    double odist;
 
-        // cur_contacts.clear();
+    for(int i=0; i<contacts.size(); i++)
+    {
+        // onoff = -1; // will be set to 0,1 in all cases.
+        dist = 0.0;
+        odist = 0.0;
+
+        odist = boost::get<2>(contacts[i]);
+
+        p1.x = aa[boost::get<0>(contacts[i])].x;
+        p1.y = aa[boost::get<0>(contacts[i])].y;
+        p1.z = aa[boost::get<0>(contacts[i])].z;
+
+        p2.x = aa[boost::get<1>(contacts[i])].x;
+        p2.y = aa[boost::get<1>(contacts[i])].y;
+        p2.z = aa[boost::get<1>(contacts[i])].z;
+
+        dist = distance(p1,p2);
+
+        if(dist < cutoff)
+        {
+            // index, index, dist, subdomain, subdomain, eh
+            cur_contacts.push_back(
+                boost::tuple<int,int,double,int,int,double>
+                (boost::get<0>(contacts[i]),
+                 boost::get<1>(contacts[i]),
+                 dist,
+                 boost::get<3>(contacts[i]),
+                 boost::get<4>(contacts[i]),
+                 boost::get<5>(contacts[i])));
+        }
     }
-    // break;
 
     return cur_contacts;
-    // }
 }
 
 void output_global_contacts(SetGlobalContacts gc)
@@ -844,13 +910,28 @@ void output_global_contacts_by_subdomain(SetGlobalContacts gc)
 
     // FILE
     FILE * fp_contacts;
+#ifdef TOPO
+    fp_contacts = fopen("emol_mtcontacts_by_subdomain_top.dat", "w+");
+#else
     fp_contacts = fopen("emol_mtcontacts_by_subdomain.dat", "w+");
+#endif
+
+    // || defined (DCD_WRITE_B) || defined (DCD_WRITE) || defined (DCD_WRITE_E)
+    // TOPOmt2 = -DDCDREAD -DTOPO -DTOPO_read -DTOPO_mt_BEFORE \
+    //     -DMTBUILDMAP -DTOPO_mt_SORT -DMTMAP2_DURING -DMTMAP2_AFTER
+
+
     // fprintf(fp_contacts,"\n");
 
 
     // FILE
     FILE * fp_contacts3;
+#ifdef TOPO
+    fp_contacts3 = fopen("emol_mtcontacts_by_subdomain3_top.dat", "w+");
+#else
     fp_contacts3 = fopen("emol_mtcontacts_by_subdomain3.dat", "w+");
+#endif
+
     fprintf(fp_contacts3,"#   0-NMC(3)");
     fprintf(fp_contacts3,"                1-NMC(7)");
     fprintf(fp_contacts3,"                0-1-NMC(11)");
@@ -863,7 +944,12 @@ void output_global_contacts_by_subdomain(SetGlobalContacts gc)
 
     // FILE
     FILE * fp_contacts3n;
+#ifdef TOPO
+    fp_contacts3n = fopen("emol_mtcontacts_by_subdomain3n_top.dat", "w+");
+#else
     fp_contacts3n = fopen("emol_mtcontacts_by_subdomain3n.dat", "w+");
+#endif
+
     fprintf(fp_contacts3n,"#     0-NMC(3)");
     fprintf(fp_contacts3n,"              1-NMC(7)");
     fprintf(fp_contacts3n,"              0-1-NMC(11)");
@@ -1007,6 +1093,7 @@ void output_global_contacts_by_subdomain(SetGlobalContacts gc)
     }
     fclose(fp_contacts);
     fclose(fp_contacts3);
+    fclose(fp_contacts3n);
 }
 
 MtNeighbors get_map_of_mtneighbors(vIndexGroup isel_chain,vAtoms aa,DimerList dimers)
@@ -1391,7 +1478,7 @@ void write_contacts_to_file(FILE *fp_topology,SetContacts contact_set)
     // fprintf(fp_topology,"# contact set\n");
     for(auto c: contact_set)
     {
-        fprintf(fp_topology," %6d  %6d    1  %9.5f   %8.5f\n",
+        fprintf(fp_topology,"%5d %5d    1  %9.5f   %8.5f\n",
                 c.get<0>(),
                 c.get<1>(),
                 c.get<2>(),
@@ -1403,6 +1490,8 @@ SetContacts read_contacts_from_file(char filename[40])
 {
     SetContacts contacts;
     std::string line;
+    std::string line_after1;
+    std::string line_after2;
     std::string fn(filename);
 
     std::string str_index1;
@@ -1410,19 +1499,24 @@ SetContacts read_contacts_from_file(char filename[40])
     std::string str_dist;
     std::string str_eh;
 
+    int now_read;
+    now_read = -1;
+
     int index1, index2;
     double dist, eh;
     index1 = index2 = -1;
     dist = eh = 0.0;
 
-
     std::cout << "Reading contacts from topology file: "
               << filename
               << std::endl;
 
-
     std::ifstream cfile(fn.c_str());
 
+    std::size_t found1;
+    std::size_t found2;
+
+    // = str.find(str2);
 
     if(cfile.is_open())
     {
@@ -1434,23 +1528,83 @@ SetContacts read_contacts_from_file(char filename[40])
             {
                 continue;
             }
-            else
+            else if (boost::algorithm::starts_with(line,";") == 1)
             {
-                str_index1 = line.substr(1,6);
-                str_index2 = line.substr(9,6);
-                str_dist = line.substr(22,9);
-                str_eh = line.substr(34,8);
+                continue;
+            }
+            else if (boost::algorithm::starts_with(line,"[ native ]") == 1)
+            {
+                now_read += 1;
+                continue;
+            }
 
-                // std::cout << str_index1 << " "
-                //           << str_index2 << " "
-                //           << str_dist << " "
-                //           << str_eh << "\n"
-                //           << std::endl;
+
+            if(now_read != -1)
+            {
+                now_read += 1;
+                // std::cout << now_read << ":";
+                // std::cout << line << std::endl;
+
+                found1 = line.find(" ");
+
+                // Gets the line that starts/ends with a space.
+                if (found1 == std::string::npos)
+                {
+                    std::cout << "lines corresponding to contacts: " << now_read << std::endl;
+                    break;
+                }
+
+                // Index1:
+                found1 = line.find_first_not_of(" ");
+                found2 = line.find_first_not_of("0123456789",found1+1);
+                str_index1 = line.substr(found1,found2);
+
+                // Index2:
+                line_after1 = line.substr(found2+1,std::string::npos);
+                found1 = line_after1.find_first_not_of(" ");
+                found2 = line_after1.find_first_not_of("0123456789",found1+1);
+                str_index2 = line_after1.substr(found1,found2);
+
+                // dist: (with a skip for that weird "1" in the topology)
+                line_after2 = line_after1.substr(found2+1,std::string::npos);
+                found1 = line_after2.find_first_not_of(" ");
+                line_after2 = line_after2.substr(found1+1,std::string::npos);
+                found1 = line_after2.find_first_not_of(" ");
+                found2 = line_after2.find_first_not_of("0123456789.",found1+1);
+                str_dist = line_after2.substr(found1,found2);
+
+                // eh:
+                str_eh = line_after2.substr(found2+1,std::string::npos);
+
+                // std::cout << found1 << " " << found2 << std::endl;
+                // std::cout << line_after1 << std::endl;
+
+                // if(now_read > 500)
+                // {
+                //     break;
+                // }
+
+
+                // // ---------------FORMER ----------
+                // str_index1 = line.substr(1,6);
+                // str_index2 = line.substr(9,6);
+                // str_dist = line.substr(22,9);
+                // str_eh = line.substr(34,8);
+
+                // // std::cout << str_index1 << " "
+                // //           << str_index2 << " "
+                // //           << str_dist << " "
+                // //           << str_eh << "\n"
+                // //           << std::endl;
+                // // ---------------FORMER ----------
+
+
 
                 index1 = atoi(str_index1.c_str());
                 index2 = atoi(str_index2.c_str());
                 dist = std::stod(str_dist.c_str());
                 eh = std::stod(str_eh.c_str());
+
 
                 // std::cout << index1 << " "
                 //           << index2 << " "
@@ -1468,10 +1622,10 @@ SetContacts read_contacts_from_file(char filename[40])
             }
         }
         cfile.close();
-
-        std::cout << "file is now closed." << std::endl;
     }
-
+    std::cout << "file is now closed." << std::endl;
+    std::cout << "# of contacts from topology file:  " <<
+        contacts.size() << std::endl;
 
     return contacts;
 }
@@ -1481,8 +1635,10 @@ void print_set_contacts(SetContacts cn)
     for(auto c: cn)
     {
         std::cout << c.get<0>() << "-"
-                  << c.get<1>() << "   "
-                  << c.get<2>() << "   \t"
+                  << c.get<1>() << "  ["
+                  << c.get<2>() << "]   "
+                  << c.get<3>() << "--"
+                  << c.get<4>() << " "
                   << c.get<5>() << "\n";
     }
 }
@@ -1496,6 +1652,80 @@ SetContacts set_eh_contacts(SetContacts cn,double eh)
         c.get<5>() = eh;
         // std::cout << c.get<5>() << std::endl;
 
+    }
+
+    // std::cout << "assignment complete.\n";
+    // for(auto c: cn)
+    // {
+    //     std::cout << c.get<5>() << std::endl;
+    // }
+
+    return cn;
+}
+
+SetContacts set_mtsubdomain_flag_contacts(SetContacts cn,MtIndexMap mtmap)
+{
+    int index;
+    index = -1;
+
+    //       v-------Major fix. Now it captures tuple by reference.
+    for(auto &c: cn)
+    {
+        index = c.get<0>();
+        // mtentry["chaintype"] = betabool;
+        // mtentry["index"] = low_index;
+        // mtentry["findex"] = high_index;
+        // mtentry["Nterm2"] = Nterm2;
+        // mtentry["Mterm1"] = Mterm1;
+        // mtentry["Mterm2"] = Mterm2;
+        // mtentry["Cterm1"] = Cterm1;
+
+        // std::cout << c.get<0>() << " " << c.get<1>() << std::endl;
+        // std::cout << chain["index"] << " " << chain["findex"] << std::endl;
+
+        for(auto chain: mtmap)
+        {
+            if((index >= chain["index"]) and
+               (index <= chain["findex"]))
+            {
+                if(index <= chain["Nterm2"])
+                {
+                    c.get<3>() = 0;
+                }
+                else if(index <= chain["Mterm2"])
+                {
+                    c.get<3>() = 1;
+                }
+                else
+                {
+                    c.get<3>() = 2;
+                }
+                break;
+            }
+        }
+
+        index = c.get<1>();
+
+        for(auto chain: mtmap)
+        {
+            if((index >= chain["index"]) and
+               (index <= chain["findex"]))
+            {
+                if(index <= chain["Nterm2"])
+                {
+                    c.get<4>() = 0;
+                }
+                else if(index <= chain["Mterm2"])
+                {
+                    c.get<4>() = 1;
+                }
+                else
+                {
+                    c.get<4>() = 2;
+                }
+                break;
+            }
+        }
     }
 
     // std::cout << "assignment complete.\n";
@@ -1549,7 +1779,7 @@ SetChains sort_contacts2(SetContacts cn,MtIndexMap mtmap,MtNeighbors matrix)
     std::cout << "matrix: "  << matrix.size() << std::endl;
 
     // SetContacts cn0,cn1,cn2,cn3,cn4,cn5,cn6,cn7,cn8; // 9
-    Contact contact;
+    // Contact contact;
     SetContacts cn0;
     SetNeighbors neighbor_set;
     SetChains chain_set;
@@ -1571,8 +1801,6 @@ SetChains sort_contacts2(SetContacts cn,MtIndexMap mtmap,MtNeighbors matrix)
     combos.push_back(std::make_pair(1,5));
     combos.push_back(std::make_pair(1,6));
     combos.push_back(std::make_pair(1,7));
-
-
     // global (not present)  | SetGlobalcontacts
     // chains (1/2)          | SetChains
     // 9 neighbors           | SetNeighbors
@@ -1592,8 +1820,6 @@ SetChains sort_contacts2(SetContacts cn,MtIndexMap mtmap,MtNeighbors matrix)
     //     std::cout << std::endl;
     // }
 
-
-
     // for(auto m: mtmap)
     // {
     //     std::cout << m.size();
@@ -1602,14 +1828,12 @@ SetChains sort_contacts2(SetContacts cn,MtIndexMap mtmap,MtNeighbors matrix)
     //     std::cout << std::endl;
     // }
 
-
     // n is all 8 neighbors --> 9 situations.
     // for(auto n: matrix)
     // 9 situations:
     // 0, 1, 0-1
     // 0: 2, 3, 4 (SEW)
     // 1: 5, 6, 7 (NEW)
-
 
     std::vector<int> n(8);
 
@@ -1655,7 +1879,6 @@ SetChains sort_contacts2(SetContacts cn,MtIndexMap mtmap,MtNeighbors matrix)
                     c1 = c.get<0>();
                     c2 = c.get<1>();
 
-
                     // PRINT HERE?
                     // std::cout << "c12: " << c1 << " " << c2 << std::endl;
                     // std::cout << "i12: " << cin1 << " " << fin1 << std::endl;
@@ -1673,192 +1896,66 @@ SetChains sort_contacts2(SetContacts cn,MtIndexMap mtmap,MtNeighbors matrix)
                         // std::cout << std::endl;
 
                         // contact = c;
-                        cn0.push_back(contact);
+                        // cn0.push_back(contact);
+                        cn0.push_back(c);
                         // cn.erase(cc);
                     }
-                    //    or
-                    //    ((c1 >= cin2) and (c1 <= fin2)
-                    //     and (c2 >= cin1) and (c2 <= fin2)))
-                    // {
-                    //     cn0.push_back(c);
-                    //     // cn.erase(c);
-                    // }
                 }
             }
-            std::cout << "cn-size: " << cn0.size() << std::endl;
+            // std::cout << "cn-size: " << cn0.size() << std::endl;
             neighbor_set.push_back(cn0);
 
         } // next combo: 0, 1, 0-1, 0-234, 1-567;
-
         chain_set.push_back(neighbor_set);
         neighbor_set.clear();
     }
 
-
-
-
-    // for(int i=0; i<matrix.size(); i++)
+    // shows that all should be 9.
+    // for(auto ch: chain_set)
     // {
-    //     // i ==> 0 - 156;
-    //     n = matrix[i];
+    //     std::cout << " " << ch.size();
+    // }
+    // std::cout << std::endl;
 
-    //     cn0.clear();
-    //     cn1.clear();
-    //     cn2.clear();
-    //     cn3.clear();
-    //     cn4.clear();
-    //     cn5.clear();
-    //     cn6.clear();
-    //     cn7.clear();
-    //     cn8.clear();
-    //     neighbor_set.clear();
 
-    //     // numchain = n[0] / 2;
-
-    //     for(auto c: cn)
+    // for(auto ch: chain_set)
+    // {
+    //     for(auto n: ch)
     //     {
-    //         cin = c.get<0>();
-    //         fin = c.get<1>();
-
-    //         if(
-    //             (cin >= mtmap[n[0]]["index"])
-    //            and (cin <= mtmap[n[0]]["findex"])
-    //            and (fin >= mtmap[n[0]]["index"])
-    //            and (fin <= mtmap[n[0]]["findex"]))
+    //         for(auto ct: n)
     //         {
-    //             cn0.push_back(c);
-    //             continue;
+    //             std::cout << ct.get<0>() << "-" << ct.get<1>() << std::endl;
     //         }
-    //         // else if(
-    //         //     (cin >= mtmap[n[1]]["index"])
-    //         //     and (cin <= mtmap[n[1]]["findex"])
-    //         //     and (fin >= mtmap[n[1]]["index"])
-    //         //     and (fin <= mtmap[n[1]]["findex"]))
-    //         // {
-    //         //     cn1.push_back(c);
-    //         //     continue;
-    //         // }
-    //         // else if(
-    //         //     (cin >= mtmap[n[0]]["index"])
-    //         //     and (cin <= mtmap[n[0]]["findex"])
-    //         //     and (fin >= mtmap[n[1]]["index"])
-    //         //     and (fin <= mtmap[n[1]]["findex"]))
-    //         // {
-    //         //     cn2.push_back(c);
-    //         //     continue;
-    //         // }
-    //         // else if(
-    //         //     (cin >= mtmap[n[0]]["index"])
-    //         //     and (cin <= mtmap[n[0]]["findex"])
-    //         //     and (fin >= mtmap[n[2]]["index"])
-    //         //     and (fin <= mtmap[n[2]]["findex"]))
-    //         // {
-    //         //     cn3.push_back(c);
-    //         //     continue;
-    //         // }
-    //         // else if(
-    //         //     (cin >= mtmap[n[0]]["index"])
-    //         //     and (cin <= mtmap[n[0]]["findex"])
-    //         //     and (fin >= mtmap[n[3]]["index"])
-    //         //     and (fin <= mtmap[n[3]]["findex"]))
-    //         // {
-    //         //     cn4.push_back(c);
-    //         //     continue;
-    //         // }
-    //         // else if(
-    //         //     (cin >= mtmap[n[0]]["index"])
-    //         //     and (cin <= mtmap[n[0]]["findex"])
-    //         //     and (fin >= mtmap[n[4]]["index"])
-    //         //     and (fin <= mtmap[n[4]]["findex"]))
-    //         // {
-    //         //     cn5.push_back(c);
-    //         //     continue;
-    //         // }
-    //         // else if(
-    //         //     (cin >= mtmap[n[1]]["index"])
-    //         //     and (cin <= mtmap[n[1]]["findex"])
-    //         //     and (fin >= mtmap[n[5]]["index"])
-    //         //     and (fin <= mtmap[n[5]]["findex"]))
-    //         // {
-    //         //     cn6.push_back(c);
-    //         //     continue;
-    //         // }
-    //         // else if(
-    //         //     (cin >= mtmap[n[1]]["index"])
-    //         //     and (cin <= mtmap[n[1]]["findex"])
-    //         //     and (fin >= mtmap[n[6]]["index"])
-    //         //     and (fin <= mtmap[n[6]]["findex"]))
-    //         // {
-    //         //     cn7.push_back(c);
-    //         //     continue;
-    //         // }
-    //         // else if(
-    //         //     (cin >= mtmap[n[1]]["index"])
-    //         //     and (cin <= mtmap[n[1]]["findex"])
-    //         //     and (fin >= mtmap[n[7]]["index"])
-    //         //     and (fin <= mtmap[n[7]]["findex"]))
-    //         // {
-    //         //     cn8.push_back(c);
-    //         //     continue;
-    //         // }
-
-
-    //     } // end for loop through contacts
-    //     // 0:
-    //     // 1:
-    //     // 0-1:
-    //     // 0-2:
-    //     // 0-3:
-    //     // 0-4:
-    //     // 1-5:
-    //     // 1-6:
-    //     // 1-7:
-
-    //     neighbor_set.push_back(cn0);
-    //     neighbor_set.push_back(cn1);
-    //     neighbor_set.push_back(cn2);
-    //     neighbor_set.push_back(cn3);
-    //     neighbor_set.push_back(cn4);
-    //     neighbor_set.push_back(cn5);
-    //     neighbor_set.push_back(cn6);
-    //     neighbor_set.push_back(cn7);
-    //     neighbor_set.push_back(cn8);
-
-    //     chain_set.push_back(neighbor_set);
+    //     }
     // }
 
-    for(auto ch: chain_set)
-    {
-        std::cout << " " << ch.size();
-    }
-    std::cout << std::endl;
     std::cout << "Chain_size: " << chain_set.size() << std::endl;
     return chain_set;
 }
 
-SetContacts sort_contacts(SetContacts cn,MtIndexMap mtmap,int c1, int c2)
-{
-    SetContacts contacts;
+// SetContacts sort_contacts(SetContacts cn,MtIndexMap mtmap,int c1, int c2)
+// {
+//     SetContacts contacts;
 
-    // std::cout << cn.size() << std::endl;
-    // std::cout << mtmap.size() << std::endl;
-    // std::cout << c1 << " " << c2 << std::endl;
-    // std::cout << mtmap[c1]["index"] << " " << mtmap[c1]["findex"] << std::endl;
-    // std::cout << mtmap[c2]["index"] << " " << mtmap[c2]["findex"] << std::endl;
+//     // std::cout << cn.size() << std::endl;
+//     // std::cout << mtmap.size() << std::endl;
+//     // std::cout << c1 << " " << c2 << std::endl;
+//     // std::cout << mtmap[c1]["index"] << " " << mtmap[c1]["findex"] << std::endl;
+//     // std::cout << mtmap[c2]["index"] << " " << mtmap[c2]["findex"] << std::endl;
 
-    for(auto c: cn)
-    {
-        // std::cout << c.get<0>() << " " << c.get<1>() << std::endl;
+//     for(auto c: cn)
+//     {
+//         // std::cout << c.get<0>() << " " << c.get<1>() << std::endl;
 
-        if((c.get<0>() >= mtmap[c1]["index"])
-           and (c.get<0>() <= mtmap[c1]["findex"])
-           and (c.get<1>() >= mtmap[c2]["index"])
-           and (c.get<1>() <= mtmap[c2]["findex"]))
-        {
-            contacts.push_back(c);
-        }
-    }
-    // exit(0);
+//         if((c.get<0>() >= mtmap[c1]["index"])
+//            and (c.get<0>() <= mtmap[c1]["findex"])
+//            and (c.get<1>() >= mtmap[c2]["index"])
+//            and (c.get<1>() <= mtmap[c2]["findex"]))
+//         {
+//             contacts.push_back(c);
+//         }
+//     }
+//     // exit(0);
 
-    return contacts;
-}
+//     return contacts;
+// }

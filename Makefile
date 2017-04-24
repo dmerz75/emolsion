@@ -77,6 +77,8 @@ TOPOw   = -DTOPO -DTOPO_write -DTOPO_write_mt -DMTBUILDMAP -DMTMAP2_BEFORE
 TOPOr   = -DTOPO -DTOPO_read
 TOPOmt  = -DDCDREAD -DTOPO -DTOPO_read -DTOPO_mt_BEFORE \
 	-DTOPO_mt_DURING -DTOPO_mt_AFTER -DMTBUILDMAP -DTOPO_mt_SORT
+TOPOmt2 = -DDCDREAD -DTOPO -DTOPO_read -DTOPO_mt_BEFORE \
+	-DMTBUILDMAP -DTOPO_mt_SORT -DMTMAP2_DURING -DMTMAP2_AFTER
 
 #  ---------------------------------------------------------  #
 #  Macros' Descriptions:                                      #
@@ -170,8 +172,14 @@ topo-r:
 	cd test && ./$(EXEC)_topo_read mtdimer6.pdb nil.dcd 0 16 2 emol_topology.top
 topo-mt:
 # 6 dimer test system for topology writing.
-	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(TOPOmt) -o test/$(EXEC)_topo_mt
-	cd test && ./$(EXEC)_topo_mt mt.ref.pdb mt_partial.dcd 7 29 2 emol_topology_example.top
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(TOPOmt2) -o test/$(EXEC)_mtcontacts_topo
+	cd test && ./$(EXEC)_mtcontacts_topo mt.ref.pdb mt_partial.dcd 7 29 2 MT_regular_example.top
+topo-mtp:
+# 6 dimer test system for topology writing.
+	$(CXX) $(CPPFILES) $(CF) -fopenmp $(INC) $(LIB) $(TOPOmt2) -o test/$(EXEC)_topo_mtp
+	cd test && ./$(EXEC)_topo_mtp mt.ref.pdb mt_partial.dcd 7 29 2 MT_regular_example.top
+# cd test && ./$(EXEC)_topo_mt mt.ref.pdb mt_partial.dcd 7 29 2 MT_regular.top
+# cd test && ./$(EXEC)_topo_mt mt.ref.pdb mt_partial.dcd 7 29 2 emol_topology_example.top
 # cd test && ./$(EXEC)_topo_mt mt.ref.pdb mt_partial.dcd 7 29 2 emol_topology_mtref.top
 mtcontactstest:
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) $(MT2) -o test/$(EXEC)_mtcontacts2
@@ -193,4 +201,8 @@ mtcontacts:
 # Make all.
 # -----------------------------------------------------------------------------
 all: \
-	main
+# To add here: insert (-DNDEBUG), change to (bin/)
+# mt6:
+# $(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) $(MT2) -DNDEBUG -o bin/$(EXEC)_mtcontacts3
+# topo-mt
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(TOPOmt2) -DNDEBUG -o bin/$(EXEC)_mtcontacts_topo

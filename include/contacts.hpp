@@ -91,6 +91,10 @@ SetContacts get_contacts_for_chain_later(vAtoms allatoms,
                                          double cutoff,
                                          double tolerance,
                                          SetContacts contacts);
+SetContacts get_contacts_for_chain_later(vAtoms aa,
+                                         double cutoff,
+                                         SetContacts contacts);
+
 
 MtNeighbors get_map_of_mtneighbors(vIndexGroup isel_chain,vAtoms aa,DimerList dimers);
 void print_mt_map(MtNeighbors mt_matrix);
@@ -101,6 +105,7 @@ void print_global_contacts(SetGlobalContacts gc);
 void print_global_contacts_count(SetGlobalContacts gc);
 
 SetContacts set_eh_contacts(SetContacts cn,double eh);
+SetContacts set_mtsubdomain_flag_contacts(SetContacts cn,MtIndexMap mtmap);
 
 // for data analysis
 void output_global_contacts(SetGlobalContacts gc);
@@ -110,8 +115,7 @@ void output_framecontact_set(SetFrameContacts framecontact_set);
 // for topology creation
 void write_contacts_to_file(FILE *fp_topology,SetContacts contact_set);
 SetContacts read_contacts_from_file(char filename[40]);
-SetContacts sort_contacts(SetContacts cn,MtIndexMap mtmap,int c1, int c2);
-
+// SetContacts sort_contacts(SetContacts cn,MtIndexMap mtmap,int c1, int c2);
 SetChains sort_contacts2(SetContacts cn,MtIndexMap mtmap,MtNeighbors matrix);
 void print_chain_index_boundaries(MtIndexMap mtmap);
 

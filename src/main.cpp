@@ -647,11 +647,11 @@ int main(int argc, char *argv[]) {
 #ifdef TOPO_read // Begin.
     SetContacts lst_contacts;
     lst_contacts = read_contacts_from_file(argv[6]);
-    std::cout << "# of contacts from topology file:  " <<
-        lst_contacts.size() << std::endl;
+    // exit(0);
 
-    lst_contacts = set_eh_contacts(lst_contacts,2.50);
+    // lst_contacts = set_eh_contacts(lst_contacts,2.50);
     // print_set_contacts(lst_contacts);
+    // exit(0);
 
 
 #ifdef TOPO_mt_SORT
@@ -662,117 +662,65 @@ int main(int argc, char *argv[]) {
     SetChains chain_set;
     SetGlobalContacts global_contacts;
 
-    // Index boundaries:
-    // print_chain_index_boundaries(mtmap_subdomain);
-
-    chain_set = sort_contacts2(lst_contacts,mtmap_subdomain,mt_matrix);
-    global_contacts.push_back(chain_set);
-    chain_set.clear();
+    // Set the flag for contacts by subdomain: N, M, or C.
+    // ---------------------------------------------------
+    // print_set_contacts(lst_contacts);
+    // lst_contacts = set_eh_contacts(lst_contacts,2.50);
+    // print_set_contacts(lst_contacts);
+    lst_contacts = set_mtsubdomain_flag_contacts(lst_contacts,mtmap_subdomain);
+    // print_set_contacts(lst_contacts);
     // exit(0);
 
 
+    // Index boundaries:
+    // print_chain_index_boundaries(mtmap_subdomain);
 
     // 9 situations:
     // 0, 1, 0-1
     // 0: 2, 3, 4 (SEW)
     // 1: 5, 6, 7 (NEW)
-
-    // // index1 with index2
-    // for(auto c: mt_matrix)
-    // {
-    //     neighbor_set.clear();
-
-    //     contact_set = sort_contacts(lst_contacts,
-    //                                 mtmap_subdomain,
-    //                                 c[0],c[0]);
-    //     neighbor_set.push_back(contact_set);
-    //     contact_set.clear();
-
-
-    //     contact_set = sort_contacts(lst_contacts,
-    //                                 mtmap_subdomain,
-    //                                 c[1],c[1]);
-    //     neighbor_set.push_back(contact_set);
-    //     contact_set.clear();
-
-
-    //     contact_set = sort_contacts(lst_contacts,
-    //                                 mtmap_subdomain,
-    //                                 c[0],c[1]);
-    //     neighbor_set.push_back(contact_set);
-    //     contact_set.clear();
-
-
-    //     for(int m=2; m<=4; m++)
-    //     {
-    //         if(c[m] < 0)
-    //         {
-    //             contact_set.clear();
-    //             neighbor_set.push_back(contact_set);
-    //             continue;
-    //         }
-    //         contact_set = sort_contacts(lst_contacts,
-    //                                     mtmap_subdomain,
-    //                                     c[0],c[m]);
-    //         neighbor_set.push_back(contact_set);
-    //         contact_set.clear();
-    //     }
-
-    //     for(int m=5; m<=7; m++)
-    //     {
-    //         if(c[m] < 0)
-    //         {
-    //             contact_set.clear();
-    //             neighbor_set.push_back(contact_set);
-    //             continue;
-    //         }
-    //         contact_set = sort_contacts(lst_contacts,
-    //                                     mtmap_subdomain,
-    //                                     c[1],c[m]);
-    //         neighbor_set.push_back(contact_set);
-    //         contact_set.clear();
-    //     }
-    //     // std::cout << "neighbors: " << neighbor_set.size() << std::endl;
-    //     chain_set.push_back(neighbor_set);
-    //     std::cout << "chain_size: " << chain_set.size() << std::endl;
-
-    // }
-    // global_contacts.push_back(chain_set);
-    // chain_set.clear();
+    chain_set = sort_contacts2(lst_contacts,mtmap_subdomain,mt_matrix);
     // exit(0);
 
-    // std::cout << "Original Contacts obtained!" << std::endl;
-    // std::cout << "Chains_contacts: " << chain_set.size() << std::endl;
-    // std::cout << "Global_contacts: (frames) " << global_contacts.size() << std::endl;
+    // Print Contacts as chain_set in global_contacts[0]
+    // for(int i=0; i<chain_set.size(); i++)
+    // {
+    //     for(int n=0; n<chain_set[i].size(); n++)
+    //     {
+    //         print_set_contacts(chain_set[i][n]);
+    //     }
+    // }
+    // exit(0);
+
+    global_contacts.push_back(chain_set);
+    chain_set.clear();
+    // exit(0);
+    // print_global_contacts(global_contacts);
+
 
     // Print some of the original contacts.
-    std::cout << "Printing global_contacts, 0th frame: " << std::endl;
+    // std::cout << "Printing global_contacts, 0th frame: " << std::endl;
     // print_global_contacts(global_contacts);
-    print_global_contacts_count(global_contacts);
+    // print_global_contacts_count(global_contacts);
     // Chain: 27
     //         n: 0 has 0 contacts.
     //         n: 1 has 0 contacts.
     //         n: 2 has 0 contacts.
     //         n: 3 has 0 contacts.
+    // exit(0);
 
-    exit(0);
 #endif // TOPO_mt_SORT
 #endif // End. TOPO_read
 
 
-#ifdef TOPO_mt_BEFORE
-    SetContacts contact_set_top;
-    SetFrameContacts framecontact_set;
-    contact_set_top.clear();
-    framecontact_set.clear();
+// #ifdef TOPO_mt_BEFORE
+//     SetContacts contact_set_top;
+//     SetFrameContacts framecontact_set;
+//     contact_set_top.clear();
+//     framecontact_set.clear();
 
-
-    // Need to do by chain. or by full map.
-
-
-
-
-#endif // TOPO_mt_BEFORE
+//     // Need to do by chain. or by full map.
+// #endif // TOPO_mt_BEFORE
 
     /* ---------------------------------------------------------
        End Topology.
@@ -1008,17 +956,27 @@ int main(int argc, char *argv[]) {
         int it_c, it_n;
         it_c = it_n = 0;
 
+
         for(auto c: global_contacts[0])
         {
             it_n = 0; // 0-8, the 9 interaction types: alpha, beta, alpha-beta,
-            // alpha-s,w,e..
+            // alpha-sew
+            // beta-new
             // std::cout << "c: " << c.size() << std::endl; // ~ 9
 
+// #pragma omp for ordered schedule(dynamic)
+            // #pragma omp parallel
+            // #pragma omp
             for(auto n: c)
             {
                 // aa_later, allatoms_chain, allatoms, sel_all
+                // contact_set = get_contacts_for_chain_later(allatoms,
+                //                                            8.0,5.0,
+                //                                            global_contacts[0][it_c][it_n]);
+
+                // Hard cutoff (no tolerance)
                 contact_set = get_contacts_for_chain_later(allatoms,
-                                                           8.0,2.0,
+                                                           13.0,
                                                            global_contacts[0][it_c][it_n]);
 
                 // std::cout << contact_set.size() << std::endl;
@@ -1070,31 +1028,31 @@ int main(int argc, char *argv[]) {
         // std::cout << global_contacts[0][0][4].size() << std::endl; // frame-156-8-sc
         // std::cout << global_contacts[0][1][4].size() << std::endl; // frame-156-8-sc
         // std::cout << global_contacts[0][2][1].size() << std::endl; // frame-156-8-sc
+        // print_global_contacts(global_contacts);
         // exit(0);
 #endif // MTMAP2_DURING
 
-#ifdef TOPO_mt_DURING
-        std::cout << "TOPO_mt_DURING: Evaluating lst_contacts." << std::endl;
-        std::cout << lst_contacts.size() << std::endl;
+// #ifdef TOPO_mt_DURING
+//         std::cout << "TOPO_mt_DURING: Evaluating lst_contacts." << std::endl;
+//         std::cout << lst_contacts.size() << std::endl;
 
-        // Clear as precaution:
-        contact_set_top.clear();
-        framecontact_set.clear();
+//         // Clear as precaution:
+//         contact_set_top.clear();
+//         framecontact_set.clear();
 
-        // c: chain (but actually 156 dimers in 312 chains for the MT)
-        // n: 9 neighboring interaction types
-        contact_set_top = get_contacts_for_chain_later(allatoms,
-                                                       8.0,2.0,
-                                                       lst_contacts);
-        std::cout << "frame_position/contacts: "
-                  << frame_position
-                  << " "
-                  << framecontact_set.size()
-                  << std::endl;
+//         // c: chain (but actually 156 dimers in 312 chains for the MT)
+//         // n: 9 neighboring interaction types
+//         contact_set_top = get_contacts_for_chain_later(allatoms,
+//                                                        8.0,2.0,
+//                                                        lst_contacts);
+//         std::cout << "frame_position/contacts: "
+//                   << frame_position
+//                   << " "
+//                   << framecontact_set.size()
+//                   << std::endl;
 
-        framecontact_set.push_back(contact_set_top);
-
-#endif // TOPO_mt_DURING
+//         framecontact_set.push_back(contact_set_top);
+// #endif // TOPO_mt_DURING
 
 #ifdef PHIPSI_M // Begin.
         std::cout << "Getting the phi / psi angles." << std::endl;
@@ -1241,18 +1199,18 @@ int main(int argc, char *argv[]) {
 #endif // MTMAP2_AFTER
 
 
-#ifdef TOPO_mt_AFTER
-    std::cout << "TOPO_mt_AFTER: Contacts by list complete." << std::endl;
+// #ifdef TOPO_mt_AFTER
+//     std::cout << "TOPO_mt_AFTER: Contacts by list complete." << std::endl;
 
-    // Print Analysis of Contacts File.
-    output_framecontact_set(framecontact_set);
+//     // Print Analysis of Contacts File.
+//     output_framecontact_set(framecontact_set);
 
-    // Notes:
-    // fp_contacts = fopen("emol_mtcontacts_by_subdomain.dat", "w+");
-    // fp_contacts3 = fopen("emol_mtcontacts_by_subdomain3.dat", "w+");
-    // fp_contacts3n = fopen("emol_mtcontacts_by_subdomain3n.dat", "w+");
+//     // Notes:
+//     // fp_contacts = fopen("emol_mtcontacts_by_subdomain.dat", "w+");
+//     // fp_contacts3 = fopen("emol_mtcontacts_by_subdomain3.dat", "w+");
+//     // fp_contacts3n = fopen("emol_mtcontacts_by_subdomain3n.dat", "w+");
 
-#endif // TOPO_mt_AFTER
+// #endif // TOPO_mt_AFTER
 
 
 #ifdef PHIPSI_E // PHIPSI Final section.
