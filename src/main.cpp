@@ -277,6 +277,29 @@ int main(int argc, char *argv[]) {
 
 
 #ifdef MTBUILDMAP
+
+    // New Addition for map.
+    std::vector<std::pair<int,int>> ext_contact_neighbors;
+// #ifndef TOPO_ext_only
+    // combos.push_back(std::make_pair(0,2));
+    // combos.push_back(std::make_pair(0,3));
+    // combos.push_back(std::make_pair(0,4));
+    // combos.push_back(std::make_pair(1,5));
+    // combos.push_back(std::make_pair(1,6));
+    // combos.push_back(std::make_pair(1,7));
+// #else
+    ext_contact_neighbors.push_back(std::make_pair(0,0));
+    ext_contact_neighbors.push_back(std::make_pair(1,1));
+    ext_contact_neighbors.push_back(std::make_pair(0,1));
+    ext_contact_neighbors.push_back(std::make_pair(0,2));
+    ext_contact_neighbors.push_back(std::make_pair(0,3));
+    ext_contact_neighbors.push_back(std::make_pair(0,4));
+    ext_contact_neighbors.push_back(std::make_pair(1,5));
+    ext_contact_neighbors.push_back(std::make_pair(1,6));
+    ext_contact_neighbors.push_back(std::make_pair(1,7));
+// #endif
+
+
     // Pairs: A(~439) and B(427-8).
     DimerList dimers;
     MtIndexMap mtmap_subdomain; // std::map<std::string,int> MtIndexMapEntry;
@@ -957,6 +980,8 @@ int main(int argc, char *argv[]) {
         it_c = it_n = 0;
 
 
+
+#ifndef TOPO_ext_only
         for(auto c: global_contacts[0])
         {
             it_n = 0; // 0-8, the 9 interaction types: alpha, beta, alpha-beta,
@@ -989,6 +1014,38 @@ int main(int argc, char *argv[]) {
             it_c += 1;
         }
         global_contacts.push_back(chain_set);
+#else
+        for(auto c: global_contacts[0])
+        {
+            it_n = 0; // 0-8, the 9 interaction types: alpha, beta, alpha-beta,
+            // alpha-sew
+            // beta-new
+            // std::cout << "c: " << c.size() << std::endl; // ~ 9
+
+            for(auto n: ext_contact_neighbors)
+            {
+                if(it_n > 2)
+                {
+                    // std::cout << n.first << " " << n.second << std::endl;
+                    contact_set = get_contacts_for_chain_later(allatoms,
+                                                               13.0,
+                                                               global_contacts[0][n.first][n.second]);
+                }
+                // std::cout << "Contact_set_size: " << contact_set.size() << std::endl;
+                neighbor_set.push_back(contact_set);
+                contact_set.clear();
+                it_n += 1;
+            }
+            // std::cout << "Neighbor-size: " << neighbor_set.size() << std::endl;
+            chain_set.push_back(neighbor_set);
+            neighbor_set.clear();
+            it_c += 1;
+        }
+        global_contacts.push_back(chain_set);
+#endif
+
+
+
 
 
         // for(auto c: mt_matrix)

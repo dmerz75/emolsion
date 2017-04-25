@@ -79,6 +79,9 @@ TOPOmt  = -DDCDREAD -DTOPO -DTOPO_read -DTOPO_mt_BEFORE \
 	-DTOPO_mt_DURING -DTOPO_mt_AFTER -DMTBUILDMAP -DTOPO_mt_SORT
 TOPOmt2 = -DDCDREAD -DTOPO -DTOPO_read -DTOPO_mt_BEFORE \
 	-DMTBUILDMAP -DTOPO_mt_SORT -DMTMAP2_DURING -DMTMAP2_AFTER
+# TOPOmt3: external only.
+TOPOmt3 = -DDCDREAD -DTOPO -DTOPO_read -DTOPO_mt_BEFORE \
+-DMTBUILDMAP -DTOPO_mt_SORT -DMTMAP2_DURING -DMTMAP2_AFTER -DTOPO_ext_only
 
 #  ---------------------------------------------------------  #
 #  Macros' Descriptions:                                      #
@@ -174,6 +177,10 @@ topo-mt:
 # 6 dimer test system for topology writing.
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(TOPOmt2) -o test/$(EXEC)_mtcontacts_topo
 	cd test && ./$(EXEC)_mtcontacts_topo mt.ref.pdb mt_partial.dcd 7 29 2 MT_regular_example.top
+topo-mt-ext:
+# external only evaluated.
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(TOPOmt3) -o test/$(EXEC)_mtcontacts_topo_extonly
+	cd test && ./$(EXEC)_mtcontacts_topo_extonly mt.ref.pdb mt_partial.dcd 7 29 2 MT_regular_example.top
 topo-mtp:
 # 6 dimer test system for topology writing.
 	$(CXX) $(CPPFILES) $(CF) -fopenmp $(INC) $(LIB) $(TOPOmt2) -o test/$(EXEC)_topo_mtp
@@ -206,3 +213,5 @@ all: \
 # $(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) $(MT2) -DNDEBUG -o bin/$(EXEC)_mtcontacts3
 # topo-mt
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(TOPOmt2) -DNDEBUG -o bin/$(EXEC)_mtcontacts_topo
+# topo-mt-ext: # external only evaluated.
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(TOPOmt3) -DNDEBUG -o bin/$(EXEC)_mtcontacts_topo_extonly

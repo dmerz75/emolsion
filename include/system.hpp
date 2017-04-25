@@ -158,7 +158,7 @@ inline Residue::Residue()
     // debug("Residue construction commencing.\n");
     id_global = -1;
     id_local = -1;
-    resid = -1;
+n    resid = -1;
     num_atoms_res = -1;
 }
 inline Residue::Residue(const Residue &obj)
@@ -289,8 +289,8 @@ inline void Atom::print_Coords()
            index,atomtype.c_str(),
            restype.c_str(),x,y,z);
     printf("                       %s\n",general_atomtype.c_str());
-
 }
+
 // inline void Atom::print_Coords()
 // {
 //     printf("ATOM %6d  %3s %3s          %8.3f%8.3f%8.3f",

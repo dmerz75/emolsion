@@ -14,7 +14,7 @@
 /* ---------------------------------------------------------
    functions
    --------------------------------------------------------- */
-double distance ( Vector v1, Vector v2 )
+double distance(Vector v1,Vector v2)
 {
     /* Distance between 2 points! */
     double distance;
@@ -27,6 +27,7 @@ double distance ( Vector v1, Vector v2 )
     distance = sqrt( xdist * xdist + ydist * ydist + zdist * zdist);
     return distance;
 }
+// double distance(Atom)
 Vector difference ( Vector v1, Vector v2 )
 {
     /* difference */
