@@ -158,7 +158,7 @@ inline Residue::Residue()
     // debug("Residue construction commencing.\n");
     id_global = -1;
     id_local = -1;
-n    resid = -1;
+    resid = -1;
     num_atoms_res = -1;
 }
 inline Residue::Residue(const Residue &obj)

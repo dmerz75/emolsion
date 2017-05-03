@@ -31,6 +31,7 @@
 #include "md.h"
 #include "system.hpp"
 #include "microtubule.hpp"
+#include "math_atom.hpp"
 // #include "dcd.h"
 // #include "dcdio.h"
 
@@ -702,27 +703,10 @@ SetContacts get_contacts_for_chain_later(vAtoms aa,
     // std::vector<std::vector<boost::tuple<int,int,int,double>>> vec_contacts;
     // std::vector<boost::tuple<int,int,int,double>> cur_contacts;
     SetContacts cur_contacts;
-
-
-    // std::cout << std::get<0>(contacts[0]); << std::endl;
-
-    Vector p1, p2;
+    cur_contacts.reserve(contacts.size());
     double dist;
     double odist;
-    // double threshold1,threshold2,threshold;
     double threshold;
-    // int onoff; // onoff; 0/1.
-
-
-    // Note to self.. fix the distance function to account for x,y,z
-    // possibly with template or overloaded function.
-
-    // for(auto a: contacts) // 156 in the 312 monomer case.
-    // {
-    // std::cout << "size: " << a.size() << std::endl;
-
-    // std::cout << "evaluating " << contacts.size() << " contacts." << std::endl;
-
 
     // Parallelize:
     // #pragma omp parallel
@@ -730,7 +714,6 @@ SetContacts get_contacts_for_chain_later(vAtoms aa,
     // for(auto c: contacts)
     // #pragma omp parallel for
     // #pragma omp simd
-
     // {
     // #pragma omp for
     // #pragma omp parallel num_threads(4)
@@ -758,20 +741,26 @@ SetContacts get_contacts_for_chain_later(vAtoms aa,
             // std::cout << aa[boost::get<0>(c)].y << std::endl;
             // std::cout << aa[boost::get<0>(c)].z << std::endl;
 
-            p1.x = aa[boost::get<0>(contacts[i])].x;
-            p1.y = aa[boost::get<0>(contacts[i])].y;
-            p1.z = aa[boost::get<0>(contacts[i])].z;
+
+            // No speed up. grrrrrrr!
+            dist = matom_distance(aa[boost::get<0>(contacts[i])],
+                                  aa[boost::get<1>(contacts[i])]);
+
+
+            // p1.x = aa[boost::get<0>(contacts[i])].x;
+            // p1.y = aa[boost::get<0>(contacts[i])].y;
+            // p1.z = aa[boost::get<0>(contacts[i])].z;
 
             // std::cout << std::endl;
             // std::cout << aa[boost::get<1>(c)].x << std::endl;
             // std::cout << aa[boost::get<1>(c)].y << std::endl;
             // std::cout << aa[boost::get<1>(c)].z << std::endl;
 
-            p2.x = aa[boost::get<1>(contacts[i])].x;
-            p2.y = aa[boost::get<1>(contacts[i])].y;
-            p2.z = aa[boost::get<1>(contacts[i])].z;
+            // p2.x = aa[boost::get<1>(contacts[i])].x;
+            // p2.y = aa[boost::get<1>(contacts[i])].y;
+            // p2.z = aa[boost::get<1>(contacts[i])].z;
 
-            dist = distance(p1,p2);
+            // dist = distance(p1,p2);
 
             // cutoff: 8
             // tolerance: 2
@@ -820,9 +809,9 @@ SetContacts get_contacts_for_chain_later(vAtoms aa,
                                          SetContacts contacts)
 {
     // Hard cutoff:
-
     SetContacts cur_contacts;
-    Vector p1, p2;
+    cur_contacts.reserve(contacts.size());
+    // Vector p1, p2;
     double dist;
     double odist;
 
@@ -834,15 +823,18 @@ SetContacts get_contacts_for_chain_later(vAtoms aa,
 
         odist = boost::get<2>(contacts[i]);
 
-        p1.x = aa[boost::get<0>(contacts[i])].x;
-        p1.y = aa[boost::get<0>(contacts[i])].y;
-        p1.z = aa[boost::get<0>(contacts[i])].z;
+        // No speed up. grrrrrrr!
+        dist = matom_distance(aa[boost::get<0>(contacts[i])],
+                              aa[boost::get<1>(contacts[i])]);
 
-        p2.x = aa[boost::get<1>(contacts[i])].x;
-        p2.y = aa[boost::get<1>(contacts[i])].y;
-        p2.z = aa[boost::get<1>(contacts[i])].z;
 
-        dist = distance(p1,p2);
+        // p1.x = aa[boost::get<0>(contacts[i])].x;
+        // p1.y = aa[boost::get<0>(contacts[i])].y;
+        // p1.z = aa[boost::get<0>(contacts[i])].z;
+        // p2.x = aa[boost::get<1>(contacts[i])].x;
+        // p2.y = aa[boost::get<1>(contacts[i])].y;
+        // p2.z = aa[boost::get<1>(contacts[i])].z;
+        // dist = distance(p1,p2);
 
         if(dist < cutoff)
         {

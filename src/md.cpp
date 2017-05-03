@@ -9,6 +9,7 @@
    other headers
    --------------------------------------------------------- */
 #include "md.h"
+// #include "system.hpp"
 
 
 /* ---------------------------------------------------------
@@ -27,7 +28,11 @@ double distance(Vector v1,Vector v2)
     distance = sqrt( xdist * xdist + ydist * ydist + zdist * zdist);
     return distance;
 }
-// double distance(Atom)
+// double distance(Atom a, Atom b)
+// {
+//     a.print_Coords();
+//     b.print_Coords();
+// }
 Vector difference ( Vector v1, Vector v2 )
 {
     /* difference */

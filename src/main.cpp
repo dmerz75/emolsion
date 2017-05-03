@@ -451,7 +451,7 @@ int main(int argc, char *argv[]) {
     for(auto c: mt_matrix)
     {
         neighbor_set.clear();
-
+        contact_set.clear();
         // Alpha, Beta, Alpha-Beta
         // contact_set = get_contacts_for_chain(chain_ref[c[0]],chain_ref[c[0]],8.0);
         // neighbor_set.push_back(contact_set);
@@ -467,24 +467,32 @@ int main(int argc, char *argv[]) {
         //                                      c[0],
         //                                      c[1]);
 
+// #ifndef TOPO_ext_only
         contact_set = get_contacts_for_chain(allatoms_ref,8.0,
                                              mtmap_subdomain,
                                              isel_chain[c[0]],
                                              c[0]);
+// #endif // TOPO_ext_only
         neighbor_set.push_back(contact_set);
         contact_set.clear();
+
+
+// #ifndef TOPO_ext_only
         contact_set = get_contacts_for_chain(allatoms_ref,8.0,
                                              mtmap_subdomain,
                                              isel_chain[c[1]],
                                              c[1]);
+// #endif // TOPO_ext_only
         neighbor_set.push_back(contact_set);
         contact_set.clear();
 
+// #ifndef TOPO_ext_only
         contact_set = get_contacts_for_chain(allatoms_ref,8.0,
                                              mtmap_subdomain,
                                              isel_chain[c[0]],
                                              isel_chain[c[1]],
                                              c[0],c[1]);
+// #endif // TOPO_ext_only
         neighbor_set.push_back(contact_set);
         contact_set.clear();
     // }
@@ -658,12 +666,10 @@ int main(int argc, char *argv[]) {
             }
         }
     }
-
 #endif // TOPO & TOPO_write & MTMAP2_BEFORE
 
-
-
     fclose(fp_topology);
+
 #endif // TOPO_write
 
 
@@ -974,47 +980,67 @@ int main(int argc, char *argv[]) {
         neighbor_set.clear();
         chain_set.clear();
 
-        // c: chain (but actually 156 dimers in 312 chains for the MT)
-        // n: 9 neighboring interaction types
-        int it_c, it_n;
-        it_c = it_n = 0;
 
 
+
+// #ifndef TOPO_ext_only
+//         for(auto c: global_contacts[0])
+//         {
+//             it_n = 0; // 0-8, the 9 interaction types: alpha, beta, alpha-beta,
+//             // alpha-sew
+//             // beta-new
+//             // std::cout << "c: " << c.size() << std::endl; // ~ 9
+
+// // #pragma omp for ordered schedule(dynamic)
+//             // #pragma omp parallel
+//             // #pragma omp
+//             for(auto n: c)
+//             {
+//                 // aa_later, allatoms_chain, allatoms, sel_all
+//                 // contact_set = get_contacts_for_chain_later(allatoms,
+//                 //                                            8.0,5.0,
+//                 //                                            global_contacts[0][it_c][it_n]);
+
+//                 // Hard cutoff (no tolerance)
+//                 contact_set = get_contacts_for_chain_later(allatoms,
+//                                                            13.0,
+//                                                            global_contacts[0][it_c][it_n]);
+
+//                 // std::cout << contact_set.size() << std::endl;
+//                 neighbor_set.push_back(contact_set);
+//                 contact_set.clear();
+//                 it_n += 1;
+//             }
+//             chain_set.push_back(neighbor_set);
+//             neighbor_set.clear();
+//             it_c += 1;
+//         }
+//         global_contacts.push_back(chain_set);
 
 #ifndef TOPO_ext_only
         for(auto c: global_contacts[0])
         {
-            it_n = 0; // 0-8, the 9 interaction types: alpha, beta, alpha-beta,
-            // alpha-sew
-            // beta-new
-            // std::cout << "c: " << c.size() << std::endl; // ~ 9
-
-// #pragma omp for ordered schedule(dynamic)
-            // #pragma omp parallel
-            // #pragma omp
-            for(auto n: c)
+            for(auto n: ext_contact_neighbors)
             {
-                // aa_later, allatoms_chain, allatoms, sel_all
-                // contact_set = get_contacts_for_chain_later(allatoms,
-                //                                            8.0,5.0,
-                //                                            global_contacts[0][it_c][it_n]);
-
-                // Hard cutoff (no tolerance)
+                contact_set.clear();
                 contact_set = get_contacts_for_chain_later(allatoms,
                                                            13.0,
-                                                           global_contacts[0][it_c][it_n]);
-
-                // std::cout << contact_set.size() << std::endl;
+                                                           global_contacts[0][n.first][n.second]);
                 neighbor_set.push_back(contact_set);
-                contact_set.clear();
-                it_n += 1;
             }
+            // std::cout << "Neighbor-size: " << neighbor_set.size() << std::endl;
             chain_set.push_back(neighbor_set);
             neighbor_set.clear();
-            it_c += 1;
         }
         global_contacts.push_back(chain_set);
 #else
+        // c: chain (but actually 156 dimers in 312 chains for the MT)
+        // n: 9 neighboring interaction types
+        // int it_c,
+        // it_c =
+        int it_n;
+        it_n = 0;
+
         for(auto c: global_contacts[0])
         {
             it_n = 0; // 0-8, the 9 interaction types: alpha, beta, alpha-beta,
@@ -1039,13 +1065,9 @@ int main(int argc, char *argv[]) {
             // std::cout << "Neighbor-size: " << neighbor_set.size() << std::endl;
             chain_set.push_back(neighbor_set);
             neighbor_set.clear();
-            it_c += 1;
         }
         global_contacts.push_back(chain_set);
 #endif
-
-
-
 
 
         // for(auto c: mt_matrix)

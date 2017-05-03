@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "debug.h"
+
 /* #include "system.hpp" */
 
 /* ---------------------------------------------------------
@@ -164,5 +165,8 @@ Vector get_vector(Vector v1,Vector v2);
 
 Vector normalize(Vector v1,Vector *v2);
 Vector normalize(Vector v1);
+
+// System - ATOM:
+/* double distance(Atom a, Atom b); */
 
 #endif

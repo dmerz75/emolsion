@@ -80,8 +80,10 @@ TOPOmt  = -DDCDREAD -DTOPO -DTOPO_read -DTOPO_mt_BEFORE \
 TOPOmt2 = -DDCDREAD -DTOPO -DTOPO_read -DTOPO_mt_BEFORE \
 	-DMTBUILDMAP -DTOPO_mt_SORT -DMTMAP2_DURING -DMTMAP2_AFTER
 # TOPOmt3: external only.
-TOPOmt3 = -DDCDREAD -DTOPO -DTOPO_read -DTOPO_mt_BEFORE \
--DMTBUILDMAP -DTOPO_mt_SORT -DMTMAP2_DURING -DMTMAP2_AFTER -DTOPO_ext_only
+# TOPOmt3 = -DDCDREAD -DTOPO -DTOPO_read -DTOPO_mt_BEFORE \
+# -DMTBUILDMAP -DTOPO_mt_SORT -DMTMAP2_DURING -DMTMAP2_AFTER -DTOPO_ext_only
+TOPOmt3 = -DDCDREAD -DTOPO -DTOPO_read \
+	-DMTBUILDMAP -DTOPO_mt_SORT -DMTMAP2_DURING -DMTMAP2_AFTER -DTOPO_ext_only
 
 #  ---------------------------------------------------------  #
 #  Macros' Descriptions:                                      #
@@ -196,11 +198,24 @@ angles-all-atoms:
 	cd test && ./$(EXEC)_phipsi_angles 2kho_implicit.pdb 2kho_implicit.dcd 10 100 2
 
 
-# ---------------------------------------------------------------------
-# Deployment:
-# ---------------------------------------------------------------------
+# ----------------------------------------------------------- #
+# Deployment:                                                 #
+# ----------------------------------------------------------- #
 mtcontacts:
 	$(CXX) $(CPPFILES) $(CF0) $(INC) $(LIB) $(DCD) $(MT2) -DNDEBUG -o bin/$(EXEC)_mtcontacts3n
+
+
+#  ---------------------------------------------------------  #
+#  Release:                                                   #
+#  ---------------------------------------------------------  #
+test-topo-mt:
+# 6 dimer test system for topology writing.
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(TOPOmt2) -o test/$(EXEC)_mtcontacts_topo
+
+test-topo-mt-ext:
+# external only evaluated.
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(TOPOmt3) -o test/$(EXEC)_mtcontacts_topo_extonly
+
 
 
 
@@ -212,6 +227,6 @@ all: \
 # mt6:
 # $(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) $(MT2) -DNDEBUG -o bin/$(EXEC)_mtcontacts3
 # topo-mt
-	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(TOPOmt2) -DNDEBUG -o bin/$(EXEC)_mtcontacts_topo
+# $(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(TOPOmt2) -DNDEBUG -o bin/$(EXEC)_mtcontacts_topo
 # topo-mt-ext: # external only evaluated.
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(TOPOmt3) -DNDEBUG -o bin/$(EXEC)_mtcontacts_topo_extonly
