@@ -348,6 +348,7 @@ int main(int argc, char *argv[]) {
 
         if((c.size() > 420) and (c.size() < 442))
         {
+            // Subdomain map, microtubules:
             Nterm2 = low_index + 214;
             Mterm1 = Nterm2 + 1;   // 215
             Mterm2 = Mterm1 + 168; // 383
