@@ -669,6 +669,475 @@ int main(int argc, char *argv[]) {
     }
 #endif // TOPO & TOPO_write & MTMAP2_BEFORE
 
+
+    // hsp70 topology:
+#ifdef TOPO_write_hsp70
+    std::cout << "writing hsp70 topology." << std::endl;
+
+
+    int allcontact;
+    allcontact = 0;
+
+    SetContacts contact_set;
+    SetContacts sub_set;
+
+    IndexGroup r2;
+    r2 = select(allatoms_ref,"resid 0 to 663");
+    std::cout << "resid 0-663: " << r2.size() << std::endl;
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,r2,r2);
+
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    std::cout << "all-c: " << sub_set.size() << std::endl;
+    std::cout << "contacts_tot: " << contact_set.size() << std::endl;
+    allcontact += sub_set.size();
+    sub_set.clear();
+
+
+    // IndexGroup nbd;
+    // nbd = select(allatoms_ref,"resid 0 to 384");
+    // std::cout << "nbd-r: " << nbd.size() << std::endl;
+    // sub_set = get_contacts_for_chain(allatoms_ref,8.0,nbd,nbd);
+
+    // contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    // std::cout << "nbd-c: " << sub_set.size() << std::endl;
+    // std::cout << "contacts_tot: " << contact_set.size() << std::endl;
+    // allcontact += sub_set.size();
+    // sub_set.clear();
+
+
+    // IndexGroup sbd;
+    // sbd = select(allatoms_ref,"resid 385 to 663");
+    // std::cout << "sbd-r: " << sbd.size() << std::endl;
+    // sub_set = get_contacts_for_chain(allatoms_ref,8.0,sbd,sbd);
+
+    // contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    // std::cout << "sbd-c: " << sub_set.size() << std::endl;
+    // std::cout << "contacts_tot: " << contact_set.size() << std::endl;
+    // sub_set.clear();
+
+
+    // sub_set = get_contacts_for_chain(allatoms_ref,8.0,nbd,sbd);
+    // contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    // std::cout << "nbd-sbd-c: " << sub_set.size() << std::endl;
+    // std::cout << "contacts_tot: " << contact_set.size() << std::endl;
+    // sub_set.clear();
+
+
+    // std::cout << "total_from_subdivisions: " << allcontact << std::endl;
+    // std::cout << "total_from_subdivisions: " << contact_set.size() << std::endl;
+
+
+    contact_set.clear();
+    sub_set.clear();
+
+
+    IndexGroup ia7, ia8, ib, ia116, ia135, ia166, cloop;
+    IndexGroup iia187, iib227, iia306, idl;
+    IndexGroup beta, ab, alpha, nr;
+
+    ia7 = select(allatoms_ref,"resid 0 to 7");       // 2.5
+    ia8 = select(allatoms_ref,"resid 8 to 38");
+    ib  = select(allatoms_ref,"resid 39 to 114");
+    ia116 = select(allatoms_ref,"resid 115 to 134"); //
+    ia135 = select(allatoms_ref,"resid 135 to 165"); // 2.5
+    ia166 = select(allatoms_ref,"resid 166 to 170");
+    cloop = select(allatoms_ref,"resid 171 to 186");
+    iia187= select(allatoms_ref,"resid 187 to 226");
+    iib227= select(allatoms_ref,"resid 227 to 305");
+    iia306= select(allatoms_ref,"resid 306 to 384");
+    idl   = select(allatoms_ref,"resid 385 to 392");
+    beta  = select(allatoms_ref,"resid 393 to 505"); // 1.35, mixed 1.55885
+    alpha = select(allatoms_ref,"resid 506 to 598"); // 1.80
+    nr    = select(allatoms_ref,"resid 599 to 663"); // 1.55885
+
+    // NBD:                                  eh
+    // domain Ia, 1-39 and 116-188;         2.50
+    // domain Ib, 40-115;                   1.25
+    // domain IIa, 189-228 and 307-385;     1.25
+    // domain IIb, 229-306.                 1.25
+    // residues 170-186 connecting Loop     1.25
+    // residues:
+    // stabilized lobe I (N-Term) by doubling the interaction energy for
+    // contacts (inside lobe I) made by residues 4-11 and 139-169
+    // (setting ??ℎ to 2.50 kcal/mol)   0-7 | 135 - 165
+    //                                      2.50
+    // End result: if 0-7 or 135 - 165 are involved in nbd, double to 2.50000
+
+    // SBD:
+    // beta:                                1.35000  501
+    // mix:                                 1.55885  not self-contained
+    // alpha:                               1.80000  formerly
+    // NR:                                  1.55885  formerly 216-222
+
+
+    // all intra
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia7,ia7);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia8,ia8);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ib,ib);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia116,ia116);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia135,ia135);
+    sub_set = set_eh_contacts(sub_set,2.50);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia166,ia166);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,cloop,cloop);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,iia187,iia187);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,iib227,iib227);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,iia306,iia306);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,idl,idl);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,beta,beta);
+    sub_set = set_eh_contacts(sub_set,1.35);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,alpha,alpha);
+    sub_set = set_eh_contacts(sub_set,1.80);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,nr,nr);
+    sub_set = set_eh_contacts(sub_set,1.55885);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    // end all intra. 1275
+
+    // NR
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia7,nr);
+    sub_set = set_eh_contacts(sub_set,1.55885);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia8,nr);
+    sub_set = set_eh_contacts(sub_set,1.55885);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ib,nr);
+    sub_set = set_eh_contacts(sub_set,1.55885);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia116,nr);
+    sub_set = set_eh_contacts(sub_set,1.55885);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia135,nr);
+    sub_set = set_eh_contacts(sub_set,2.5000);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia166,nr);
+    sub_set = set_eh_contacts(sub_set,1.55885);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,cloop,nr);
+    sub_set = set_eh_contacts(sub_set,1.55885);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,iia187,nr);
+    sub_set = set_eh_contacts(sub_set,1.55885);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,iib227,nr);
+    sub_set = set_eh_contacts(sub_set,1.55885);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,iia306,nr);
+    sub_set = set_eh_contacts(sub_set,1.55885);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,idl,nr);
+    sub_set = set_eh_contacts(sub_set,1.55885);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,beta,nr);
+    sub_set = set_eh_contacts(sub_set,1.55885);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,alpha,nr);
+    sub_set = set_eh_contacts(sub_set,1.55885);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+
+    // alpha
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia7,alpha);
+    sub_set = set_eh_contacts(sub_set,1.55885);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia8,alpha);
+    sub_set = set_eh_contacts(sub_set,1.55885);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ib,alpha);
+    sub_set = set_eh_contacts(sub_set,1.55885);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia116,alpha);
+    sub_set = set_eh_contacts(sub_set,1.55885);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia135,alpha);
+    sub_set = set_eh_contacts(sub_set,2.50);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia166,alpha);
+    sub_set = set_eh_contacts(sub_set,1.55885);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,cloop,alpha);
+    sub_set = set_eh_contacts(sub_set,1.55885);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,iia187,alpha);
+    sub_set = set_eh_contacts(sub_set,1.55885);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,iib227,alpha);
+    sub_set = set_eh_contacts(sub_set,1.55885);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,iia306,alpha);
+    sub_set = set_eh_contacts(sub_set,1.55885);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,idl,alpha);
+    sub_set = set_eh_contacts(sub_set,1.55885);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,beta,alpha);
+    sub_set = set_eh_contacts(sub_set,1.55885);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+
+    // beta
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia7,beta);
+    sub_set = set_eh_contacts(sub_set,1.55885);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia8,beta);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ib,beta);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia116,beta);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia135,beta);
+    sub_set = set_eh_contacts(sub_set,2.50);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia166,beta);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,cloop,beta);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,iia187,beta);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,iib227,beta);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,iia306,beta);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,idl,beta);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+
+    // idl
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia7,idl);
+    sub_set = set_eh_contacts(sub_set,2.50);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia8,idl);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ib,idl);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia116,idl);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia135,idl);
+    sub_set = set_eh_contacts(sub_set,2.50);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia166,idl);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,cloop,idl);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,iia187,idl);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,iib227,idl);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,iia306,idl);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+
+    // iia306
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia7,iia306);
+    sub_set = set_eh_contacts(sub_set,2.50);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia8,iia306);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ib,iia306);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia116,iia306);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia135,iia306);
+    sub_set = set_eh_contacts(sub_set,2.50);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia166,iia306);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,cloop,iia306);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,iia187,iia306);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,iib227,iia306);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+
+    // iib227
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia7,iib227);
+    sub_set = set_eh_contacts(sub_set,2.50);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia8,iib227);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ib,iib227);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia116,iib227);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia135,iib227);
+    sub_set = set_eh_contacts(sub_set,2.50);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia166,iib227);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,cloop,iib227);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,iia187,iib227);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+
+    // iia187
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia7,iia187);
+    sub_set = set_eh_contacts(sub_set,2.50);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia8,iia187);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ib,iia187);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia116,iia187);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia135,iia187);
+    sub_set = set_eh_contacts(sub_set,2.50);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia166,iia187);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,cloop,iia187);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+
+
+    // cloop
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia7,cloop);
+    sub_set = set_eh_contacts(sub_set,2.50);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia8,cloop);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ib,cloop);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia116,cloop);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia135,cloop);
+    sub_set = set_eh_contacts(sub_set,2.50);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia166,cloop);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+
+    // ia166
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia7,ia166);
+    sub_set = set_eh_contacts(sub_set,2.50);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia8,ia166);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ib,ia166);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia116,ia166);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia135,ia166);
+    sub_set = set_eh_contacts(sub_set,2.50);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+
+    // ia135
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia7,ia135);
+    sub_set = set_eh_contacts(sub_set,2.50);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia8,ia135);
+    sub_set = set_eh_contacts(sub_set,2.50);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ib,ia135);
+    sub_set = set_eh_contacts(sub_set,2.50);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia116,ia135);
+    sub_set = set_eh_contacts(sub_set,2.50);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+
+    // ia116
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia7,ia116);
+    sub_set = set_eh_contacts(sub_set,2.50);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia8,ia116);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ib,ia116);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+
+    // ib
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia7,ib);
+    sub_set = set_eh_contacts(sub_set,2.50);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia8,ib);
+    sub_set = set_eh_contacts(sub_set,1.25);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+
+    // ia8
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia7,ia8);
+    sub_set = set_eh_contacts(sub_set,2.50);
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+
+
+    std::cout << "Total contacts accounted: " << contact_set.size() << std::endl;
+
+    write_contacts_to_file(fp_topology,contact_set);
+
+
+
+#endif // TOPO_write_hsp70
+
+
     fclose(fp_topology);
 
 #endif // TOPO_write

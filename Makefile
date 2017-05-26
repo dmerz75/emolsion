@@ -74,6 +74,7 @@ DCDW    = -DDCDREAD -DDCD_WRITE_B -DDCD_WRITE -DDCD_WRITE_E
 MT2     = -DMTBUILDMAP -DMTMAP2_BEFORE -DMTMAP2_DURING -DMTMAP2_AFTER
 PHIPSI  = -DPHIPSI_B -DPHIPSI_M -DPHIPSI_E
 TOPOw   = -DTOPO -DTOPO_write -DTOPO_write_mt -DMTBUILDMAP -DMTMAP2_BEFORE
+TOPOwh7 = -DTOPO -DTOPO_write -DTOPO_write_hsp70
 TOPOr   = -DTOPO -DTOPO_read
 TOPOmt  = -DDCDREAD -DTOPO -DTOPO_read -DTOPO_mt_BEFORE \
 	-DTOPO_mt_DURING -DTOPO_mt_AFTER -DMTBUILDMAP -DTOPO_mt_SORT
@@ -171,6 +172,11 @@ topo-w:
 # 6 dimer test system for topology writing.
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(TOPOw) -o test/$(EXEC)_topo_write
 	cd test && ./$(EXEC)_topo_write mtdimer6.pdb nil.dcd 0 16 2 emol_topology.top # 6-9 .. 21-24-27.
+topo-w-hsp70:
+# 6 dimer test system for topology writing.
+# cd test && ./$(EXEC)_topo_writehsp70 fullhsp70.pdb nil.dcd 0 16 2 emol_topology.top
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(TOPOwh7) -o test/$(EXEC)_topo_writehsp70
+	cd test && ./$(EXEC)_topo_writehsp70 fullhsp70_ca_renum.pdb nil.dcd 0 16 2 emol_topology.top
 topo-r:
 # 6 dimer test system for topology writing.
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(TOPOr) -o test/$(EXEC)_topo_read
