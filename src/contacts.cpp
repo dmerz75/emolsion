@@ -1470,7 +1470,7 @@ void write_contacts_to_file(FILE *fp_topology,SetContacts contact_set)
     // fprintf(fp_topology,"# contact set\n");
     for(auto c: contact_set)
     {
-        fprintf(fp_topology,"%5d %5d    1  %9.5f   %8.5f\n",
+        fprintf(fp_topology,"%5d %5d     1  %9.5f   %8.5f\n",
                 c.get<0>(),
                 c.get<1>(),
                 c.get<2>(),
