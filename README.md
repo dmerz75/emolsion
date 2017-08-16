@@ -31,6 +31,12 @@ induce depolymerization. The 600 piconewtons measured in silico is comparable to
 The first break usually occurs at 300 piconewtons, and the critical break occurs at the peak force.
 Contact analysis reveals the pathways and fractures behind these breaks.
 
+This microtubule is arranged from South, the alpha-orange monomer end (negative), to North,
+the beta-blue/cyan monomer end(positive). (See figure below) Indentation positions, 1,2,3,4 shown,
+result in a distribution of forces (see Force-Indentation plot, below, on left). The distribution of forces
+can be explained by the fracturing patterns (see fracturing patterns for indentation positions 1,3 on right, below)
+and quantified by contact analysis.
+
 Figure of microtubule:
 ![Figure of Microtubule](https://github.com/dmerz75/emolsion/blob/master/fig/microtubule.png)
 
@@ -43,32 +49,34 @@ Contacts were evaluated according to the following diagram:
             3  6
             East
 
-If 0 is alpha and 1 is beta, then 9 situations from the 2 monomers in the dimer and their 6 orthogonal
-neighbors arise. They are:
-* 0    intra-alpha
-* 1    intra-beta
-* 0-1  intra-dimer
-* 0-2  alpha-south
-* 0-3  alpha-east
-* 0-4  alpha-west
-* 1-5  beta-north
-* 1-6  beta-east
-* 1-7  beta-west
 
+Only external (not intra-alpha, intra-beta, or intra-dimer) contacts are shown.
+West (left), East (right),
+South (bottom), and North (top) are subdivided into the N-term (red), Middle (green), C-term (blue) subdomains for
+each tubulin monomer.
 
-### The microtubule map: a diagram
-This microtubule is arranged from South, the alpha-orange monomer end (negative), to North,
-the beta-blue/cyan monomer end(positive). (See figure below)
+The alpha monomer (0) and the beta monomer (1) have internal contacts (designated intra) and interfacial contacts
+(designated external) by way of 9 situations:
+* 0    intra-alpha  (internal)
+* 1    intra-beta   (internal)
+* 0-1  intra-dimer  (internal)
+* 0-2  alpha-south  (external)
+* 0-3  alpha-east   (external)
+* 0-4  alpha-west   (external)
+* 1-5  beta-north   (external)
+* 1-6  beta-east    (external)
+* 1-7  beta-west    (external)
 
+The external contacts (the sum of the longitudinal north and south, the lateral east and west) are plotted by dimer.
+(see the Contacts vs. Frame plots on the left, below). The external contacts can be further understood by their points of
+origin, the N-term(red), M-term(green), or C-term(blue) on the longitudinal and lateral interfaces (see 6 plots on the right, below).
+The top is the longitudinal north (beta monomer) interface, followed by the west and east beta lateral interfaces, followed again by the
+west and east alpha lateral interfaces, finally followed by longitudinal south (alpha monomer) interface.
 
-## Figure of representative contacts:
 ![Figure of representative contacts](https://github.com/dmerz75/emolsion/blob/master/fig/contacts65.png)
 
 ![Figure of representative contacts](https://github.com/dmerz75/emolsion/blob/master/fig/contacts79.png)
 
-Only external (not intra-alpha, intra-beta, or intra-dimer) contacts are shown. West (left), East (right),
-South (bottom), and North (top) are subdivided into the N-term (red), Middle (green), C-term (blue) subdomains for
-each tubulin monomer.
 
 
 ## Dependencies:
