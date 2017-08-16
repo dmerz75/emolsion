@@ -1,7 +1,16 @@
 # Emolsion
-A pdb and dcd reading/writing molecular mechanics evaluation program.
+Emolsion evaluates microtubule properties, particularly contacts and topologies, by reading the dcd
+into the pdb. It is capable of reading in a wide range of sizes and number of segments (i.e. the
+microtubule is often up to 312 chains of 427 to 438 atoms per segment for a total of 135k atoms).
 
-### Quickstart:
+The contacts, often determined by a spherical 8 angstrom cutoff, are evaluated both by monomer
+(alpha/beta) and by dimer. They are also evaluated by
+North, South, East, and West neighbors. They are further subdivided by their localization in each
+monomer as N-term, Middle term, or C-term contacts. As the coordinates evolve in time (reading the dcd),
+the contacts are tracked according to a tolerance criterion of 10 - 13 Angstroms. Their persistence is
+output to data files, easily plotted with the combination of numpy and matplotlib.
+
+## Quickstart:
 1. DCD reading: To read a pdb with corresponding dcd (from frames 6 - 27, stepping by 3 frames) ..
 
         make dcdr
@@ -15,20 +24,8 @@ stepping by 2 frames)..
 
 
 
-### Dependencies:
-Other softwares I often use with this project include:
-* cscope - developer's tool for browsing program code. Run `./scope.sh`, creates cscope.files and cscope.out.
-* [Boost] (http://www.boost.org/) - provides free peer-reviewed portable C++ source libraries.
 
 ## Microtubules' Contacts:
-### The microtubule map: a diagram
-This microtubule is arranged from South, the alpha-orange monomer end (negative), to North,
-the beta-blue/cyan monomer end(positive). (See figure below)
-
-Figure of microtubule:
-![Figure of Microtubule]
-(https://github.com/dmerz75/emolsion/blob/master/fig/microtubule.png)
-
 
 Contacts were evaluated according to the following diagram:
 
@@ -50,15 +47,34 @@ neighbors arise. They are:
 * 1-6  beta-east
 * 1-7  beta-west
 
-Figure of representative contacts:
+
+### The microtubule map: a diagram
+This microtubule is arranged from South, the alpha-orange monomer end (negative), to North,
+the beta-blue/cyan monomer end(positive). (See figure below)
+
+Figure of microtubule:
+![Figure of Microtubule](https://github.com/dmerz75/emolsion/blob/master/fig/microtubule.png)
+
+
+## Figure of representative contacts:
 ![Figure of representative contacts]
-(https://github.com/dmerz75/emolsion/blob/master/fig/contacts1.png)
+(https://github.com/dmerz75/emolsion/blob/master/fig/contacts65.png)
+
+![Figure of representative contacts]
+(https://github.com/dmerz75/emolsion/blob/master/fig/contacts79.png)
+
 Only external (not intra-alpha, intra-beta, or intra-dimer) contacts are shown. West (left), East (right),
 South (bottom), and North (top) are subdivided into the N-term (red), Middle (green), C-term (blue) subdomains for
 each tubulin monomer.
 
 
-### Notes/ Disclaimer/ Acknowledgements:
+## Dependencies:
+Other softwares I often use with this project include:
+* cscope - developer's tool for browsing program code. Run `./scope.sh`, creates cscope.files and cscope.out.
+* [Boost] (http://www.boost.org/) - provides free peer-reviewed portable C++ source libraries.
+
+
+## Notes/ Disclaimer/ Acknowledgements:
 Six header files are not mine. They are currently used because I believe permission was given
 provided the copyrights were retained and credit/notice given. They are:
 
