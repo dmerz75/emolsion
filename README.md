@@ -62,9 +62,8 @@ the beta-blue/cyan monomer end(positive). (See figure below)
 
 
 ## Figure of representative contacts:
-![Figure of representative contacts](https://github.com/dmerz75/emolsion/blob/master/fig/contacts65.png)
-
-![Figure of representative contacts](https://github.com/dmerz75/emolsion/blob/master/fig/contacts79.png)
+![Figure of representative contacts](https://github.com/dmerz75/emolsion/blob/master/fig/emolcontacts_3n_bysubdomain_seamup_doz5_fix2_reg_2_65dimer-0.png)
+![Figure of representative contacts](https://github.com/dmerz75/emolsion/blob/master/fig/emolcontacts_3n_bysubdomain_seamup_doz5_fix2_reg_2_79dimer-0.png)
 
 Only external (not intra-alpha, intra-beta, or intra-dimer) contacts are shown. West (left), East (right),
 South (bottom), and North (top) are subdivided into the N-term (red), Middle (green), C-term (blue) subdomains for
