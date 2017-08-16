@@ -24,9 +24,17 @@ stepping by 2 frames)..
 
 
 
+## Indentation of a microtubule.
+Microtubule indentation is in silico way to match the in vitro experiment, Atomic Force Microscopy (AFM).
+It is also representative of how severing proteins will apply force to the microtubule lattice to aid in or
+induce depolymerization. The 600 piconewtons measured in silico is comparable to AFM experiments.
+The first break usually occurs at 300 piconewtons, and the critical break occurs at the peak force.
+Contact analysis reveals the pathways and fractures behind these breaks.
+
+Figure of microtubule:
+![Figure of Microtubule](https://github.com/dmerz75/emolsion/blob/master/fig/microtubule.png)
 
 ## Microtubules' Contacts:
-
 Contacts were evaluated according to the following diagram:
 
             West
@@ -52,16 +60,11 @@ neighbors arise. They are:
 This microtubule is arranged from South, the alpha-orange monomer end (negative), to North,
 the beta-blue/cyan monomer end(positive). (See figure below)
 
-Figure of microtubule:
-![Figure of Microtubule](https://github.com/dmerz75/emolsion/blob/master/fig/microtubule.png)
-
 
 ## Figure of representative contacts:
-![Figure of representative contacts]
-(https://github.com/dmerz75/emolsion/blob/master/fig/contacts65.png)
+![Figure of representative contacts](https://github.com/dmerz75/emolsion/blob/master/fig/contacts65.png)
 
-![Figure of representative contacts]
-(https://github.com/dmerz75/emolsion/blob/master/fig/contacts79.png)
+![Figure of representative contacts](https://github.com/dmerz75/emolsion/blob/master/fig/contacts79.png)
 
 Only external (not intra-alpha, intra-beta, or intra-dimer) contacts are shown. West (left), East (right),
 South (bottom), and North (top) are subdivided into the N-term (red), Middle (green), C-term (blue) subdomains for
