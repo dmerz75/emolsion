@@ -1951,3 +1951,60 @@ SetChains sort_contacts2(SetContacts cn,MtIndexMap mtmap,MtNeighbors matrix)
 
 //     return contacts;
 // }
+
+SetBonds get_bonds(vAtoms allatoms)
+{
+    std::cout << "getting bonds." << std::endl;
+
+    SetBonds lst_bonds;
+    std::cout << "current bond list size: " << lst_bonds.size() << std::endl;
+
+    int i;
+    i = 0;
+
+    double bond_length;
+    bond_length = 0.0;
+
+
+    // for(auto a: allatoms)
+    // {
+    // std::cout << i << "  "
+    //           << a.x << " "
+    //           << a.y << " "
+    //           << a.z << " "
+    //           << std::endl;
+
+    while (i < allatoms.size()-1)
+   {
+
+        std::cout << i << " " << i+1 << std::endl;
+        bond_length = matom_distance(allatoms[i],allatoms[i+1]);
+        std::cout << "bond_length: " << bond_length << std::endl;
+
+        lst_bonds.push_back(boost::tuple<int,int,double>(
+                                i,
+                                i+1,
+                                bond_length));
+        i++;
+    }
+
+    return lst_bonds;
+}
+
+
+void write_bonds_to_topology(FILE *fp_topology,SetBonds bond_set)
+{
+    std::cout << "writing bonds to topology." << std::endl;
+
+
+    for(auto b: bond_set)
+    {
+        fprintf(fp_topology," %7d %7d %6.3f\n",
+                b.get<0>(),
+                b.get<1>(),
+                b.get<2>());
+
+
+    }
+
+}

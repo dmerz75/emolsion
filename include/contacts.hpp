@@ -53,6 +53,9 @@
 //
 //                    i1  i2  dist  mt1 mt2 eh
 typedef boost::tuple<int,int,double,int,int,double> Contact;
+typedef boost::tuple<int,int,double> Bond;
+typedef std::vector<Bond> SetBonds;
+
 typedef std::vector<Contact> SetContacts;
 typedef std::vector<SetContacts> SetNeighbors;
 typedef std::vector<SetContacts> SetFrameContacts;
@@ -95,6 +98,8 @@ SetContacts get_contacts_for_chain_later(vAtoms aa,
                                          double cutoff,
                                          SetContacts contacts);
 
+SetBonds get_bonds(vAtoms allatoms);
+
 
 MtNeighbors get_map_of_mtneighbors(vIndexGroup isel_chain,vAtoms aa,DimerList dimers);
 void print_mt_map(MtNeighbors mt_matrix);
@@ -113,6 +118,7 @@ void output_global_contacts_by_subdomain(SetGlobalContacts gc);
 void output_framecontact_set(SetFrameContacts framecontact_set);
 
 // for topology creation
+void write_bonds_to_topology(FILE *fp_topology,SetBonds bond_set);
 void write_contacts_to_file(FILE *fp_topology,SetContacts contact_set);
 SetContacts read_contacts_from_file(char filename[40]);
 // SetContacts sort_contacts(SetContacts cn,MtIndexMap mtmap,int c1, int c2);

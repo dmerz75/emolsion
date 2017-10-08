@@ -74,6 +74,7 @@ DCDW    = -DDCDREAD -DDCD_WRITE_B -DDCD_WRITE -DDCD_WRITE_E
 MT2     = -DMTBUILDMAP -DMTMAP2_BEFORE -DMTMAP2_DURING -DMTMAP2_AFTER
 PHIPSI  = -DPHIPSI_B -DPHIPSI_M -DPHIPSI_E
 TOPOw   = -DTOPO -DTOPO_write -DTOPO_write_mt -DMTBUILDMAP -DMTMAP2_BEFORE
+TOPObond= -DTOPO -DTOPO_write -DTOPO_write_bonds
 TOPOwh7 = -DTOPO -DTOPO_write -DTOPO_write_hsp70
 TOPOr   = -DTOPO -DTOPO_read
 TOPOmt  = -DDCDREAD -DTOPO -DTOPO_read -DTOPO_mt_BEFORE \
@@ -172,11 +173,16 @@ topo-w:
 # 6 dimer test system for topology writing.
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(TOPOw) -o test/$(EXEC)_topo_write
 	cd test && ./$(EXEC)_topo_write mtdimer6.pdb nil.dcd 0 16 2 emol_topology.top # 6-9 .. 21-24-27.
+topo-write-bonds:
+# 6 dimer test system for topology writing.
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(TOPObond) -o test/$(EXEC)_topo_write_bonds
+	cd test && ./$(EXEC)_topo_write_bonds atp4b393.pdb nil.dcd 0 16 2 emol_topology.top
 topo-w-hsp70:
 # 6 dimer test system for topology writing.
 # cd test && ./$(EXEC)_topo_writehsp70 fullhsp70.pdb nil.dcd 0 16 2 emol_topology.top
 # $(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(TOPOwh7) -o test/$(EXEC)_topo_writehsp70
-	cd test && ./$(EXEC)_topo_writehsp70 final_state44_ca_renum.pdb nil.dcd 0 16 2 emol_topology.top
+# cd test && ./$(EXEC)_topo_writehsp70 final_state44_ca_renum.pdb nil.dcd 0 16 2 emol_topology.top
+	cd test && ./$(EXEC)_topo_writehsp70 hsp704b3934eCA.pdb nil.dcd 0 16 2 emol_topology.top
 # for the peptide-linker-58
 # cd test && ./$(EXEC)_topo_writehsp70 fullhsp70_ca_renum.pdb nil.dcd 0 16 2 emol_topology.top
 topo-r:

@@ -82,7 +82,7 @@ west and east alpha lateral interfaces, finally followed by longitudinal south (
 ## Dependencies:
 Other softwares I often use with this project include:
 * cscope - developer's tool for browsing program code. Run `./scope.sh`, creates cscope.files and cscope.out.
-* [Boost] (http://www.boost.org/) - provides free peer-reviewed portable C++ source libraries.
+* [Boost](http://www.boost.org/) - provides free peer-reviewed portable C++ source libraries.
 
 
 ## Notes/ Disclaimer/ Acknowledgements:

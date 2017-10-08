@@ -670,6 +670,27 @@ int main(int argc, char *argv[]) {
 #endif // TOPO & TOPO_write & MTMAP2_BEFORE
 
 
+#ifdef TOPO_write_bonds
+    std::cout << "writing bond topology." << std::endl;
+
+    // FILE
+    FILE * fp_bond_topology;
+    fp_bond_topology = fopen("emol_bond_topology.top", "a+");
+    fprintf(fp_bond_topology,"# Topology written with emolsion.\n");
+    // write_contacts_to_file_header();
+
+
+    SetBonds lst_bonds;
+    lst_bonds = get_bonds(allatoms_ref);
+    std::cout << "number of bonds: " << lst_bonds.size() << std::endl;
+
+    write_bonds_to_topology(fp_bond_topology,lst_bonds);
+
+    fclose(fp_bond_topology);
+
+#endif
+
+
     // hsp70 topology:
 #ifdef TOPO_write_hsp70
     std::cout << "writing hsp70 topology." << std::endl;
