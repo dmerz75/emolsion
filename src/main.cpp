@@ -33,6 +33,7 @@ extern "C" {
 #include "contacts.hpp"
 #include "microtubule.hpp"
 #include "phipsiangle.hpp"
+#include "protofilaments.hpp"
 // #include "mt.hpp"
 // #include "config.hpp"
 // #include "ConfigFile.h"
@@ -638,7 +639,7 @@ int main(int argc, char *argv[]) {
     /* ---------------------------------------------------------
        Begin Topology.
        --------------------------------------------------------- */
-    std::cout << "Topology Tools:" << std::endl;
+    std::cout << "DTOPO: Topology Tools:" << std::endl;
 
 #ifdef TOPO_write
     // build write_contacts_to_file, 2x overloaded.
@@ -702,16 +703,16 @@ int main(int argc, char *argv[]) {
     SetContacts contact_set;
     SetContacts sub_set;
 
-    IndexGroup r2;
-    r2 = select(allatoms_ref,"resid 0 to 663");
-    std::cout << "resid 0-663: " << r2.size() << std::endl;
-    sub_set = get_contacts_for_chain(allatoms_ref,8.0,r2,r2);
+    // IndexGroup r2;
+    // r2 = select(allatoms_ref,"resid 0 to 663");
+    // std::cout << "resid 0-663: " << r2.size() << std::endl;
 
-    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
-    std::cout << "all-c: " << sub_set.size() << std::endl;
-    std::cout << "contacts_tot: " << contact_set.size() << std::endl;
-    allcontact += sub_set.size();
-    sub_set.clear();
+    // sub_set = get_contacts_for_chain(allatoms_ref,8.0,r2,r2);
+    // contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+    // allcontact += sub_set.size();
+    // sub_set.clear();
+    // std::cout << "all-c: " << sub_set.size() << std::endl;
+    // std::cout << "contacts_tot: " << contact_set.size() << std::endl;
 
 
     // IndexGroup nbd;
@@ -748,9 +749,6 @@ int main(int argc, char *argv[]) {
     // std::cout << "total_from_subdivisions: " << contact_set.size() << std::endl;
 
 
-    contact_set.clear();
-    sub_set.clear();
-
     // Full description here.
     // NBD:                                  eh
     // domain Ia, 1-39 and 116-188;         2.50
@@ -774,6 +772,14 @@ int main(int argc, char *argv[]) {
     // berthelot-lorentz mix 1.25 -- 1.35 = 1.29903 ~ 1.30
 
 
+    // All clear.
+    contact_set.clear();
+    sub_set.clear();
+
+    std::cout << "Contact sets were cleared." << std::endl;
+    // exit(0);
+
+
     IndexGroup ia7, ia8, ib, ia116, ia135, ia166, cloop;
     IndexGroup iia187, iib227, iia306, idl;
     IndexGroup beta, ab, alpha, nr;
@@ -791,7 +797,30 @@ int main(int argc, char *argv[]) {
     idl   = select(allatoms_ref,"resid 385 to 392");
     beta  = select(allatoms_ref,"resid 393 to 505"); // 1.35, mixed 1.55885
     alpha = select(allatoms_ref,"resid 506 to 598"); // 1.80
+#ifndef HSP70_NUC
     nr    = select(allatoms_ref,"resid 599 to 663"); // 1.55885
+    #else
+    nr    = select(allatoms_ref,"resid 599 to 656"); // 1.55885
+#endif
+
+    // was previously 2174.
+#ifdef HSP70_NUC
+    IndexGroup allca,nucleo;
+    allca = select(allatoms_ref,"resid 0 to 656");
+    nucleo= select(allatoms_ref,"resid 657 to 687");
+    // nucleo= select(allatoms_ref,"resid 657 to 683"); // if ADP
+#endif
+
+    // std::cout << "for resid 0 to 7: " << ia7.size() << std::endl;
+    // IndexGroup r2;
+    // r2 = select(allatoms_ref,"resid 0 to 663");
+    // std::cout << "resid 0-663: " << r2.size() << std::endl;
+    // sub_set = get_contacts_for_chain(allatoms_ref,8.0,r2,r2); ***
+    // allcontact += sub_set.size();
+    // contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end()); ***
+    // sub_set.clear();
+    // exit(0);
+
 
     // all intra
     sub_set = get_contacts_for_chain(allatoms_ref,8.0,ia7,ia7);
@@ -1157,9 +1186,17 @@ int main(int argc, char *argv[]) {
     sub_set = set_eh_contacts(sub_set,2.50);
     contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
 
+#ifdef HSP70_NUC
+    // allca with nucleo:
+    sub_set = get_contacts_for_chain(allatoms_ref,8.0,allca,nucleo);
+    sub_set = set_eh_contacts(sub_set,0.2);
+    std::cout << "The nucleotide contacts amounted to: " << sub_set.size() << std::endl;
+    contact_set.insert(contact_set.end(),sub_set.begin(),sub_set.end());
+#endif
+
+
 
     std::cout << "Total contacts accounted: " << contact_set.size() << std::endl;
-
     write_contacts_to_file(fp_topology,contact_set);
 
 
@@ -1254,6 +1291,32 @@ int main(int argc, char *argv[]) {
        End Topology.
        --------------------------------------------------------- */
 #endif // End TOPO
+
+#ifdef PFBEND_BEFORE
+    std::cout << "PFBEND_BEFORE:" << std::endl;
+
+    std::cout << "Determining Protofilaments: " << std::endl;
+
+    // std::vector<std::pair<int,int>> lst_Protofilaments;
+    // std::vector<protofilament> Protofilaments;
+
+
+    Protofilaments lst_allpf;
+    lst_allpf = determine_protofilaments(allatoms_ref);
+
+
+
+
+    for(auto pf:lst_allpf)
+    {
+        for(auto d: pf)
+        {
+            std::cout << d.first << ", " << d.second << std::endl;
+        }
+    }
+
+
+#endif // PFBEND_BEFORE
 
     /* ---------------------------------------------------------
        Analysis Before. Finish.
@@ -1674,6 +1737,12 @@ int main(int argc, char *argv[]) {
         local_phipsi.clear();
 
 #endif // PHIPSI End.
+
+#ifdef PFBEND_DURING
+        std::cout << "PFBEND_DURING:" << std::endl;
+
+
+#endif // PFBEND_DURING
 
 
         /* ---------------------------------------------------------

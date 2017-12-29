@@ -76,6 +76,7 @@ PHIPSI  = -DPHIPSI_B -DPHIPSI_M -DPHIPSI_E
 TOPOw   = -DTOPO -DTOPO_write -DTOPO_write_mt -DMTBUILDMAP -DMTMAP2_BEFORE
 TOPObond= -DTOPO -DTOPO_write -DTOPO_write_bonds
 TOPOwh7 = -DTOPO -DTOPO_write -DTOPO_write_hsp70
+TOPOwh7n= -DTOPO -DTOPO_write -DTOPO_write_hsp70 -DHSP70_NUC
 TOPOr   = -DTOPO -DTOPO_read
 TOPOmt  = -DDCDREAD -DTOPO -DTOPO_read -DTOPO_mt_BEFORE \
 	-DTOPO_mt_DURING -DTOPO_mt_AFTER -DMTBUILDMAP -DTOPO_mt_SORT
@@ -86,6 +87,8 @@ TOPOmt2 = -DDCDREAD -DTOPO -DTOPO_read -DTOPO_mt_BEFORE \
 # -DMTBUILDMAP -DTOPO_mt_SORT -DMTMAP2_DURING -DMTMAP2_AFTER -DTOPO_ext_only
 TOPOmt3 = -DDCDREAD -DTOPO -DTOPO_read \
 	-DMTBUILDMAP -DTOPO_mt_SORT -DMTMAP2_DURING -DMTMAP2_AFTER -DTOPO_ext_only
+PFBEND  = -DDCDREAD -DPFBEND_BEFORE -DPFBEND_DURING
+
 
 #  ---------------------------------------------------------  #
 #  Macros' Descriptions:                                      #
@@ -179,10 +182,17 @@ topo-write-bonds:
 	cd test && ./$(EXEC)_topo_write_bonds atp4b393.pdb nil.dcd 0 16 2 emol_topology.top
 topo-w-hsp70:
 # 6 dimer test system for topology writing.
-# cd test && ./$(EXEC)_topo_writehsp70 fullhsp70.pdb nil.dcd 0 16 2 emol_topology.top
-# $(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(TOPOwh7) -o test/$(EXEC)_topo_writehsp70
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(TOPOwh7) -o test/$(EXEC)_topo_writehsp70
 # cd test && ./$(EXEC)_topo_writehsp70 final_state44_ca_renum.pdb nil.dcd 0 16 2 emol_topology.top
-	cd test && ./$(EXEC)_topo_writehsp70 hsp704b3934eCA.pdb nil.dcd 0 16 2 emol_topology.top
+# cd test && ./$(EXEC)_topo_writehsp70 hsp704b3934eCA.pdb nil.dcd 0 16 2 emol_topology.top
+# cd test && ./$(EXEC)_topo_writehsp70 fullhsp70.pdb nil.dcd 0 16 2 emol_topology.top
+topo-w-hsp70-nuc-atp:
+# 6 dimer test system for topology writing.
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(TOPOwh7n) -o test/$(EXEC)_topo_writehsp70nuc
+	cd test && ./$(EXEC)_topo_writehsp70nuc atp4b393.pdb nil.dcd 0 16 2 emol_topology.top
+topo-w-hsp70-nuc-adp:
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(TOPOwh7n) -o test/$(EXEC)_topo_writehsp70nuc
+	cd test && ./$(EXEC)_topo_writehsp70nuc adp4b393.pdb nil.dcd 0 16 2 emol_topology.top
 # for the peptide-linker-58
 # cd test && ./$(EXEC)_topo_writehsp70 fullhsp70_ca_renum.pdb nil.dcd 0 16 2 emol_topology.top
 topo-r:
@@ -210,6 +220,10 @@ mtcontactstest:
 angles-all-atoms:
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(DCD) $(PHIPSI) -o test/$(EXEC)_phipsi_angles
 	cd test && ./$(EXEC)_phipsi_angles 2kho_implicit.pdb 2kho_implicit.dcd 10 100 2
+pfbend:
+# protofilament bending
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(PFBEND) -o test/$(EXEC)_mtpfbend
+	cd test && ./$(EXEC)_mtpfbend mt.ref.pdb mt_partial.dcd 6 32 2
 
 
 # ----------------------------------------------------------- #
