@@ -43,7 +43,7 @@ Figure of microtubule:
 ## Analysis: Curvature during breaking.
 Figure of the Alpha/Beta monomers' curvature.
 <!-- ![Figure of the curvature](https://github.com/dmerz75/emolsion/blob/master/fig/alphabetacurvaturedesc.png {width=400px height=400px}) -->
-<img src="https://github.com/dmerz75/emolsion/blob/master/fig/alphabetacurvaturedesc.png" width=900>
+<img src="https://github.com/dmerz75/emolsion/blob/master/fig/alphabetacurvaturedesc.png" width=800>
 
 
 ## Microtubules' Contacts:
