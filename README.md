@@ -80,11 +80,11 @@ The top is the longitudinal north (beta monomer) interface, followed by the west
 west and east alpha lateral interfaces, finally followed by longitudinal south (alpha monomer) interface.
 
 <!-- ![Figure of representative contacts](https://github.com/dmerz75/emolsion/blob/master/fig/contacts65.png) -->
-<img src="https://github.com/dmerz75/emolsion/blob/master/fig/contacts65.png" width=950 height=450>
+<img src="https://github.com/dmerz75/emolsion/blob/master/fig/contacts65.png" width=950>
 
 
 <!-- ![Figure of representative contacts](https://github.com/dmerz75/emolsion/blob/master/fig/contacts79.png) -->
-<img src="https://github.com/dmerz75/emolsion/blob/master/fig/contacts79.png" width=950 height=450>
+<img src="https://github.com/dmerz75/emolsion/blob/master/fig/contacts79.png" width=950>
 
 
 ## Analysis: Compile histograms.
@@ -92,23 +92,23 @@ west and east alpha lateral interfaces, finally followed by longitudinal south (
 
 Figure of Force-Indentation by position:
 <!-- ![Figure of Force-Indentation by position](https://github.com/dmerz75/emolsion/blob/master/fig/forceextensiondoz1thru5.png) -->
-<img src="https://github.com/dmerz75/emolsion/blob/master/fig/forceextensiondoz1thru5.png" width=800 height=500>
+<img src="https://github.com/dmerz75/emolsion/blob/master/fig/forceextensiondoz1thru5.png" width=950>
 
 Figure of the first and critical breaking forces:
 <!-- ![Figure of the first and critical breaking forces](https://github.com/dmerz75/emolsion/blob/master/fig/doz3firstcritbreak.png {width=400px height=800px}) -->
-<img src="https://github.com/dmerz75/emolsion/blob/master/fig/doz3firstcritbreak.png" height=800 width=600>
+<img src="https://github.com/dmerz75/emolsion/blob/master/fig/doz3firstcritbreak.png" height=800>
 
 
 Histogram of preliminary/example results:
 <!-- ![Histogram of the example results](https://github.com/dmerz75/emolsion/blob/master/fig/examplehistogram.png {width=800px height=400px}) -->
-<img src="https://github.com/dmerz75/emolsion/blob/master/fig/examplehistogram.png" width=800 height=400>
+<img src="https://github.com/dmerz75/emolsion/blob/master/fig/examplehistogram.png" width=950>
 
 
 ## Analysis: Upon Retraction of cantilever.
 
 Figure of contact recovery during retraction of the cantilever:
 <!-- ![Figure of contact recovery](https://github.com/dmerz75/emolsion/blob/master/fig/contactsbyretraction.png {width=800px height=600px}) -->
-<img src="https://github.com/dmerz75/emolsion/blob/master/fig/contactsbyretraction.png" width=900px>
+<img src="https://github.com/dmerz75/emolsion/blob/master/fig/contactsbyretraction.png" width=950px>
 
 
 
