@@ -88,16 +88,23 @@ west and east alpha lateral interfaces, finally followed by longitudinal south (
 
 
 ## Analysis: Compile histograms.
+From the five positions described above, multiple indentation trajectories were acquired. Getting meaningful information about
+the fracturing patterns and breaking methods would prove quite difficult if the force-indentation curves were all we had.
 
 Figure of Force-Indentation by position:
 <!-- ![Figure of Force-Indentation by position](https://github.com/dmerz75/emolsion/blob/master/fig/forceextensiondoz1thru5.png) -->
 <img src="https://github.com/dmerz75/emolsion/blob/master/fig/forceextensiondoz1thru5.png" width=950>
+
+Instead, by evaluating each force-indentation curve by the first and critical breaking points, corroborated by analysis of the loss
+of contacts, we identify the exact points at which the cantilever disrupts the microtubule's lattice, initially and critically.
 
 Figure of the first and critical breaking forces:
 <!-- ![Figure of the first and critical breaking forces](https://github.com/dmerz75/emolsion/blob/master/fig/doz3firstcritbreak.png {width=400px height=800px}) -->
 <img src="https://github.com/dmerz75/emolsion/blob/master/fig/doz3firstcritbreak.png" height=800>
 
 
+By collecting the first and critical breaking forces, statistics and histograms of the forces required at each break reveal the position dependence
+of severing by katanin or the corresponding cantilever.
 Histogram of preliminary/example results:
 <!-- ![Histogram of the example results](https://github.com/dmerz75/emolsion/blob/master/fig/examplehistogram.png {width=800px height=400px}) -->
 <img src="https://github.com/dmerz75/emolsion/blob/master/fig/examplehistogram.png" width=950>
@@ -105,6 +112,9 @@ Histogram of preliminary/example results:
 
 
 ## Analysis: Upon Retraction of cantilever.
+Retraction, recovery, and healing of the lattice was also investigated to identify its resilience. By revealing the point of no
+return (a permanent lack of recovery), the extent of contact loss reveals the kinetic limitations of the lattice to reform.
+
 Figure of contact recovery during retraction of the cantilever:
 <!-- ![Figure of contact recovery](https://github.com/dmerz75/emolsion/blob/master/fig/contactsbyretraction.png {width=800px height=600px}) -->
 <img src="https://github.com/dmerz75/emolsion/blob/master/fig/contactsbyretraction.png" width=950px>
