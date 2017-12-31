@@ -54,5 +54,6 @@ typedef std::vector<Protofilament> Protofilaments;
    --------------------------------------------------------- */
 // void ReadPDBfile(PDBfile *pdbfile,char filename[40]);
 Protofilaments determine_num_protofilaments(vAtoms aa);
+Protofilaments get_full_protofilament(vAtoms aa);
 
 #endif

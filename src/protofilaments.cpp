@@ -30,7 +30,8 @@
    --------------------------------------------------------- */
 // void ReadPDBfile (PDBfile *pdbfile,char filename[40],System sys)
 // protofilament determine_protofilaments(allatoms_ref);
-Protofilaments determine_num_protofilaments(vAtoms aa){
+Protofilaments determine_num_protofilaments(vAtoms aa)
+{
 
     Dimer dimer;
     Protofilament pf;
@@ -57,4 +58,16 @@ Protofilaments determine_num_protofilaments(vAtoms aa){
         pf.clear();
     }
     return lst_allpf;
+}
+
+Protofilaments get_full_protofilament(vAtoms aa)
+{
+    std::cout << "Inside function: get_full_protofilament." << std::endl;
+
+
+
+    // see if selection command can work in here.
+
+
+
 }

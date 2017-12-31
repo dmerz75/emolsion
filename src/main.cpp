@@ -1317,6 +1317,8 @@ int main(int argc, char *argv[]) {
         std::cout << pf[0].first << ", " << pf[0].second << std::endl;
     }
 
+    lst_allpf = get_full_protofilament(allatoms_ref);
+
 
 #endif // PFBEND_BEFORE
 
