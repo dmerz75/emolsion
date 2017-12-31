@@ -39,6 +39,10 @@ and quantified by contact analysis.
 Figure of microtubule:
 ![Figure of Microtubule](https://github.com/dmerz75/emolsion/blob/master/fig/microtubule.png)
 
+## Analysis: Curvature during breaking.
+Figure of the Alpha/Beta monomers' curvature.
+![Figure of the curvature](https://github.com/dmerz75/emolsion/blob/master/fig/alphabetacurvaturedesc.png {width=400px height=400px})
+
 ## Microtubules' Contacts:
 Contacts were evaluated according to the following diagram:
 
@@ -84,21 +88,18 @@ Figure of Force-Indentation by position:
 ![Figure of Force-Indentation by position](https://github.com/dmerz75/emolsion/blob/master/fig/forceextensiondoz1thru5.png)
 
 Figure of the first and critical breaking forces:
-![Figure of the first and critical breaking forces](https://github.com/dmerz75/emolsion/blob/master/fig/doz3firstcritbreak.png)
+![Figure of the first and critical breaking forces](https://github.com/dmerz75/emolsion/blob/master/fig/doz3firstcritbreak.png {width=400px height=800px})
 
 Histogram of preliminary/example results:
-![Histogram of the example results](https://github.com/dmerz75/emolsion/blob/master/fig/examplehistogram.png)
+![Histogram of the example results](https://github.com/dmerz75/emolsion/blob/master/fig/examplehistogram.png {width=800px height=400px})
 
 
 ## Analysis: Upon Retraction of cantilever.
 
 Figure of contact recovery during retraction of the cantilever:
-![Figure of contact recovery](https://github.com/dmerz75/emolsion/blob/master/fig/contactsbyretraction.png)
+![Figure of contact recovery](https://github.com/dmerz75/emolsion/blob/master/fig/contactsbyretraction.png {width=800px height=600px})
 
 
-## Analysis: Curvature during breaking.
-Figure of the Alpha/Beta monomers' curvature.
-![Figure of the curvature](https://github.com/dmerz75/emolsion/blob/master/fig/alphabetacurvaturedesc.png)
 
 
 
