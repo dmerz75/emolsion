@@ -23,8 +23,7 @@ stepping by 2 frames)..
         emol_dcdwriter mt.ref.pdb mt_partial.dcd 4 30 2
 
 
-
-## Indentation of a microtubule.
+## Investigating severing by Katanin: Indentation of a microtubule.
 Microtubule indentation is in silico way to match the in vitro experiment, Atomic Force Microscopy (AFM).
 It is also representative of how severing proteins will apply force to the microtubule lattice to aid in or
 induce depolymerization. The 600 piconewtons measured in silico is comparable to AFM experiments.
@@ -76,6 +75,30 @@ west and east alpha lateral interfaces, finally followed by longitudinal south (
 ![Figure of representative contacts](https://github.com/dmerz75/emolsion/blob/master/fig/contacts65.png)
 
 ![Figure of representative contacts](https://github.com/dmerz75/emolsion/blob/master/fig/contacts79.png)
+
+
+## Analysis: Compile histograms.
+
+
+Figure of Force-Indentation by position:
+![Figure of Force-Indentation by position](https://github.com/dmerz75/emolsion/blob/master/fig/force_extension_doz1thru5.png)
+
+Figure of the first and critical breaking forces:
+![Figure of the first and critical breaking forces](https://github.com/dmerz75/emolsion/blob/master/fig/doz3_first_crit_break.png)
+
+Histogram of preliminary/example results:
+![Histogram of the example results](https://github.com/dmerz75/emolsion/blob/master/fig/example_histogram.png)
+
+
+## Analysis: Upon Retraction of cantilever.
+
+Figure of contact recovery during retraction of the cantilever:
+![Figure of contact recovery](https://github.com/dmerz75/emolsion/blob/master/fig/contacts_by_retraction.png)
+
+
+## Analysis: Curvature during breaking.
+Figure of the Alpha/Beta monomers' curvature.
+![Figure of the curvature](https://github.com/dmerz75/emolsion/blob/master/fig/alpha_beta_curvature_desc.png)
 
 
 

@@ -1300,19 +1300,21 @@ int main(int argc, char *argv[]) {
     // std::vector<std::pair<int,int>> lst_Protofilaments;
     // std::vector<protofilament> Protofilaments;
 
-
+    Dimer dimer;
+    // Protofilament pf;
     Protofilaments lst_allpf;
-    lst_allpf = determine_protofilaments(allatoms_ref);
+    lst_allpf = determine_num_protofilaments(allatoms_ref);
 
 
-
-
+    // 1 dimer deep in the protofilament stack.
     for(auto pf:lst_allpf)
     {
-        for(auto d: pf)
-        {
-            std::cout << d.first << ", " << d.second << std::endl;
-        }
+        // for(auto d: pf)
+        // dimer = pf;
+        // {
+        // std::cout << dimer.first << ", " << dimer.second << std::endl;
+        // }
+        std::cout << pf[0].first << ", " << pf[0].second << std::endl;
     }
 
 
