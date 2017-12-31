@@ -88,7 +88,9 @@ Figure of Force-Indentation by position:
 ![Figure of Force-Indentation by position](https://github.com/dmerz75/emolsion/blob/master/fig/forceextensiondoz1thru5.png)
 
 Figure of the first and critical breaking forces:
-![Figure of the first and critical breaking forces](https://github.com/dmerz75/emolsion/blob/master/fig/doz3firstcritbreak.png {width=400px height=800px})
+<!-- ![Figure of the first and critical breaking forces](https://github.com/dmerz75/emolsion/blob/master/fig/doz3firstcritbreak.png {width=400px height=800px}) -->
+<img src="https://github.com/dmerz75/emolsion/blob/master/fig/doz3firstcritbreak.png" height="800" width="400">
+
 
 Histogram of preliminary/example results:
 ![Histogram of the example results](https://github.com/dmerz75/emolsion/blob/master/fig/examplehistogram.png {width=800px height=400px})
