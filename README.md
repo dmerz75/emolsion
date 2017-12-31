@@ -109,8 +109,6 @@ Histogram of preliminary/example results:
 <!-- ![Histogram of the example results](https://github.com/dmerz75/emolsion/blob/master/fig/examplehistogram.png {width=800px height=400px}) -->
 <img src="https://github.com/dmerz75/emolsion/blob/master/fig/examplehistogram.png" width=950>
 
-
-
 ## Analysis: Upon Retraction of cantilever.
 Retraction, recovery, and healing of the lattice was also investigated to identify its resilience. By revealing the point of no
 return (a permanent lack of recovery), the extent of contact loss reveals the kinetic limitations of the lattice to reform.
@@ -118,7 +116,6 @@ return (a permanent lack of recovery), the extent of contact loss reveals the ki
 Figure of contact recovery during retraction of the cantilever:
 <!-- ![Figure of contact recovery](https://github.com/dmerz75/emolsion/blob/master/fig/contactsbyretraction.png {width=800px height=600px}) -->
 <img src="https://github.com/dmerz75/emolsion/blob/master/fig/contactsbyretraction.png" width=950px>
-
 
 
 ## Dependencies:
