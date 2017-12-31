@@ -100,7 +100,8 @@ Histogram of preliminary/example results:
 ## Analysis: Upon Retraction of cantilever.
 
 Figure of contact recovery during retraction of the cantilever:
-![Figure of contact recovery](https://github.com/dmerz75/emolsion/blob/master/fig/contactsbyretraction.png {width=800px height=600px})
+<!-- ![Figure of contact recovery](https://github.com/dmerz75/emolsion/blob/master/fig/contactsbyretraction.png {width=800px height=600px}) -->
+<img src="https://github.com/dmerz75/emolsion/blob/master/fig/contactsbyretraction.png" width=800px height=600px>
 
 
 
