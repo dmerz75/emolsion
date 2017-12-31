@@ -81,24 +81,24 @@ west and east alpha lateral interfaces, finally followed by longitudinal south (
 
 
 Figure of Force-Indentation by position:
-![Figure of Force-Indentation by position](https://github.com/dmerz75/emolsion/blob/master/fig/force_extension_doz1thru5.png)
+![Figure of Force-Indentation by position](https://github.com/dmerz75/emolsion/blob/master/fig/forceextensiondoz1thru5.png)
 
 Figure of the first and critical breaking forces:
-![Figure of the first and critical breaking forces](https://github.com/dmerz75/emolsion/blob/master/fig/doz3_first_crit_break.png)
+![Figure of the first and critical breaking forces](https://github.com/dmerz75/emolsion/blob/master/fig/doz3firstcritbreak.png)
 
 Histogram of preliminary/example results:
-![Histogram of the example results](https://github.com/dmerz75/emolsion/blob/master/fig/example_histogram.png)
+![Histogram of the example results](https://github.com/dmerz75/emolsion/blob/master/fig/examplehistogram.png)
 
 
 ## Analysis: Upon Retraction of cantilever.
 
 Figure of contact recovery during retraction of the cantilever:
-![Figure of contact recovery](https://github.com/dmerz75/emolsion/blob/master/fig/contacts_by_retraction.png)
+![Figure of contact recovery](https://github.com/dmerz75/emolsion/blob/master/fig/contactsbyretraction.png)
 
 
 ## Analysis: Curvature during breaking.
 Figure of the Alpha/Beta monomers' curvature.
-![Figure of the curvature](https://github.com/dmerz75/emolsion/blob/master/fig/alpha_beta_curvature_desc.png)
+![Figure of the curvature](https://github.com/dmerz75/emolsion/blob/master/fig/alphabetacurvaturedesc.png)
 
 
 
