@@ -38,12 +38,12 @@ and quantified by contact analysis.
 
 Figure of microtubule:
 <!-- ![Figure of Microtubule](https://github.com/dmerz75/emolsion/blob/master/fig/microtubule.png) -->
-<img src="https://github.com/dmerz75/emolsion/blob/master/fig/microtubule.png" width=1000 height=700>
+<img src="https://github.com/dmerz75/emolsion/blob/master/fig/microtubule.png" width=900 height=700>
 
 ## Analysis: Curvature during breaking.
 Figure of the Alpha/Beta monomers' curvature.
 <!-- ![Figure of the curvature](https://github.com/dmerz75/emolsion/blob/master/fig/alphabetacurvaturedesc.png {width=400px height=400px}) -->
-<img src="https://github.com/dmerz75/emolsion/blob/master/fig/alphabetacurvaturedesc.png" width=1000 height=700>
+<img src="https://github.com/dmerz75/emolsion/blob/master/fig/alphabetacurvaturedesc.png" width=900 height=700>
 
 
 ## Microtubules' Contacts:
@@ -79,10 +79,11 @@ origin, the N-term(red), M-term(green), or C-term(blue) on the longitudinal and 
 The top is the longitudinal north (beta monomer) interface, followed by the west and east beta lateral interfaces, followed again by the
 west and east alpha lateral interfaces, finally followed by longitudinal south (alpha monomer) interface.
 
-![Figure of representative contacts](https://github.com/dmerz75/emolsion/blob/master/fig/contacts65.png)
+<!-- ![Figure of representative contacts](https://github.com/dmerz75/emolsion/blob/master/fig/contacts65.png) -->
 <img src="https://github.com/dmerz75/emolsion/blob/master/fig/contacts65.png" width=800 height=600>
 
-![Figure of representative contacts](https://github.com/dmerz75/emolsion/blob/master/fig/contacts79.png)
+
+<!-- ![Figure of representative contacts](https://github.com/dmerz75/emolsion/blob/master/fig/contacts79.png) -->
 <img src="https://github.com/dmerz75/emolsion/blob/master/fig/contacts79.png" width=800 height=600>
 
 
