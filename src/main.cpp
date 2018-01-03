@@ -1294,30 +1294,40 @@ int main(int argc, char *argv[]) {
 
 #ifdef PFBEND_BEFORE
     std::cout << "PFBEND_BEFORE:" << std::endl;
-
     std::cout << "Determining Protofilaments: " << std::endl;
+    // std::cout << "Building a system of protofilaments: " << std::endl;
 
     // std::vector<std::pair<int,int>> lst_Protofilaments;
     // std::vector<protofilament> Protofilaments;
 
-    Dimer dimer;
+    SystemPF syspf;
+    // syspf.num_protofilaments = 13;
+    syspf.build_initial_dimers();
+    syspf.print_PF();
+
+    // sorting allatoms into --> protofilaments.
+    syspf.get_first_ab_axes(allatoms_ref);
+    syspf.identify_chains_on_pf(allatoms_ref,isel_chain);
+
+
+    // for(auto c: isel_chain)
+    // {
+    //     std::cout << c.size() << std::endl;
+    //     // for(auto i: c)
+    //     // {
+    //     //     std::cout << i << " ";
+    //     // }
+    // }
+    // // exit(0);
+
+
+    syspf.print_PF();
+
+    // Dimer dimer;
     // Protofilament pf;
-    Protofilaments lst_allpf;
-    lst_allpf = determine_num_protofilaments(allatoms_ref);
-
-
-    // 1 dimer deep in the protofilament stack.
-    for(auto pf:lst_allpf)
-    {
-        // for(auto d: pf)
-        // dimer = pf;
-        // {
-        // std::cout << dimer.first << ", " << dimer.second << std::endl;
-        // }
-        std::cout << pf[0].first << ", " << pf[0].second << std::endl;
-    }
-
-    lst_allpf = get_full_protofilament(allatoms_ref);
+    // Protofilaments lst_allpf;
+    // lst_allpf = determine_num_protofilaments(allatoms_ref);
+    // lst_allpf = get_full_protofilament(allatoms_ref);
 
 
 #endif // PFBEND_BEFORE
@@ -1881,6 +1891,12 @@ int main(int argc, char *argv[]) {
 #endif // PHIPSI_E End.
 
 #endif // multi-dcd
+
+#ifdef PFBEND_AFTER
+    std::cout << "PFBEND After." << std::endl;
+
+
+#endif // PFBEND_AFTER
 
 
 #ifdef DCD_WRITE_E
