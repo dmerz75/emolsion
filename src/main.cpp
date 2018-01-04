@@ -1303,13 +1303,15 @@ int main(int argc, char *argv[]) {
     SystemPF syspf;
     // syspf.num_protofilaments = 13;
     syspf.build_initial_dimers();
+    syspf.get_unique_chainids(allatoms_ref,isel_chain);
+    // syspf.print_Chainids();
     syspf.print_PF();
 
     // sorting allatoms into --> protofilaments.
     syspf.get_first_ab_axes(allatoms_ref);
     syspf.identify_chains_on_pf(allatoms_ref,isel_chain);
-
-
+    syspf.print_PF();
+    syspf.get_bending_angle(allatoms_ref,isel_chain);
     // for(auto c: isel_chain)
     // {
     //     std::cout << c.size() << std::endl;
@@ -1320,8 +1322,6 @@ int main(int argc, char *argv[]) {
     // }
     // // exit(0);
 
-
-    syspf.print_PF();
 
     // Dimer dimer;
     // Protofilament pf;
@@ -1755,6 +1755,7 @@ int main(int argc, char *argv[]) {
 #ifdef PFBEND_DURING
         std::cout << "PFBEND_DURING:" << std::endl;
 
+        syspf.get_bending_angle(allatoms,isel_chain);
 
 #endif // PFBEND_DURING
 
