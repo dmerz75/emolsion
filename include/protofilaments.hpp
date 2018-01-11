@@ -368,56 +368,103 @@ inline void SystemPF::identify_chains_on_pf(vAtoms aa,vIndexGroup isel_chain)
 }
 inline void SystemPF::get_bending_angle(vAtoms aa,vIndexGroup isel_chain)
 {
-    std::cout << "Getting Bending Angle." << std::endl;
+    // Description:
+    // The bending angle is described as the 2-3 monomer-monomer vector
+    // dotted with the 4-5 monomer-monomer vector. Take the acos.
+    // Angles should increase from 0 degrees to 30++.
+
+    // std::cout << "Getting Bending Angle." << std::endl;
 
     // FILE
     FILE * fp_bending_angle;
-    fp_bending_angle = fopen("emol_mtpf_bending_angle.dat", "a+");
+    fp_bending_angle = fopen("emol_mtpfbending_angle.dat", "a+");
     fprintf(fp_bending_angle,"#\n");
-    // fprintf(fp_bending_angle,"\n");
 
-
-
-    // std::ostringstream select_a; // str: "chainid 0"
-    // std::ostringstream select_b;
-    // IndexGroup indexgroup_a;   // (1st) alpha,beta
-    // IndexGroup indexgroup_b;   // indices, and selection.
-    // Vector centroid_a;
-    // Vector centroid_b;
-    // Vector axis;
-
+    // Variables:
     int num_angles; // angles (dimers * 0.5 + 1), for 13: should be 7
     int start;
     int pf1, pf2, pf3, pf4;
     Vector cen1, cen2, cen3, cen4;
     Vector v12, v34, n12, n34;
-    double rad_ang, deg_ang;
+    double cos_ang, acos_ang;
 
-    // 0-1;
-    // 1-2;
-    // 2-3; *
-    // 3-4; *
-    // 4-5; *
-    // 5-6; *
-    // 6-7; *
-    // 7-8; *
-    // 8-9; *
-    // 9-10;
-    // 10-11;
+
+    // std::cout << "Num_Protofilaments: " << num_protofilaments << std::endl;
+    // std::cout << "Num_Dimers: " << protofilaments[0].size() << std::endl;
+
+    if(protofilaments[0].size() == 12)
+    {
+
+    }
+    else if(protofilaments[0].size() == 8)
+    {
+
+    }
+    else
+    {
+        fprintf(stderr,"[WARN] %s:%d: errno: %s\n",__FILE__,__LINE__,
+                "Protofilaments' bending angles were not computed.");
+        return;
+    }
+    num_angles = protofilaments[0].size() * 0.5 + 1;
+    start = (protofilaments[0].size() - num_angles) * 0.5; // 12->2, 8->1 (pos)
+    // 12:  7  (position 0 .. 1 .. 2)  --> 4-5
+    //  8:  5  (position 0 .. 1)       --> 2-3
+    // Dimers:   12, 8
+    // 1.  0-1
+    // 2.  2-3       _ 2-3  v 4-5
+    // 3.  4-5    _  _ 4-5  v 6-7
+    // 4.  6-7    _  _ 6-7  v 8-9
+    // 5.  8-9    _  _ 8-9  v 10-11
+    // 6.  10-11  _  _ 10-11 v 12-13
+    // 7.  12-13  _
+    // 8.  14-15  _
+    // 9.  16-17  _
+    // 10. 18-19
+    // 11. 20-21
+    // 12. 22-23
 
     for(auto pf: protofilaments)
     {
         // std::cout << pf[0].first << ", " << pf[0].second << std::endl;
         // std::cout << pf.size() << std::endl;
-        num_angles = pf.size() * 0.5 + 1;
-        start = (pf.size() - num_angles) * 0.5; // for the 13 case, starts at 2-3.
-
+        // num_angles = pf.size() * 0.5 + 1;
+        // start = (pf.size() - num_angles) * 0.5; // for the 13 case, starts at 2-3.
         for(int s=start; s < start + num_angles; s++)
         {
-            pf1 = s;
-            pf2 = s + 1;
-            pf3 = s + 2;
-            pf4 = s + 3;
+            pf1 = pf[s].first;
+            pf2 = pf[s].second;
+            pf3 = pf[s + 1].first;
+            pf4 = pf[s + 1].second;
+            // std::cout << "Monomers: " << pf1
+            //           << " " << pf2
+            //           << " " << pf3
+            //           << " " << pf4
+            //           << std::endl;
+            // 20, 21
+            //     Monomers: 72 73 98 99
+            //     Monomers: 98 99 124 125
+            //     Monomers: 124 125 150 151
+            //     Monomers: 150 151 176 177
+            //     Monomers: 176 177 202 203
+            //     Monomers: 202 203 228 229
+            //     Monomers: 228 229 254 255
+            //     22, 23
+            //     Monomers: 74 75 100 101
+            //     Monomers: 100 101 126 127
+            //     Monomers: 126 127 152 153
+            //     Monomers: 152 153 178 179
+            //     Monomers: 178 179 204 205
+            //     Monomers: 204 205 230 231
+            //     Monomers: 230 231 256 257
+            //     24, 25
+            //     Monomers: 76 77 102 103
+            //     Monomers: 102 103 128 129
+            //     Monomers: 128 129 154 155
+            //     Monomers: 154 155 180 181
+            //     Monomers: 180 181 206 207
+            //     Monomers: 206 207 232 233
+            //     Monomers: 232 233 258 259
 
             cen1 = get_centroid(isel_chain[pf1],aa);
             cen2 = get_centroid(isel_chain[pf2],aa);
@@ -430,10 +477,14 @@ inline void SystemPF::get_bending_angle(vAtoms aa,vIndexGroup isel_chain)
             n12 = normalize(v12);
             n34 = normalize(v34);
 
-            rad_ang = get_costheta(n12,n34);
-            deg_ang = acos(rad_ang);
+            cos_ang = get_costheta(n12,n34);
+            acos_ang = acos(cos_ang) / M_PI * 180.0;
 
-            fprintf(fp_bending_angle,"%4.1f ",deg_ang);
+            // v12.print_Vector();
+            // v34.print_Vector();
+            // std::cout << "Angle(cos): " << cos_ang << std::endl;
+            // std::cout << "Angle(acos): " << acos_ang << std::endl;
+            fprintf(fp_bending_angle,"%5.1f ",acos_ang);
         }
 
         fprintf(fp_bending_angle,"\n");

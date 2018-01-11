@@ -244,6 +244,9 @@ test-topo-mt:
 test-topo-mt-ext:
 # external only evaluated.
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(TOPOmt3) -o test/$(EXEC)_mtcontacts_topo_extonly
+pfbend_release:
+# protofilament bending
+	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(PFBEND) -DNDEBUG -o bin/$(EXEC)_mtpfbend
 
 
 
