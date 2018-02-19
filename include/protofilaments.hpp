@@ -389,6 +389,11 @@ inline void SystemPF::get_bending_angle(vAtoms aa,vIndexGroup isel_chain)
     double cos_ang, acos_ang;
 
 
+    Vector cendist;
+    double mag_cendist;
+    // double sin_ang, asin_ang;
+
+
     // std::cout << "Num_Protofilaments: " << num_protofilaments << std::endl;
     // std::cout << "Num_Dimers: " << protofilaments[0].size() << std::endl;
 
@@ -474,17 +479,46 @@ inline void SystemPF::get_bending_angle(vAtoms aa,vIndexGroup isel_chain)
             v12 = get_vector(cen1,cen2);
             v34 = get_vector(cen3,cen4);
 
+            cendist = get_vector(cen2,cen3);
+            mag_cendist = magnitude(cendist);
+
+
             n12 = normalize(v12);
             n34 = normalize(v34);
 
             cos_ang = get_costheta(n12,n34);
             acos_ang = acos(cos_ang) / M_PI * 180.0;
 
+            // sin_ang = get_sintheta(n12,n34);
+            // asin_ang = asin(sin_ang) / M_PI * 180.0;
+            // std::cout << "Angle(sin): " << sin_ang << std::endl;
+            // std::cout << "Angle(asin): " << asin_ang << std::endl;
+
+            // sin_ang = get_sintheta(n34,n12);
+            // asin_ang = asin(sin_ang) / M_PI * 180.0;
+            // std::cout << "Angle(sin): " << sin_ang << std::endl;
+            // std::cout << "Angle(asin): " << asin_ang << std::endl;
+
+
             // v12.print_Vector();
             // v34.print_Vector();
+
             // std::cout << "Angle(cos): " << cos_ang << std::endl;
             // std::cout << "Angle(acos): " << acos_ang << std::endl;
+
+
+
+            // if(sin_ang < 0)
+            // {
+            //     acos_ang = acos_ang * -1;
+            //     fprintf(stderr,"[WARN] %s:%d: errno: %s\n",__FILE__,__LINE__,
+            //             "A negative arcsin found!");
+            //     std::cout << "Angle(sin): " << sin_ang << std::endl;
+            //     std::cout << "Angle(asin): " << asin_ang << std::endl;
+            // }
+
             fprintf(fp_bending_angle,"%5.1f ",acos_ang);
+            fprintf(fp_bending_angle,"%5.1f ",mag_cendist);
         }
 
         fprintf(fp_bending_angle,"\n");
