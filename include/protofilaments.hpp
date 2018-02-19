@@ -385,12 +385,18 @@ inline void SystemPF::get_bending_angle(vAtoms aa,vIndexGroup isel_chain)
     int start;
     int pf1, pf2, pf3, pf4;
     Vector cen1, cen2, cen3, cen4;
-    Vector v12, v34, n12, n34;
-    double cos_ang, acos_ang;
+    Vector v12, v23, v34, n12, n23, n34;
+    double cos_ang, acos_ang, sign;
+
+    // Vector cross13, cross24;
+    Vector cross14;
+    // Vector n13, n24;
 
 
-    Vector cendist;
-    double mag_cendist;
+
+    // Vector cendist;
+    // double mag_cendist;
+    double m23;
     // double sin_ang, asin_ang;
 
 
@@ -477,17 +483,39 @@ inline void SystemPF::get_bending_angle(vAtoms aa,vIndexGroup isel_chain)
             cen4 = get_centroid(isel_chain[pf4],aa);
 
             v12 = get_vector(cen1,cen2);
+            v23 = get_vector(cen2,cen3);
             v34 = get_vector(cen3,cen4);
 
-            cendist = get_vector(cen2,cen3);
-            mag_cendist = magnitude(cendist);
-
+            m23 = magnitude(v23);
 
             n12 = normalize(v12);
+            n23 = normalize(v23);
             n34 = normalize(v34);
 
+            // cross13 = cross_product(n12,n23);
+            // cross24 = cross_product(n23,n34);
+            // n13 = normalize(cross13);
+            // n24 = normalize(cross24);
+
+
+            // Next step for dihedral angle calculation:
+            // Get the orthogonal unit vectors.
             cos_ang = get_costheta(n12,n34);
             acos_ang = acos(cos_ang) / M_PI * 180.0;
+
+            // http://x3dna.org/highlights/how-to-calculate-torsion-angle
+            // sign:
+            cross14 = cross_product(n12,n34);
+            sign = dot_product(cross14,n23);
+
+            if (sign < 0)
+            {
+                acos_ang = -1 * acos_ang;
+                // std::cout << "Negative!" << std::endl;
+            }
+            // std::cout << "Angle(cos): " << cos_ang << std::endl;
+            // std::cout << "Angle(acos): " << acos_ang << std::endl;
+
 
             // sin_ang = get_sintheta(n12,n34);
             // asin_ang = asin(sin_ang) / M_PI * 180.0;
@@ -503,8 +531,6 @@ inline void SystemPF::get_bending_angle(vAtoms aa,vIndexGroup isel_chain)
             // v12.print_Vector();
             // v34.print_Vector();
 
-            // std::cout << "Angle(cos): " << cos_ang << std::endl;
-            // std::cout << "Angle(acos): " << acos_ang << std::endl;
 
 
 
@@ -518,7 +544,7 @@ inline void SystemPF::get_bending_angle(vAtoms aa,vIndexGroup isel_chain)
             // }
 
             fprintf(fp_bending_angle,"%5.1f ",acos_ang);
-            fprintf(fp_bending_angle,"%5.1f ",mag_cendist);
+            fprintf(fp_bending_angle,"%5.1f ",m23);
         }
 
         fprintf(fp_bending_angle,"\n");
