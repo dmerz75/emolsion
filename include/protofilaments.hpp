@@ -372,7 +372,6 @@ inline void SystemPF::get_bending_angle(vAtoms aa,vIndexGroup isel_chain)
     // The bending angle is described as the 2-3 monomer-monomer vector
     // dotted with the 4-5 monomer-monomer vector. Take the acos.
     // Angles should increase from 0 degrees to 30++.
-
     // std::cout << "Getting Bending Angle." << std::endl;
 
     // FILE
@@ -384,22 +383,19 @@ inline void SystemPF::get_bending_angle(vAtoms aa,vIndexGroup isel_chain)
     int num_angles; // angles (dimers * 0.5 + 1), for 13: should be 7
     int start;
     int pf1, pf2, pf3, pf4;
+
     Vector cen1, cen2, cen3, cen4;
-    Vector v12, v23, v34, n12, n23, n34;
+    Vector v12, v23, v34;
+    Vector n12, n23, n34;
+    Vector cross13, cross14, cross24;
+    Vector n13, n24;
+
     double cos_ang, acos_ang, sign;
-
-    // Vector cross13, cross24;
-    Vector cross14;
-    // Vector n13, n24;
-
-
+    double m23;
 
     // Vector cendist;
     // double mag_cendist;
-    double m23;
     // double sin_ang, asin_ang;
-
-
     // std::cout << "Num_Protofilaments: " << num_protofilaments << std::endl;
     // std::cout << "Num_Dimers: " << protofilaments[0].size() << std::endl;
 
@@ -477,45 +473,68 @@ inline void SystemPF::get_bending_angle(vAtoms aa,vIndexGroup isel_chain)
             //     Monomers: 206 207 232 233
             //     Monomers: 232 233 258 259
 
+            // 4 Centroids.
             cen1 = get_centroid(isel_chain[pf1],aa);
             cen2 = get_centroid(isel_chain[pf2],aa);
             cen3 = get_centroid(isel_chain[pf3],aa);
             cen4 = get_centroid(isel_chain[pf4],aa);
 
+            // 3 Vectors.
+            // v12 = get_vector(cen2,cen1); // !REVERSED
             v12 = get_vector(cen1,cen2);
             v23 = get_vector(cen2,cen3);
             v34 = get_vector(cen3,cen4);
 
+            // Middle vector length. Dimer-Dimer separation.
             m23 = magnitude(v23);
 
+            // 3 normalized vectors.
             n12 = normalize(v12);
             n23 = normalize(v23);
             n34 = normalize(v34);
+            // Can remove the normalization later, after the cross.
+            // cross v23 with v12
+            // cross v23 with v34
 
-            // cross13 = cross_product(n12,n23);
-            // cross24 = cross_product(n23,n34);
-            // n13 = normalize(cross13);
-            // n24 = normalize(cross24);
+
+            // Normal to the Dihedral Planes.
+            cross13 = cross_product(v23,v12);
+            cross24 = cross_product(v23,v34);
+            n13 = normalize(cross13);
+            n24 = normalize(cross24);
+
+            // Law of Sines Rule:  a x b / |a| |b|
+            // The defining cross product, for 2 vectors passing by each other.
+            // Right hand rule: thumb out, thumb in.
+            cross14 = cross_product(n13,n24);
+            sign = dot_product(cross14,n23);
 
 
             // Next step for dihedral angle calculation:
             // Get the orthogonal unit vectors.
             cos_ang = get_costheta(n12,n34);
-            acos_ang = acos(cos_ang) / M_PI * 180.0;
+            acos_ang = (acos(cos_ang) * 180.0) / M_PI;
 
+            // ALTERNATE:
             // http://x3dna.org/highlights/how-to-calculate-torsion-angle
             // sign:
-            cross14 = cross_product(n12,n34);
-            sign = dot_product(cross14,n23);
+            // cross14 = cross_product(n12,n34);
+            // sign = dot_product(cross14,n23);
 
+            // std::cout << "The sign: " << sign << std::endl;
             if (sign < 0)
             {
                 acos_ang = -1 * acos_ang;
+                // acos_ang = -1 * acos_ang + 180.0;
                 // std::cout << "Negative!" << std::endl;
             }
+            // else
+            // {
+                // acos_ang = acos_ang - 180.0;
+            // }
+
             // std::cout << "Angle(cos): " << cos_ang << std::endl;
             // std::cout << "Angle(acos): " << acos_ang << std::endl;
-
 
             // sin_ang = get_sintheta(n12,n34);
             // asin_ang = asin(sin_ang) / M_PI * 180.0;
@@ -527,12 +546,8 @@ inline void SystemPF::get_bending_angle(vAtoms aa,vIndexGroup isel_chain)
             // std::cout << "Angle(sin): " << sin_ang << std::endl;
             // std::cout << "Angle(asin): " << asin_ang << std::endl;
 
-
             // v12.print_Vector();
             // v34.print_Vector();
-
-
-
 
             // if(sin_ang < 0)
             // {
@@ -543,8 +558,8 @@ inline void SystemPF::get_bending_angle(vAtoms aa,vIndexGroup isel_chain)
             //     std::cout << "Angle(asin): " << asin_ang << std::endl;
             // }
 
-            fprintf(fp_bending_angle,"%5.1f ",acos_ang);
-            fprintf(fp_bending_angle,"%5.1f ",m23);
+            fprintf(fp_bending_angle,"%6.1f ",acos_ang);
+            fprintf(fp_bending_angle,"%6.1f ",m23);
         }
 
         fprintf(fp_bending_angle,"\n");
