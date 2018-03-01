@@ -224,7 +224,8 @@ angles-all-atoms:
 pfbend:
 # protofilament bending
 	$(CXX) $(CPPFILES) $(CF) $(INC) $(LIB) $(PFBEND) -o test/$(EXEC)_mtpfbend
-	cd test && ./$(EXEC)_mtpfbend mt.ref.pdb mt_partial.dcd 6 32 2
+	cd test &&./$(EXEC)_mtpfbend mt8doz_poz2_reg1010.pdb mt8doz_poz2_reg1010.dcd 8 475 24
+# cd test && ./$(EXEC)_mtpfbend mt.ref.pdb mt_partial.dcd 6 32 2
 
 
 # ----------------------------------------------------------- #

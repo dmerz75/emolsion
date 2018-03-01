@@ -220,6 +220,8 @@ inline void SystemPF::identify_chains_on_pf(vAtoms aa,vIndexGroup isel_chain)
     i = 0;
     a = b = csel = -1;
 
+    int c = 0;
+
     int counter = 0;
     std::ostringstream chainid;
 
@@ -256,13 +258,12 @@ inline void SystemPF::identify_chains_on_pf(vAtoms aa,vIndexGroup isel_chain)
         for(auto pf: protofilaments) // of pair/tuple. (0,1),(2,3)..
         {
             // std::cout << pf[0].first << ", " << pf[0].second << std::endl;
-
             // USE THIS
-            // std::cout << i << " --which protofilament-- "
-            //           << pf.back().first
-            //           << ", "
-            //           << pf.back().second
-            //           << std::endl;
+            std::cout << i << " --which protofilament-- "
+                      << pf.back().first
+                      << ", "
+                      << pf.back().second
+                      << std::endl;
 
             vector_ab = vAxis[i].get<0>();
             centroida = vAxis[i].get<1>();
@@ -276,19 +277,21 @@ inline void SystemPF::identify_chains_on_pf(vAtoms aa,vIndexGroup isel_chain)
                 // std::cout << "chainid: " << aa[c[0]].chainid
                 //           << " (" << c.size() << ")" << std::endl;
 
-
-                // csel = unused_chainids[0];
+                // csel: integer of the chainid.
                 csel = unused_chainids[0];
-                // std::cout << "csel(1): " << csel << std::endl;
+                // std::cout << "csel(pf): " << csel << std::endl;
                 // std::cout << "i: " << i << std::endl;
                 // std::cout << "ab: " << a << ", " << b << std::endl;
-
-
 
                 // if(i > isel_chain.size())
                 // {
                 //     break;
                 // }
+                if(i >= num_protofilaments)
+                {
+                    break;
+                }
+
                 if(counter + num_protofilaments * 2 + 1 >= isel_chain.size())
                 {
                     break;
@@ -320,6 +323,7 @@ inline void SystemPF::identify_chains_on_pf(vAtoms aa,vIndexGroup isel_chain)
 
                 // Not.
                 // Remove a,b:
+                // Hard cosine and sine.
                 if((dcos > 0.970) && (dsin < 0.06))
                 {
                     counter += 1;
@@ -345,7 +349,6 @@ inline void SystemPF::identify_chains_on_pf(vAtoms aa,vIndexGroup isel_chain)
                     continue;
                 }
 
-
                 if((a == -1) || (b == -1))
                 {
                     continue;
@@ -361,7 +364,13 @@ inline void SystemPF::identify_chains_on_pf(vAtoms aa,vIndexGroup isel_chain)
             }
 
             i += 1; // 0-12 for the 13 protofilaments.
-            // break;
+
+            // std::cout << "num_pf: " << num_protofilaments << std::endl;
+            // if(i >= num_protofilaments)
+            // {
+            //     break;
+            // }
+
         } // the protofilaments.
 
     } // np for loop
