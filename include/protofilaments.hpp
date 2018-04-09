@@ -82,7 +82,12 @@ public:
     void print_Chainids();
     void get_first_ab_axes(vAtoms aa);
     void identify_chains_on_pf(vAtoms aa,vIndexGroup isel_chain);
-    void get_bending_angle(vAtoms aa,vIndexGroup isel_chain);
+    void get_bending_angle1(vAtoms aa,vIndexGroup isel_chain);
+    void get_bending_angle2(vAtoms aa,vIndexGroup isel_chain);
+
+
+    void get_distance_centroid(vAtoms aa,vIndexGroup isel_chain);
+    void get_beta_angle(vAtoms aa,vIndexGroup isel_chain);
 
 private:
 
@@ -375,7 +380,7 @@ inline void SystemPF::identify_chains_on_pf(vAtoms aa,vIndexGroup isel_chain)
 
     } // np for loop
 }
-inline void SystemPF::get_bending_angle(vAtoms aa,vIndexGroup isel_chain)
+inline void SystemPF::get_bending_angle1(vAtoms aa,vIndexGroup isel_chain)
 {
     // Description:
     // The bending angle is described as the 2-3 monomer-monomer vector
@@ -448,6 +453,7 @@ inline void SystemPF::get_bending_angle(vAtoms aa,vIndexGroup isel_chain)
         // start = (pf.size() - num_angles) * 0.5; // for the 13 case, starts at 2-3.
         for(int s=start; s < start + num_angles; s++)
         {
+            // Identify 4 monomers.
             pf1 = pf[s].first;
             pf2 = pf[s].second;
             pf3 = pf[s + 1].first;
@@ -531,19 +537,21 @@ inline void SystemPF::get_bending_angle(vAtoms aa,vIndexGroup isel_chain)
             // sign = dot_product(cross14,n23);
 
             // std::cout << "The sign: " << sign << std::endl;
-            if (sign < 0)
-            {
-                acos_ang = -1 * acos_ang;
-                // acos_ang = -1 * acos_ang + 180.0;
-                // std::cout << "Negative!" << std::endl;
-            }
+            // if (sign < 0)
+            // {
+            //     acos_ang = -1 * acos_ang;
+            //     // acos_ang = -1 * acos_ang + 180.0;
+            //     // std::cout << "Negative!" << std::endl;
+            // }
+
+
             // else
             // {
                 // acos_ang = acos_ang - 180.0;
             // }
 
-            // std::cout << "Angle(cos): " << cos_ang << std::endl;
-            // std::cout << "Angle(acos): " << acos_ang << std::endl;
+            std::cout << "Angle(cos): " << cos_ang << std::endl;
+            std::cout << "Angle(acos): " << acos_ang << std::endl;
 
             // sin_ang = get_sintheta(n12,n34);
             // asin_ang = asin(sin_ang) / M_PI * 180.0;
@@ -572,6 +580,7 @@ inline void SystemPF::get_bending_angle(vAtoms aa,vIndexGroup isel_chain)
         }
 
         fprintf(fp_bending_angle,"\n");
+        // exit(0);
 
         // Dimers:
         // for(auto d: pf)
@@ -583,14 +592,343 @@ inline void SystemPF::get_bending_angle(vAtoms aa,vIndexGroup isel_chain)
     }
 
     fclose(fp_bending_angle);
+    // exit(0);
 
 }
 
-/* ---------------------------------------------------------
-   function declarations:
-   --------------------------------------------------------- */
-// void ReadPDBfile(PDBfile *pdbfile,char filename[40]);
-// Protofilaments determine_num_protofilaments(vAtoms aa);
-// Protofilaments get_full_protofilament(vAtoms aa);
+
+inline void SystemPF::get_bending_angle2(vAtoms aa,vIndexGroup isel_chain)
+{
+    // Description:
+    // The bending angle is described as the 2-3 monomer-monomer vector
+    // dotted with the 4-5 monomer-monomer vector. Take the acos.
+    // Angles should increase from 0 degrees to 30++.
+    // std::cout << "Getting Bending Angle." << std::endl;
+
+    // FILE
+    FILE * fp_bending_angle;
+    fp_bending_angle = fopen("emol_mtpfbending_angle.dat", "a+");
+    fprintf(fp_bending_angle,"#\n");
+
+    // Variables:
+    int num_angles; // angles (dimers * 0.5 + 1), for 13: should be 7
+    int start;
+    int pf1, pf2, pf3, pf4;
+
+    Vector cen1, cen2, cen3, cen4;
+    Vector v12, v23, v34;
+    Vector n12, n23, n34;
+
+
+    // Vector cross13, cross14, cross24;
+    // Vector n13, n24;
+    // double cos_ang, acos_ang, sign;
+
+    double m23;
+    Vector c12, c23, on12, on23, n1b2;
+    double dihedral_rad, dihedral_deg, yv, xv;
+
+    // std::cout << "Num_Protofilaments: " << num_protofilaments << std::endl;
+    // std::cout << "Num_Dimers: " << protofilaments[0].size() << std::endl;
+    if(protofilaments[0].size() == 12)
+    {
+
+    }
+    else if(protofilaments[0].size() == 8)
+    {
+
+    }
+    else
+    {
+        fprintf(stderr,"[WARN] %s:%d: errno: %s\n",__FILE__,__LINE__,
+                "Protofilaments' bending angles were not computed.");
+        return;
+    }
+    num_angles = protofilaments[0].size() * 0.5 + 1;
+    start = (protofilaments[0].size() - num_angles) * 0.5; // 12->2, 8->1 (pos)
+
+
+
+    for(auto pf: protofilaments)
+    {
+
+        for(int s=start; s < start + num_angles; s++)
+        {
+            // Identify 4 monomers.
+            pf1 = pf[s].first;
+            pf2 = pf[s].second;
+            pf3 = pf[s + 1].first;
+            pf4 = pf[s + 1].second;
+
+            // 4 Centroids.
+            cen1 = get_centroid(isel_chain[pf1],aa);
+            cen2 = get_centroid(isel_chain[pf2],aa);
+            cen3 = get_centroid(isel_chain[pf3],aa);
+            cen4 = get_centroid(isel_chain[pf4],aa);
+
+            // 3 Vectors.
+            v12 = get_vector(cen1,cen2);
+            v23 = get_vector(cen2,cen3);
+            v34 = get_vector(cen3,cen4);
+
+            // 3 normalized vectors.
+            n12 = normalize(v12);
+            n23 = normalize(v23); // b2
+            n34 = normalize(v34);
+
+            // Middle vector length. Dimer-Dimer separation.
+            m23 = magnitude(v23);
+
+
+            // Normal to the Dihedral Planes. (orthonormal).
+            // https://math.stackexchange.com/questions/47059/
+            // how-do-i-calculate-a-dihedral-angle-given-cartesian-coordinates
+            c12 = cross_product(v12,v23);
+            on12 = normalize(c12);        // n1
+
+            c23 = cross_product(v23,v34);
+            on23 = normalize(c23);        // n2
+
+            // on12, n23,
+            n1b2 = cross_product(on12,n23); // m1
+
+            xv = dot_product(n12,n23);
+            yv = dot_product(n1b2,on23);
+
+            dihedral_rad = atan2(yv,xv);
+            dihedral_deg = dihedral_rad * 180.0 / M_PI;
+            // std::cout << "Angle: " << dihedral_deg << std::endl;
+
+            fprintf(fp_bending_angle,"%6.1f ",dihedral_deg);
+            fprintf(fp_bending_angle,"%6.1f ",m23);
+
+        }
+
+        fprintf(fp_bending_angle,"\n");
+
+    }
+
+    fclose(fp_bending_angle);
+
+}
+
+
+inline void SystemPF::get_distance_centroid(vAtoms aa,vIndexGroup isel_chain)
+{
+    // Description:
+
+
+    // FILE
+    FILE * fp_dist_centroid;
+    fp_dist_centroid = fopen("emol_mtpfdist_centroid.dat","a+");
+    fprintf(fp_dist_centroid,"#\n");
+
+    // Variables:
+    // int num_angles; // angles (dimers * 0.5 + 1), for 13: should be 7
+    // int start;
+    int pf1, pf2, pf3, pf4;
+    Vector cen1, cen2, cen3, cen4;
+    Vector v23;
+
+    // Vector v12, v23, v34;
+    // Vector n12, n23, n34;
+
+    double m23;
+    // Vector c12, c23, on12, on23, n1b2;
+    // double dihedral_rad, dihedral_deg, yv, xv;
+
+    // std::cout << "Num_Protofilaments: " << num_protofilaments << std::endl;
+    // std::cout << "Num_Dimers: " << protofilaments[0].size() << std::endl;
+    // std::cout << num_protofilaments << std::endl;
+    // std::cout << protofilaments[0].size() << std::endl;
+
+    if(protofilaments[0].size() == 12)
+    {
+
+    }
+    else if(protofilaments[0].size() == 8)
+    {
+
+    }
+    else
+    {
+        fprintf(stderr,"[WARN] %s:%d: errno: %s\n",__FILE__,__LINE__,
+                "Protofilaments' bending angles were not computed.");
+        return;
+    }
+    // num_angles = protofilaments[0].size() * 0.5 + 1;
+    // start = (protofilaments[0].size() - num_angles) * 0.5; // 12->2, 8->1 (pos)
+
+
+
+
+    for(auto pf: protofilaments)
+    {
+
+        for(int s=0; s < protofilaments[0].size()-1; s++)
+        {
+        //     // Identify 4 monomers.
+            pf1 = pf[s].first;
+            pf2 = pf[s].second;
+            pf3 = pf[s + 1].first;
+            pf4 = pf[s + 1].second;
+
+            // std::cout << pf1 << " " << pf2 << " " << pf3 << " "<< pf4 << std::endl;
+
+        //     // 4 Centroids.
+        //     // cen1 = get_centroid(isel_chain[pf1],aa);
+            cen2 = get_centroid(isel_chain[pf2],aa);
+            cen3 = get_centroid(isel_chain[pf3],aa);
+        //     // cen4 = get_centroid(isel_chain[pf4],aa);
+
+        //     // 3 Vectors.
+        //     // v12 = get_vector(cen1,cen2);
+            v23 = get_vector(cen2,cen3);
+        //     // v34 = get_vector(cen3,cen4);
+
+        //     // 3 normalized vectors.
+        //     // n12 = normalize(v12);
+        //     // n23 = normalize(v23); // b2
+        //     // n34 = normalize(v34);
+
+        //     // Middle vector length. Dimer-Dimer separation.
+            m23 = magnitude(v23);
+
+        //     // Normal to the Dihedral Planes. (orthonormal).
+        //     // https://math.stackexchange.com/questions/47059/
+        //     // how-do-i-calculate-a-dihedral-angle-given-cartesian-coordinates
+        //     // c12 = cross_product(v12,v23);
+        //     // on12 = normalize(c12);        // n1
+
+        //     // c23 = cross_product(v23,v34);
+        //     // on23 = normalize(c23);        // n2
+
+        //     // // on12, n23,
+        //     // n1b2 = cross_product(on12,n23); // m1
+
+        //     // xv = dot_product(n12,n23);
+        //     // yv = dot_product(n1b2,on23);
+
+        //     // dihedral_rad = atan2(yv,xv);
+        //     // dihedral_deg = dihedral_rad * 180.0 / M_PI;
+        //     // std::cout << "Angle: " << dihedral_deg << std::endl;
+
+            fprintf(fp_dist_centroid,"%3d %3d ",pf2,pf3);
+            fprintf(fp_dist_centroid,"%6.1f ",m23);
+            fprintf(fp_dist_centroid,"%6.1f %6.1f %6.1f ",cen2.x,cen2.y,cen2.z);
+            fprintf(fp_dist_centroid,"%6.1f %6.1f %6.1f ",cen3.x,cen3.y,cen3.z);
+            fprintf(fp_dist_centroid,"\n");
+
+        //     fprintf(fp_dist_centroid,"%6.1f %6.1f %6.1f ",cen3.x,cen3.y,cen3.z);
+        }
+
+        // fprintf(fp_dist_centroid,"\n");
+
+    }
+
+    fclose(fp_dist_centroid);
+
+}
+
+
+inline void SystemPF::get_beta_angle(vAtoms aa,vIndexGroup isel_chain)
+{
+    // Description:
+
+
+    // FILE
+    FILE * fp_beta_angle;
+    fp_beta_angle = fopen("emol_mtpf_beta_angle.dat","a+");
+    fprintf(fp_beta_angle,"#\n");
+
+    // Variables:
+    // int num_angles; // angles (dimers * 0.5 + 1), for 13: should be 7
+    // int start;
+    int pf1, pf2, pf3, pfa;
+    Vector cen1, cen2, cen3, cen4;
+    Vector n12,n23;
+    Vector v12,v23,va;
+    double m,vdot,acos_vdot;
+
+
+    // std::cout << "Num_Protofilaments: " << num_protofilaments << std::endl;
+    // std::cout << "Num_Dimers: " << protofilaments[0].size() << std::endl;
+    // std::cout << num_protofilaments << std::endl;
+    // std::cout << protofilaments[0].size() << std::endl;
+
+    if(protofilaments[0].size() == 12)
+    {
+
+    }
+    else if(protofilaments[0].size() == 8)
+    {
+
+    }
+    else
+    {
+        fprintf(stderr,"[WARN] %s:%d: errno: %s\n",__FILE__,__LINE__,
+                "Protofilaments' bending angles were not computed.");
+        return;
+    }
+    // num_angles = protofilaments[0].size() * 0.5 + 1;
+    // start = (protofilaments[0].size() - num_angles) * 0.5; // 12->2, 8->1 (pos)
+
+
+
+
+    for(auto pf: protofilaments)
+    {
+
+        // for(int s=1; s < protofilaments[0].size()-2; s++)
+        for(int s=1; s < pf.size()-1; s++)
+        {
+            // Identify 4 monomers.
+            pf1 = pf[s-1].second; // beta -1
+            pf2 = pf[s].second;   // beta
+            pf3 = pf[s + 1].second; // beta+1
+
+            pfa = pf[s + 1].first;    // alpha
+
+
+            // 4 Centroids.
+            cen1 = get_centroid(isel_chain[pf1],aa);
+            cen2 = get_centroid(isel_chain[pf2],aa);
+            cen3 = get_centroid(isel_chain[pf3],aa);
+            cen4 = get_centroid(isel_chain[pfa],aa);
+
+            // 3 Vectors.
+            v12 = get_vector(cen2,cen1);
+            v23 = get_vector(cen3,cen2);
+            va  = get_vector(cen4,cen2); // alpha
+            m   = magnitude(va);
+
+            // 3 normalized vectors.
+            n12 = normalize(v12);
+            n23 = normalize(v23); // b2
+
+
+            vdot = dot_product(n12,n23); // scalar.
+            acos_vdot = (acos(vdot)) * 180.0 / M_PI;
+
+
+
+
+            fprintf(fp_beta_angle,"%7.2f %7.2f ",m,acos_vdot);
+            // fprintf(fp_beta_angle,"%6.1f %6.1f %6.1f ",cen2.x,cen2.y,cen2.z);
+            // fprintf(fp_beta_angle,"%6.1f %6.1f %6.1f ",cen3.x,cen3.y,cen3.z);
+            // fprintf(fp_beta_angle,"\n");
+
+        //     fprintf(fp_beta_angle,"%6.1f %6.1f %6.1f ",cen3.x,cen3.y,cen3.z);
+        }
+
+        // fprintf(fp_beta_angle,"#");
+        fprintf(fp_beta_angle,"\n");
+
+    }
+
+    fclose(fp_beta_angle);
+
+}
+
 
 #endif

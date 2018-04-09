@@ -1311,7 +1311,11 @@ int main(int argc, char *argv[]) {
     syspf.get_first_ab_axes(allatoms_ref);
     syspf.identify_chains_on_pf(allatoms_ref,isel_chain);
     syspf.print_PF();
-    syspf.get_bending_angle(allatoms_ref,isel_chain);
+    // syspf.get_bending_angle1(allatoms_ref,isel_chain);
+    // syspf.get_bending_angle2(allatoms_ref,isel_chain);
+    syspf.get_distance_centroid(allatoms_ref,isel_chain);
+    syspf.get_beta_angle(allatoms_ref,isel_chain);
+
     // for(auto c: isel_chain)
     // {
     //     std::cout << c.size() << std::endl;
@@ -1755,7 +1759,10 @@ int main(int argc, char *argv[]) {
 #ifdef PFBEND_DURING
         std::cout << "PFBEND_DURING:" << std::endl;
 
-        syspf.get_bending_angle(allatoms,isel_chain);
+        // syspf.get_bending_angle1(allatoms,isel_chain);
+        // syspf.get_bending_angle2(allatoms,isel_chain);
+        syspf.get_distance_centroid(allatoms,isel_chain);
+        syspf.get_beta_angle(allatoms,isel_chain);
 
 #endif // PFBEND_DURING
 
