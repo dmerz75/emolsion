@@ -88,6 +88,7 @@ public:
 
     void get_distance_centroid(vAtoms aa,vIndexGroup isel_chain);
     void get_beta_angle(vAtoms aa,vIndexGroup isel_chain);
+    void get_point4AB(vAtoms aa,vIndexGroup isel_chain);
 
 private:
 
@@ -928,6 +929,120 @@ inline void SystemPF::get_beta_angle(vAtoms aa,vIndexGroup isel_chain)
 
     fclose(fp_beta_angle);
 
+}
+
+inline void SystemPF::get_point4AB(vAtoms aa,vIndexGroup isel_chain)
+{
+    // Description:
+
+
+    // FILE
+    FILE * fp_point4AB;
+    fp_point4AB = fopen("emol_mtpf_point4AB.dat","a+");
+    fprintf(fp_point4AB,"#\n");
+
+    // Variables:
+    // int num_angles; // angles (dimers * 0.5 + 1), for 13: should be 7
+    // int start;
+    int pf1, pf2, pf3, pf4, pf5;
+    Vector cen1, cen2, cen3, cen4, cen5;
+
+    Vector v12,v23,v53;
+    Vector n12,n23,n53;
+
+    double m53,vdot,acos_vdot;
+
+
+    // std::cout << "Num_Protofilaments: " << num_protofilaments << std::endl;
+    // std::cout << "Num_Dimers: " << protofilaments[0].size() << std::endl;
+    // std::cout << num_protofilaments << std::endl;
+    // std::cout << protofilaments[0].size() << std::endl;
+
+    if(protofilaments[0].size() == 12)
+    {
+
+    }
+    else if(protofilaments[0].size() == 8)
+    {
+
+    }
+    else
+    {
+        fprintf(stderr,"[WARN] %s:%d: errno: %s\n",__FILE__,__LINE__,
+                "Protofilaments' bending angles were not computed.");
+        return;
+    }
+    // num_angles = protofilaments[0].size() * 0.5 + 1;
+    // start = (protofilaments[0].size() - num_angles) * 0.5; // 12->2, 8->1 (pos)
+
+
+    for(auto pf: protofilaments)
+    {
+
+        pf1 = pf[0].first;
+        pf2 = pf[0].second;
+
+        cen1 = get_centroid(isel_chain[pf1],aa);
+        cen2 = get_centroid(isel_chain[pf2],aa);
+
+        v12 = get_vector(cen1,cen2);
+        n12 = normalize(v12);
+
+        // std::cout << pf1 << "  " << pf2 << std::endl;
+        // PFBEND_DURING:
+        // 0  1
+        // 2  3
+        // 4  5
+        // 6  7
+        // 8  9
+        // 10  11
+        // 12  13
+        // 14  15
+        // 16  17
+        // 18  19
+        // 20  21
+        // 22  23
+        // 24  25
+
+        for(int s=1; s < pf.size(); s++)
+        {
+            // Identify 4 monomers.
+            pf3 = pf[s].first;  // alpha
+            pf4 = pf[s].second; // beta
+
+            // Centroid distance check: previous beta.
+            pf5 = pf[s-1].second;
+
+            // 4 Centroids.
+            cen3 = get_centroid(isel_chain[pf3],aa);
+            cen4 = get_centroid(isel_chain[pf4],aa);
+            cen5 = get_centroid(isel_chain[pf5],aa);
+
+            // Get the separation distance. previous beta.
+            v53 = get_vector(cen5,cen3);
+            m53 = magnitude(v53);
+
+            // 3 Vectors.
+            v23 = get_vector(cen2,cen3);
+            n23 = normalize(v23);
+
+            vdot = dot_product(n12,n23); // scalar.
+            acos_vdot = (acos(vdot)) * 180.0 / M_PI;
+
+
+            fprintf(fp_point4AB,"%7.1f %7.2f ",m53,acos_vdot);
+            // fprintf(fp_point4AB,"%6.1f %6.1f %6.1f ",cen2.x,cen2.y,cen2.z);
+            // fprintf(fp_point4AB,"%6.1f %6.1f %6.1f ",cen3.x,cen3.y,cen3.z);
+            // fprintf(fp_point4AB,"\n");
+            // fprintf(fp_point4AB,"%6.1f %6.1f %6.1f ",cen3.x,cen3.y,cen3.z);
+        }
+
+        // fprintf(fp_point4AB,"#");
+        fprintf(fp_point4AB,"\n");
+
+    }
+
+    fclose(fp_point4AB);
 }
 
 

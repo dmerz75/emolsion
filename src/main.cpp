@@ -1313,8 +1313,11 @@ int main(int argc, char *argv[]) {
     syspf.print_PF();
     // syspf.get_bending_angle1(allatoms_ref,isel_chain);
     // syspf.get_bending_angle2(allatoms_ref,isel_chain);
-    syspf.get_distance_centroid(allatoms_ref,isel_chain);
-    syspf.get_beta_angle(allatoms_ref,isel_chain);
+    // syspf.get_distance_centroid(allatoms_ref,isel_chain);
+    // syspf.get_beta_angle(allatoms_ref,isel_chain);
+    syspf.get_point4AB(allatoms_ref,isel_chain);
+
+
 
     // for(auto c: isel_chain)
     // {
@@ -1761,8 +1764,9 @@ int main(int argc, char *argv[]) {
 
         // syspf.get_bending_angle1(allatoms,isel_chain);
         // syspf.get_bending_angle2(allatoms,isel_chain);
-        syspf.get_distance_centroid(allatoms,isel_chain);
-        syspf.get_beta_angle(allatoms,isel_chain);
+        // syspf.get_distance_centroid(allatoms,isel_chain);
+        // syspf.get_beta_angle(allatoms,isel_chain);
+        syspf.get_point4AB(allatoms,isel_chain);
 
 #endif // PFBEND_DURING
 
