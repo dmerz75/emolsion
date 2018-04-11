@@ -145,7 +145,7 @@ double dot_product(Vector v1, Vector v2);
 double get_sintheta(Vector v1, Vector v2);
 
 Vector difference(Vector v1, Vector v2);
-Vector midpoint2(Vector v1,Vector v2);
+Vector midpoint(Vector v1,Vector v2);
 Vector cross_product(Vector v1, Vector v2);
 Vector scalar_mult(Vector v1, double a);
 Vector vec_add(Vector v1, Vector v2);

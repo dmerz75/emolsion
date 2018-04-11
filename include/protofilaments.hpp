@@ -31,6 +31,9 @@
 #include <sstream>
 #include "boost/tuple/tuple.hpp"
 #include <math.h>
+
+#include "md.h"
+
 // #include "atom.hpp"
 // #include "microtubule.hpp"
 
@@ -89,6 +92,9 @@ public:
     void get_distance_centroid(vAtoms aa,vIndexGroup isel_chain);
     void get_beta_angle(vAtoms aa,vIndexGroup isel_chain);
     void get_point4AB(vAtoms aa,vIndexGroup isel_chain);
+
+    void get_centroiddimerangle(vAtoms aa,vIndexGroup isel_chain);
+
 
 private:
 
@@ -1045,5 +1051,256 @@ inline void SystemPF::get_point4AB(vAtoms aa,vIndexGroup isel_chain)
     fclose(fp_point4AB);
 }
 
+inline void SystemPF::get_centroiddimerangle(vAtoms aa,vIndexGroup isel_chain)
+{
+    // Description:
+
+
+    // FILE
+    FILE * fp_pfang;
+    fp_pfang = fopen("emol_mtpf_entire_PFang.dat","a+");
+    fprintf(fp_pfang,"#\n");
+
+    // Variables:
+    // int num_angles; // angles (dimers * 0.5 + 1), for 13: should be 7
+    // int start;
+    int pf1, pf2, pf3, pf4;
+    int lastpf,low_mon, pfbeta, pfalpha;
+    Vector cen1, cen2, cen3, cen4, cenbeta, cenalpha;
+    Vector mid1,mid2,nfh,nsh,firsthalf,secondhalf;
+
+    int pfcheck;
+    int usel=-1;
+    int vsel=-1;
+
+    Vector cencheck,vcheck1,vcheck2;
+    Vector nv1, nv2;
+
+    // Vector v12,v23,v53;
+    // Vector n12,n23,n53;
+
+    double vdot,acos_vdot,supp_vdot,y,mfh,msh;
+
+
+    // std::cout << "Num_Protofilaments: " << num_protofilaments << std::endl;
+    // std::cout << "Num_Dimers: " << protofilaments[0].size() << std::endl;
+    // std::cout << num_protofilaments << std::endl;
+    // std::cout << protofilaments[0].size() << std::endl;
+
+    if(protofilaments[0].size() == 12)
+    {
+
+    }
+    else if(protofilaments[0].size() == 8)
+    {
+
+    }
+    else
+    {
+        fprintf(stderr,"[WARN] %s:%d: errno: %s\n",__FILE__,__LINE__,
+                "Protofilaments' bending angles were not computed.");
+        return;
+    }
+    // num_angles = protofilaments[0].size() * 0.5 + 1;
+    // start = (protofilaments[0].size() - num_angles) * 0.5; // 12->2, 8->1 (pos)
+
+
+    for(auto pf: protofilaments)
+    {
+        lastpf = pf.size() - 1;
+
+        pf1 = pf[0].first;
+        pf2 = pf[0].second;
+
+        cen1 = get_centroid(isel_chain[pf1],aa);
+        cen2 = get_centroid(isel_chain[pf2],aa);
+
+        mid1 = midpoint(cen1,cen2);
+
+        pf3 = pf[lastpf].first;
+        pf4 = pf[lastpf].second;
+
+        cen3 = get_centroid(isel_chain[pf3],aa);
+        cen4 = get_centroid(isel_chain[pf4],aa);
+
+        mid2 = midpoint(cen3,cen4);
+
+        y = mid1.y;
+        low_mon = pf2;
+
+
+        // std::cout << pf1 << "  " << pf2 << std::endl;
+        // std::cout << pf3 << "  " << pf4 << std::endl;
+
+
+        // PFBEND_DURING:
+        // 0  1
+        // 2  3
+        // 4  5
+        // 6  7
+        // 8  9
+        // 10  11
+        // 12  13
+        // 14  15
+        // 16  17
+        // 18  19
+        // 20  21
+        // 22  23
+        // 24  25
+
+        // for(int s=1; s < pf.size(); s++)
+        // {
+        //     std::cout << pf[s].first << " " << pf[s].second << " ";
+        // }
+        // std::cout << " " << std::endl;
+
+        for(int s=1; s < pf.size()-1; s++)
+        {
+            // Identify low_mon
+            pfalpha = pf[s].first;
+            pfbeta = pf[s].second;
+            cenalpha = get_centroid(isel_chain[pfalpha],aa);
+            cenbeta = get_centroid(isel_chain[pfbeta],aa);
+
+            if(cenalpha.y < y)
+            {
+                low_mon = pfalpha;
+                y = cenalpha.y;
+            }
+
+            if(cenbeta.y < y)
+            {
+                // std::cout << pf1 << " "
+                //           << pf2 << " "
+                //           << pf3 << " "
+                //           << pf4 << " "
+                //           << std::endl;
+
+                low_mon = pfbeta;
+                // std::cout << "Lower: " << low_mon << std::endl;
+                y = cenbeta.y;
+            }
+        }
+
+        // Now I need the first monomers to show bending,
+        // preferably between pf2 and pf3.
+        // Loop through monomers between pf2 and low_mon;
+        // Loop through monomers between low_mon and pf3;
+        // Keep the highest one that makes 10 deg. angle with pf1
+        // Keep the highest one that makes 10 deg. angle with pf4
+
+        for(int u=1; u < pf.size()-1; u++)
+        {
+            pfcheck = pf[u].second;
+
+            if(pfcheck >= low_mon)
+            {
+                usel = u;
+                break;
+            }
+
+            cencheck = get_centroid(isel_chain[pfcheck],aa);
+            vcheck1 = get_vector(mid1,cencheck);
+            vcheck2 = get_vector(cencheck,mid2);
+
+            nv1 = normalize(vcheck1);
+            nv2 = normalize(vcheck2);
+
+            vdot = dot_product(nv1,nv2);
+            acos_vdot = (acos(vdot)) * 180.0 / M_PI;
+
+            if(acos_vdot > 10.0)
+            {
+                usel = u;
+                break;
+            }
+
+            usel = u;
+        }
+        // Take u-1?
+
+        // now get the latter half monomer.
+        for(int v=1; v < pf.size()-1; v++)
+        {
+            pfcheck = pf[v].first;
+
+            if(pfcheck <= low_mon)
+            {
+                continue;
+            }
+
+            cencheck = get_centroid(isel_chain[pfcheck],aa);
+            vcheck1 = get_vector(mid1,cencheck);
+            vcheck2 = get_vector(cencheck,mid2);
+
+            nv1 = normalize(vcheck1);
+            nv2 = normalize(vcheck2);
+
+            vdot = dot_product(nv1,nv2);
+            acos_vdot = (acos(vdot)) * 180.0 / M_PI;
+
+            if(acos_vdot < 8.0)
+            {
+                vsel = v;
+                break;
+            }
+            vsel = v;
+        }
+        // Take v.
+
+
+        // Have u,v. Get Midpoint.
+        pf1 = pf[usel-1].first;
+        pf2 = pf[usel-1].second;
+
+        cen1 = get_centroid(isel_chain[pf1],aa);
+        cen2 = get_centroid(isel_chain[pf2],aa);
+
+        mid1 = midpoint(cen1,cen2);
+
+        pf3 = pf[vsel].first;
+        pf4 = pf[vsel].second;
+
+        cen3 = get_centroid(isel_chain[pf3],aa);
+        cen4 = get_centroid(isel_chain[pf4],aa);
+
+        mid2 = midpoint(cen3,cen4);
+
+
+        // std::cout << "More Acute Angle. Larger Beta." << std::endl;
+        // std::cout << pf1 << " " << pf2 << std::endl;
+        // std::cout << pf3 << " " << pf4 << std::endl;
+
+
+        // Have the lowest on Y beta monomer.
+        // Get its centroid. And ..
+        cenbeta = get_centroid(isel_chain[low_mon],aa);
+
+        // Vector lengths, up to the deepest beta monomer.
+        // from the midpoint of the first dimer to the midpoint of the last dimer.
+        firsthalf = get_vector(mid1,cenbeta);
+        secondhalf = get_vector(cenbeta,mid2);
+
+        // Vector lengths.
+        mfh = magnitude(firsthalf);
+        msh = magnitude(secondhalf);
+
+        // normalize vectors:
+        nfh = normalize(firsthalf);
+        nsh = normalize(secondhalf);
+
+        vdot = dot_product(nfh,nsh);
+        acos_vdot = (acos(vdot)) * 180.0 / M_PI;
+        supp_vdot = 180.0 - acos_vdot;
+
+        fprintf(fp_pfang,"%7.2f %7.2f  %6.2f %7.2f", mfh, msh, acos_vdot, supp_vdot);
+
+        // fprintf(fp_pfang,"#");
+        fprintf(fp_pfang,"\n");
+
+    }
+
+    fclose(fp_pfang);
+}
 
 #endif
