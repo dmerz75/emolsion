@@ -1188,8 +1188,7 @@ inline void SystemPF::get_centroiddimerangle(vAtoms aa,vIndexGroup isel_chain)
         // Loop through monomers between low_mon and pf3;
         // Keep the highest one that makes 10 deg. angle with pf1
         // Keep the highest one that makes 10 deg. angle with pf4
-
-        for(int u=1; u < pf.size()-1; u++)
+        for(int u=1; u < pf.size(); u++)
         {
             pfcheck = pf[u].second;
 
@@ -1220,7 +1219,7 @@ inline void SystemPF::get_centroiddimerangle(vAtoms aa,vIndexGroup isel_chain)
         // Take u-1?
 
         // now get the latter half monomer.
-        for(int v=1; v < pf.size()-1; v++)
+        for(int v=usel; v < pf.size(); v++)
         {
             pfcheck = pf[v].first;
 
@@ -1239,7 +1238,7 @@ inline void SystemPF::get_centroiddimerangle(vAtoms aa,vIndexGroup isel_chain)
             vdot = dot_product(nv1,nv2);
             acos_vdot = (acos(vdot)) * 180.0 / M_PI;
 
-            if(acos_vdot < 8.0)
+            if(acos_vdot < 10.0)
             {
                 vsel = v;
                 break;
@@ -1293,7 +1292,10 @@ inline void SystemPF::get_centroiddimerangle(vAtoms aa,vIndexGroup isel_chain)
         acos_vdot = (acos(vdot)) * 180.0 / M_PI;
         supp_vdot = 180.0 - acos_vdot;
 
-        fprintf(fp_pfang,"%7.2f %7.2f  %6.2f %7.2f", mfh, msh, acos_vdot, supp_vdot);
+
+
+        fprintf(fp_pfang,"%4d %4d %4d %7.2f %7.2f  %6.2f %7.2f",
+                pf2,low_mon,pf3,mfh,msh,acos_vdot,supp_vdot);
 
         // fprintf(fp_pfang,"#");
         fprintf(fp_pfang,"\n");
